@@ -20,6 +20,17 @@ import { RouterLink, RouterView } from 'vue-router'
         </RouterLink>
 
         <RouterLink
+          to="/activity"
+          class="flex items-center px-4 py-3 rounded-lg transition-colors duration-200"
+          active-class="bg-indigo-600 text-white shadow-md"
+          :class="
+            $route.path === '/activity' ? '' : 'text-slate-300 hover:bg-slate-800 hover:text-white'
+          "
+        >
+          <span class="font-medium">活動監控 (Live)</span>
+        </RouterLink>
+
+        <RouterLink
           to="/about"
           class="flex items-center px-4 py-3 rounded-lg transition-colors duration-200"
           active-class="bg-indigo-600 text-white shadow-md"
