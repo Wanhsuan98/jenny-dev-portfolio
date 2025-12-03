@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import { useRoute, useRouter } from 'vue-router' // 路由工具
-import { doc, getDoc, deleteDoc, Timestamp } from 'firebase/firestore'
+import { useRoute, useRouter } from 'vue-router'
+import { doc, getDoc, deleteDoc, updateDoc, Timestamp } from 'firebase/firestore' // ✨ 新增 updateDoc
 import { db } from '@/firebase'
 import { useAuthStore } from '@/stores/auth'
 
@@ -14,7 +14,18 @@ const projectId = route.params.id as string
 const project = ref<any>(null)
 const isLoading = ref(true)
 const errorMsg = ref('')
+
 const isDeleting = ref(false)
+const isEditing = ref(false)
+const isSaving = ref(false)
+
+// 編輯表單
+const editForm = ref({
+  name: '',
+  tech: '',
+  status: 'Active',
+  description: '',
+})
 
 onMounted(async () => {
   try {
@@ -34,14 +45,53 @@ onMounted(async () => {
   }
 })
 
+// 進入編輯模式
+const startEdit = () => {
+  // 把目前的資料複製到表單中
+  editForm.value = {
+    name: project.value.name,
+    tech: project.value.tech,
+    status: project.value.status,
+    description: project.value.description || '',
+  }
+  isEditing.value = true
+}
+
+// 儲存修改
+const handleUpdate = async () => {
+  if (!authStore.isAdmin) return alert('權限不足')
+
+  isSaving.value = true
+  try {
+    const docRef = doc(db, 'projects', projectId)
+
+    // 寫入 Firebase
+    await updateDoc(docRef, {
+      name: editForm.value.name,
+      tech: editForm.value.tech,
+      status: editForm.value.status,
+      description: editForm.value.description,
+    })
+
+    // 更新本地顯示資料
+    project.value = {
+      ...project.value,
+      ...editForm.value,
+    }
+
+    alert('✅ 更新成功！')
+    isEditing.value = false
+  } catch (error) {
+    console.error(error)
+    alert('❌ 更新失敗')
+  } finally {
+    isSaving.value = false
+  }
+}
+
 // 刪除專案
 const handleDelete = async () => {
-  // 先檢查權限
-  if (!authStore.isAdmin) {
-    alert('您沒有刪除權限！')
-    return
-  }
-
+  if (!authStore.isAdmin) return
   if (!confirm('確定要刪除這個專案嗎？此動作無法復原。')) return
 
   isDeleting.value = true
@@ -49,14 +99,14 @@ const handleDelete = async () => {
     await deleteDoc(doc(db, 'projects', projectId))
     alert('專案已刪除')
     router.push('/')
-  } catch (err) {
-    alert('刪除失敗，權限不足')
+  } catch (error) {
+    console.error(error)
+    alert('刪除失敗')
   } finally {
     isDeleting.value = false
   }
 }
 
-// 時間格式化
 const formatDate = (ts: Timestamp) => {
   if (!ts) return '-'
   return ts.toDate().toLocaleString('zh-TW')
@@ -68,7 +118,6 @@ const formatDate = (ts: Timestamp) => {
     <div v-if="isLoading" class="flex justify-center py-12">
       <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
     </div>
-
     <div v-else-if="errorMsg" class="text-center py-12">
       <div class="text-red-500 text-xl mb-4">⚠️ {{ errorMsg }}</div>
       <button @click="router.push('/')" class="text-indigo-600 hover:underline">← 回到列表</button>
@@ -76,25 +125,95 @@ const formatDate = (ts: Timestamp) => {
 
     <div v-else class="space-y-6">
       <div class="flex items-center justify-between">
-        <button
-          @click="router.push('/')"
-          class="flex items-center text-gray-500 hover:text-indigo-600 transition"
-        >
-          <span class="mr-1">←</span> 返回專案列表
+        <button @click="router.push('/')" class="text-gray-500 hover:text-indigo-600 transition">
+          ← 返回專案列表
         </button>
 
-        <button
-          v-if="authStore.isAdmin"
-          @click="handleDelete"
-          :disabled="isDeleting"
-          class="bg-red-100 text-red-600 px-4 py-2 rounded-lg hover:bg-red-200 transition flex items-center gap-2 text-sm font-medium"
-        >
-          <span v-if="isDeleting">刪除中...</span>
-          <span v-else>刪除專案</span>
-        </button>
+        <div v-if="authStore.isAdmin" class="flex gap-3">
+          <template v-if="!isEditing">
+            <button
+              @click="startEdit"
+              class="bg-indigo-50 text-indigo-600 px-4 py-2 rounded-lg hover:bg-indigo-100 transition font-medium"
+            >
+              ✏️ 編輯
+            </button>
+            <button
+              @click="handleDelete"
+              :disabled="isDeleting"
+              class="bg-red-50 text-red-600 px-4 py-2 rounded-lg hover:bg-red-100 transition font-medium"
+            >
+              {{ isDeleting ? '刪除中...' : '🗑️ 刪除' }}
+            </button>
+          </template>
+
+          <template v-else>
+            <button
+              @click="isEditing = false"
+              class="text-gray-500 hover:text-gray-700 px-4 py-2 transition"
+            >
+              取消
+            </button>
+            <button
+              @click="handleUpdate"
+              :disabled="isSaving"
+              class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition font-medium flex items-center"
+            >
+              <span v-if="isSaving" class="animate-spin mr-2">⚪</span>
+              {{ isSaving ? '儲存中...' : '💾 儲存變更' }}
+            </button>
+          </template>
+        </div>
       </div>
 
-      <div class="bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-100">
+      <div
+        v-if="isEditing"
+        class="bg-white rounded-2xl shadow-lg border border-indigo-100 p-8 space-y-6"
+      >
+        <h2 class="text-2xl font-bold text-gray-800 mb-4">編輯專案內容</h2>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">專案名稱</label>
+            <input
+              v-model="editForm.name"
+              type="text"
+              class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
+            />
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">狀態</label>
+            <select
+              v-model="editForm.status"
+              class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
+            >
+              <option value="Active">進行中 (Active)</option>
+              <option value="Pending">排程中 (Pending)</option>
+              <option value="Completed">已完成 (Completed)</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">使用技術 (逗號分隔)</label>
+          <input
+            v-model="editForm.tech"
+            type="text"
+            class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
+          />
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">專案描述</label>
+          <textarea
+            v-model="editForm.description"
+            rows="5"
+            class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
+            placeholder="請輸入詳細描述..."
+          ></textarea>
+        </div>
+      </div>
+
+      <div v-else class="bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-100">
         <div class="p-8 border-b border-gray-100 bg-gradient-to-r from-gray-50 to-white">
           <div class="flex items-center gap-4 mb-4">
             <span
@@ -134,16 +253,8 @@ const formatDate = (ts: Timestamp) => {
             <h3 class="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-3">
               專案描述 Description
             </h3>
-            <div class="prose max-w-none text-gray-600 leading-relaxed">
-              <p v-if="project.description">
-                {{ project.description }}
-              </p>
-              <p v-else class="italic text-gray-400">
-                此專案尚無詳細描述...
-                <br />
-                (這是因為我們目前的 Firebase 資料庫只有 name 和 tech 欄位，
-                未來擴充欄位後，這裡就會顯示真正的內容。)
-              </p>
+            <div class="prose max-w-none text-gray-600 leading-relaxed whitespace-pre-wrap">
+              {{ project.description || '此專案尚無詳細描述...' }}
             </div>
           </div>
         </div>
