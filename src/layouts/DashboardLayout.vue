@@ -1,5 +1,8 @@
 <script setup lang="ts">
 import { RouterLink, RouterView } from 'vue-router'
+import { useAuthStore } from '@/stores/auth'
+
+const authStore = useAuthStore()
 </script>
 
 <template>
@@ -42,8 +45,17 @@ import { RouterLink, RouterView } from 'vue-router'
         </RouterLink>
       </nav>
 
-      <div class="p-4 border-t border-slate-700 text-xs text-slate-500 text-center">
-        © 2025 Jenny Profile
+      <div class="p-4 border-t border-slate-700">
+        <div class="flex items-center justify-between">
+          <span class="text-xs text-slate-500">© 2025 Jenny</span>
+
+          <button
+            @click="authStore.logout"
+            class="text-xs text-slate-400 hover:text-white transition-colors"
+          >
+            登出
+          </button>
+        </div>
       </div>
     </aside>
 

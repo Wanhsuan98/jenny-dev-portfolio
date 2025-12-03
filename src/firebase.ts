@@ -3,6 +3,7 @@
  */
 import { initializeApp } from 'firebase/app'
 import { getFirestore } from 'firebase/firestore'
+import { getAuth } from 'firebase/auth'
 
 const firebaseConfig = {
   apiKey: 'AIzaSyC7GUS-q_5y4RGKtvje16FZdmQhvWZ0dbs',
@@ -13,11 +14,14 @@ const firebaseConfig = {
   appId: '1:382795265020:web:cc4dbd594224c8e8423879',
 }
 
-// 1. 初始化 Firebase App
+// 初始化 Firebase App
 const app = initializeApp(firebaseConfig)
 
-// 2. 取得 Firestore 資料庫實體
+// 取得 Firestore 資料庫實體
 const db = getFirestore(app)
 
-// 3. 匯出 db 讓其他檔案使用
-export { db }
+// 取得 Auth 實體
+const auth = getAuth(app)
+
+// 匯出 db 和 auth
+export { db, auth }
