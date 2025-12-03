@@ -4,6 +4,8 @@ import { useRoute, useRouter } from 'vue-router'
 import { doc, getDoc, deleteDoc, updateDoc, Timestamp } from 'firebase/firestore' // ✨ 新增 updateDoc
 import { db } from '@/firebase'
 import { useAuthStore } from '@/stores/auth'
+import StatusBadge from '@/components/StatusBadge.vue'
+import type { Project } from '@/types/project'
 
 const route = useRoute()
 const router = useRouter()
@@ -11,7 +13,7 @@ const authStore = useAuthStore()
 
 const projectId = route.params.id as string
 
-const project = ref<any>(null)
+const project = ref<Project | null>(null)
 const isLoading = ref(true)
 const errorMsg = ref('')
 
@@ -36,7 +38,7 @@ onMounted(async () => {
     const docSnap = await getDoc(docRef)
 
     if (docSnap.exists()) {
-      project.value = { id: docSnap.id, ...docSnap.data() }
+      project.value = { id: docSnap.id, ...docSnap.data() } as Project
     } else {
       errorMsg.value = '找不到此專案，可能已被刪除。'
     }
@@ -52,11 +54,11 @@ onMounted(async () => {
 const startEdit = () => {
   // 把目前的資料複製到表單中
   editForm.value = {
-    name: project.value.name,
-    tech: project.value.tech,
-    status: project.value.status,
-    description: project.value.description || '',
-    screenshots: project.value.screenshots || [],
+    name: project.value?.name || '',
+    tech: project.value?.tech || '',
+    status: project.value?.status || '',
+    description: project.value?.description || '',
+    screenshots: project.value?.screenshots || [],
   }
   tempImageUrl.value = ''
   isEditing.value = true
@@ -98,7 +100,7 @@ const handleUpdate = async () => {
     project.value = {
       ...project.value,
       ...editForm.value,
-    }
+    } as Project
 
     alert('✅ 更新成功！')
     isEditing.value = false
@@ -309,16 +311,7 @@ const formatDate = (ts: Timestamp) => {
           class="p-8 border-b border-gray-100 bg-gradient-to-r from-gray-50 to-white dark:from-gray-700 dark:to-gray-800"
         >
           <div class="flex items-center gap-4 mb-4">
-            <span
-              class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider"
-              :class="{
-                'bg-green-100 text-green-700': project.status === 'Active',
-                'bg-blue-100 text-blue-700': project.status === 'Completed',
-                'bg-yellow-100 text-yellow-700': project.status === 'Pending',
-              }"
-            >
-              {{ project.status }}
-            </span>
+            <StatusBadge :status="project.status" />
             <span class="text-gray-400 text-sm"> 建立於：{{ formatDate(project.createdAt) }} </span>
           </div>
           <h1 class="text-4xl font-extrabold text-gray-800 dark:text-gray-100 tracking-tight">

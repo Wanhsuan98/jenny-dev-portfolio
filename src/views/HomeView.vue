@@ -1,26 +1,18 @@
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { collection, addDoc, onSnapshot, query, orderBy, serverTimestamp } from 'firebase/firestore'
 import { db } from '@/firebase'
 import { useAuthStore } from '@/stores/auth'
 import BaseTable from '@/components/BaseTable.vue'
 import BaseChart from '@/components/BaseChart.vue'
 import BaseModal from '@/components/BaseModal.vue'
+import ProjectForm from '@/components/ProjectForm.vue'
+import StatusBadge from '@/components/StatusBadge.vue'
 import type { Column } from '@/types/table'
 import type { ChartData, ChartOptions } from 'chart.js'
+import type { Project } from '@/types/project'
 
 const authStore = useAuthStore()
-
-// 定義資料結構
-interface Project {
-  id: string
-  name: string
-  status: 'Active' | 'Completed' | 'Pending'
-  tech: string
-  screenshots?: string[]
-  description?: string
-  createdAt?: any
-}
 
 const tableColumns: Column<Project>[] = [
   { key: 'name', label: '專案名稱', slot: true },
@@ -32,30 +24,11 @@ const projects = ref<Project[]>([])
 const isModalOpen = ref(false)
 const isSubmitting = ref(false)
 
-// 表單
-const form = ref({
-  name: '',
-  tech: '',
-  status: 'Active' as const,
-  screenshots: [] as string[],
-  description: '',
-})
-
-const tempImageUrl = ref('')
-
-const addScreenshot = () => {
-  if (!tempImageUrl.value.trim()) return
-  form.value.screenshots.push(tempImageUrl.value.trim())
-  tempImageUrl.value = ''
-}
-
-const removeScreenshot = (index: number) => {
-  form.value.screenshots.splice(index, 1)
-}
+let unsubscribe: null | (() => void) = null
 
 onMounted(() => {
   const q = query(collection(db, 'projects'), orderBy('createdAt', 'desc'))
-  onSnapshot(q, (snapshot) => {
+  unsubscribe = onSnapshot(q, (snapshot) => {
     projects.value = snapshot.docs.map(
       (doc) =>
         ({
@@ -66,24 +39,23 @@ onMounted(() => {
   })
 })
 
-const handleAddProject = async () => {
-  if (!form.value.name || !form.value.tech) return alert('請填寫完整資訊')
+onUnmounted(() => {
+  if (unsubscribe) {
+    unsubscribe()
+  }
+})
+
+const handleAddProject = async (formData: any) => {
+  if (!formData.name || !formData.tech) return alert('請填寫完整資訊')
 
   isSubmitting.value = true
   try {
     await addDoc(collection(db, 'projects'), {
-      name: form.value.name,
-      tech: form.value.tech,
-      status: form.value.status,
-      screenshots: form.value.screenshots,
-      description: form.value.description,
+      ...formData,
       createdAt: serverTimestamp(),
     })
 
     isModalOpen.value = false
-    // 重置表單
-    form.value = { name: '', tech: '', status: 'Active', screenshots: [], description: '' }
-    tempImageUrl.value = ''
   } catch (error) {
     console.error('新增失敗', error)
     alert('新增失敗')
@@ -157,134 +129,21 @@ const chartOptions: ChartOptions<'bar'> = {
         </RouterLink>
       </template>
       <template #cell-status="{ row }">
-        <span
-          class="px-3 py-1 rounded-full text-xs font-medium"
-          :class="{
-            'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300':
-              row.status === 'Active',
-            'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300':
-              row.status === 'Completed',
-            'bg-yellow-100 text-yellow-700 dark:bg-yellow-900 dark:text-yellow-300':
-              row.status === 'Pending',
-          }"
-        >
-          {{ row.status }}
-        </span>
+        <StatusBadge :status="row.status" />
       </template>
     </BaseTable>
 
-    <BaseModal :is-open="isModalOpen" title="新增專案" @close="isModalOpen = false">
-      <form @submit.prevent="handleAddProject" class="space-y-4">
-        <div>
-          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
-            >專案名稱</label
-          >
-          <input
-            v-model="form.name"
-            type="text"
-            required
-            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none dark:bg-gray-700"
-            placeholder="例如：後台管理系統"
-          />
-        </div>
-
-        <div>
-          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
-            >使用技術</label
-          >
-          <input
-            v-model="form.tech"
-            type="text"
-            required
-            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none dark:bg-gray-700"
-            placeholder="例如：Vue3, Tailwind"
-          />
-        </div>
-
-        <div>
-          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
-            >目前狀態</label
-          >
-          <select
-            v-model="form.status"
-            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none dark:bg-gray-700 dark:text-gray-300"
-          >
-            <option value="Active">進行中 (Active)</option>
-            <option value="Pending">排程中 (Pending)</option>
-            <option value="Completed">已完成 (Completed)</option>
-          </select>
-        </div>
-
-        <div>
-          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
-            >專案描述</label
-          >
-          <textarea
-            v-model="form.description"
-            rows="4"
-            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none resize-none dark:bg-gray-700"
-            placeholder="請輸入專案詳細介紹、亮點功能..."
-          ></textarea>
-        </div>
-
-        <div>
-          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
-            >專案截圖連結 (可多張)</label
-          >
-
-          <div class="flex gap-2 mb-2">
-            <input
-              v-model="tempImageUrl"
-              type="url"
-              class="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none dark:bg-gray-700"
-              placeholder="https://imgur.com/..."
-              @keypress.enter.prevent="addScreenshot"
-            />
-            <button
-              type="button"
-              @click="addScreenshot"
-              class="bg-gray-100 text-gray-600 dark:text-gray-300 px-3 py-2 rounded-lg hover:bg-gray-200 dark:bg-gray-700"
-            >
-              新增
-            </button>
-          </div>
-
-          <div v-if="form.screenshots.length > 0" class="space-y-2">
-            <div
-              v-for="(url, index) in form.screenshots"
-              :key="index"
-              class="flex items-center justify-between bg-gray-50 dark:bg-gray-700 p-2 rounded border border-gray-100 dark:border-gray-600 text-sm dark:text-gray-300"
-            >
-              <span class="truncate flex-1 text-gray-600 mr-2">{{ url }}</span>
-              <button
-                type="button"
-                @click="removeScreenshot(index)"
-                class="text-red-500 dark:text-red-400 hover:text-red-700 dark:hover:text-red-400"
-              >
-                ✕
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <div class="flex justify-end gap-3 mt-6">
-          <button
-            type="button"
-            @click="isModalOpen = false"
-            class="px-4 py-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 rounded-lg transition"
-          >
-            取消
-          </button>
-          <button
-            type="submit"
-            :disabled="isSubmitting"
-            class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition disabled:opacity-50 flex items-center"
-          >
-            <span v-if="isSubmitting" class="animate-spin mr-2">⚪</span>
-            {{ isSubmitting ? '儲存中...' : '確認新增' }}
-          </button>
-        </div>
-      </form>
+    <BaseModal
+      v-if="isModalOpen"
+      :is-open="isModalOpen"
+      title="新增專案"
+      @close="isModalOpen = false"
+    >
+      <ProjectForm
+        :loading="isSubmitting"
+        @submit="handleAddProject"
+        @cancel="isModalOpen = false"
+      />
     </BaseModal>
   </div>
 </template>
