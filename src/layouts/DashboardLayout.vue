@@ -1,8 +1,21 @@
 <script setup lang="ts">
+import { computed } from 'vue'
 import { RouterLink, RouterView } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 
 const authStore = useAuthStore()
+
+const displayRole = computed(() => {
+  if (!authStore.role) return 'Guest'
+  return authStore.role.charAt(0).toUpperCase() + authStore.role.slice(1)
+})
+
+const avatarLetter = computed(() => {
+  if (authStore.user && authStore.user.email) {
+    return authStore.user.email.charAt(0).toUpperCase()
+  }
+  return '?'
+})
 </script>
 
 <template>
@@ -63,11 +76,11 @@ const authStore = useAuthStore()
       <header class="h-16 bg-white shadow-sm flex items-center justify-between px-6 z-10">
         <h2 class="text-lg font-semibold text-gray-700">控制台</h2>
         <div class="flex items-center space-x-4">
-          <span class="text-sm text-gray-500">Jenny (Admin)</span>
+          <span class="text-sm text-gray-500">{{ authStore.user?.email }} ({{ displayRole }})</span>
           <div
             class="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 font-bold"
           >
-            J
+            {{ avatarLetter }}
           </div>
         </div>
       </header>
