@@ -21,7 +21,7 @@ interface Project {
 }
 
 const tableColumns: Column<Project>[] = [
-  { key: 'name', label: '專案名稱' },
+  { key: 'name', label: '專案名稱', slot: true },
   { key: 'tech', label: '使用技術' },
   { key: 'status', label: '狀態', slot: true, align: 'center' },
 ]
@@ -132,6 +132,15 @@ const chartOptions: ChartOptions<'bar'> = {
     </div>
 
     <BaseTable :columns="tableColumns" :data="projects">
+      <template #cell-name="{ row }">
+        <RouterLink
+          :to="{ name: 'project-details', params: { id: row.id } }"
+          class="text-indigo-600 hover:text-indigo-800 hover:underline font-medium transition-colors"
+        >
+          {{ row.name }}
+        </RouterLink>
+      </template>
+
       <template #cell-status="{ row }">
         <span
           class="px-3 py-1 rounded-full text-xs font-medium"
@@ -158,7 +167,6 @@ const chartOptions: ChartOptions<'bar'> = {
             placeholder="例如：企業形象官網"
           />
         </div>
-
         <div>
           <label class="block text-sm font-medium text-gray-700 mb-1">使用技術</label>
           <input
@@ -169,7 +177,6 @@ const chartOptions: ChartOptions<'bar'> = {
             placeholder="例如：Vue3, Tailwind"
           />
         </div>
-
         <div>
           <label class="block text-sm font-medium text-gray-700 mb-1">目前狀態</label>
           <select
@@ -181,7 +188,6 @@ const chartOptions: ChartOptions<'bar'> = {
             <option value="Completed">已完成 (Completed)</option>
           </select>
         </div>
-
         <div class="flex justify-end gap-3 mt-6">
           <button
             type="button"
