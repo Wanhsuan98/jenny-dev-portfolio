@@ -2,6 +2,7 @@
 import { ref } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import { useRouter } from 'vue-router'
+import { FirebaseError } from 'firebase/app'
 
 const email = ref('')
 const password = ref('')
@@ -20,6 +21,24 @@ const handleLogin = async () => {
     router.push('/')
   } catch (error) {
     console.error('登入失敗:', error)
+    if (error instanceof FirebaseError) {
+      switch (error.code) {
+        case 'auth/invalid-credential':
+        case 'auth/user-not-found':
+        case 'auth/wrong-password':
+          errorMsg.value = '帳號或密碼錯誤'
+          break
+        case 'auth/too-many-requests':
+          errorMsg.value = '登入失敗次數過多，請稍後再試'
+          break
+        default:
+          errorMsg.value = `登入失敗 (${error.code})`
+      }
+    } else if (error instanceof Error) {
+      errorMsg.value = error.message
+    } else {
+      errorMsg.value = '發生未知錯誤'
+    }
   } finally {
     isLoading.value = false
   }
