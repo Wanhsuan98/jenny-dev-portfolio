@@ -7,10 +7,9 @@ import BaseTable from '@/components/BaseTable.vue'
 import BaseChart from '@/components/BaseChart.vue'
 import BaseModal from '@/components/BaseModal.vue'
 import ProjectForm from '@/components/ProjectForm.vue'
-import StatusBadge from '@/components/StatusBadge.vue'
 import type { Column } from '@/types/table'
-import type { ChartData, ChartOptions } from 'chart.js'
 import type { Project } from '@/types/project'
+import type { ChartData, ChartOptions } from 'chart.js'
 
 const authStore = useAuthStore()
 
@@ -40,14 +39,10 @@ onMounted(() => {
 })
 
 onUnmounted(() => {
-  if (unsubscribe) {
-    unsubscribe()
-  }
+  if (unsubscribe) unsubscribe()
 })
 
-const handleAddProject = async (formData: Project) => {
-  if (!formData.name || !formData.tech) return alert('請填寫完整資訊')
-
+const handleAddProject = async (formData: any) => {
   isSubmitting.value = true
   try {
     await addDoc(collection(db, 'projects'), {
@@ -97,8 +92,25 @@ const chartOptions: ChartOptions<'bar'> = {
         <p class="page-subtitle">管理您的所有 MarTech 專案進度。</p>
       </div>
 
-      <button v-if="authStore.isAdmin" @click="isModalOpen = true" class="btn btn-primary gap-2">
-        <span>+</span> 新增專案
+      <button
+        v-if="authStore.isAdmin"
+        @click="isModalOpen = true"
+        class="btn-primary flex items-center gap-2"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="h-5 w-5"
+          viewBox="0 0 20 20"
+          fill="currentColor"
+        >
+          <path
+            fill-rule="evenodd"
+            d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z"
+            clip-rule="evenodd"
+          />
+        </svg>
+
+        <span class="hidden md:inline">新增專案</span>
       </button>
     </div>
 
@@ -121,16 +133,20 @@ const chartOptions: ChartOptions<'bar'> = {
         </RouterLink>
       </template>
       <template #cell-status="{ row }">
-        <StatusBadge :status="row.status" />
+        <span
+          class="badge badge-sm"
+          :class="{
+            'badge-success': row.status === 'Active',
+            'badge-info': row.status === 'Completed',
+            'badge-warning': row.status === 'Pending',
+          }"
+        >
+          {{ row.status }}
+        </span>
       </template>
     </BaseTable>
 
-    <BaseModal
-      v-if="isModalOpen"
-      :is-open="isModalOpen"
-      title="新增專案"
-      @close="isModalOpen = false"
-    >
+    <BaseModal :is-open="isModalOpen" title="新增專案" @close="isModalOpen = false">
       <ProjectForm
         :loading="isSubmitting"
         @submit="handleAddProject"

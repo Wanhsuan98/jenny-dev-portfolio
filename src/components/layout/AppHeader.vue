@@ -2,6 +2,8 @@
 import { ref, computed, onMounted } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 
+const emit = defineEmits(['toggle-sidebar'])
+
 const authStore = useAuthStore()
 
 // --- 使用者資訊 ---
@@ -50,7 +52,26 @@ onMounted(() => {
 
 <template>
   <header class="layout-header">
-    <h2 class="text-lg font-semibold text-gray-700 dark:text-gray-200">控制台</h2>
+    <div class="flex items-center gap-4">
+      <button @click="emit('toggle-sidebar')" class="btn-mode-toggle md:hidden">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="h-6 w-6"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M4 6h16M4 12h16M4 18h16"
+          />
+        </svg>
+      </button>
+
+      <h2 class="text-lg font-semibold text-gray-700 dark:text-gray-200 md:hidden">控制台</h2>
+    </div>
 
     <div class="flex items-center space-x-4">
       <button
@@ -90,7 +111,7 @@ onMounted(() => {
         </svg>
       </button>
 
-      <span class="text-sm text-gray-500 dark:text-gray-300">
+      <span class="text-sm text-gray-500 dark:text-gray-300 hidden sm:inline-block">
         {{ authStore.user?.email }} ({{ displayRole }})
       </span>
 
