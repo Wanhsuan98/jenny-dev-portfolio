@@ -5,17 +5,13 @@ import AppHeader from '@/components/layout/AppHeader.vue'
 </script>
 
 <template>
-  <div
-    class="flex h-screen bg-gray-50 dark:bg-gray-900 font-sans text-gray-900 dark:text-gray-100 transition-colors duration-300"
-  >
+  <div class="layout-root">
     <AppSidebar />
 
-    <main class="flex-1 flex flex-col overflow-hidden relative">
+    <main class="layout-main">
       <AppHeader />
 
-      <div
-        class="flex-1 overflow-auto p-6 bg-gray-50 dark:bg-gray-900 transition-colors duration-300"
-      >
+      <div class="layout-content">
         <RouterView v-slot="{ Component }">
           <transition name="fade" mode="out-in">
             <component :is="Component" />
@@ -25,16 +21,3 @@ import AppHeader from '@/components/layout/AppHeader.vue'
     </main>
   </div>
 </template>
-
-<style scoped>
-/* 簡單的淡入淡出動畫 */
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.2s ease;
-}
-
-.fade-enter-from,
-.fade-leave-to {
-  opacity: 0;
-}
-</style>

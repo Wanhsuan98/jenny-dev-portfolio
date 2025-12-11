@@ -49,15 +49,13 @@ onMounted(() => {
 </script>
 
 <template>
-  <header
-    class="h-16 bg-white dark:bg-gray-800 shadow-sm flex items-center justify-between px-6 z-10 transition-colors duration-300"
-  >
+  <header class="layout-header">
     <h2 class="text-lg font-semibold text-gray-700 dark:text-gray-200">控制台</h2>
 
     <div class="flex items-center space-x-4">
       <button
         @click="toggleDark"
-        class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors text-gray-500 dark:text-yellow-400"
+        class="btn-mode-toggle"
         :title="isDark ? '切換為亮色' : '切換為暗色'"
       >
         <svg
@@ -96,9 +94,7 @@ onMounted(() => {
         {{ authStore.user?.email }} ({{ displayRole }})
       </span>
 
-      <div
-        class="w-8 h-8 rounded-full bg-indigo-100 dark:bg-indigo-900 flex items-center justify-center text-indigo-600 dark:text-indigo-300 font-bold"
-      >
+      <div class="avatar-header">
         {{ avatarLetter }}
       </div>
     </div>

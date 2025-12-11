@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { collection, onSnapshot, query, orderBy, Timestamp } from 'firebase/firestore'
 import { db } from '@/firebase'
 import { useAuthStore } from '@/stores/auth'
 import BaseTable from '@/components/BaseTable.vue'
 import BaseChart from '@/components/BaseChart.vue'
+import StatusBadge from '@/components/StatusBadge.vue'
 import type { Column } from '@/types/table'
 import type { ChartData, ChartOptions } from 'chart.js'
 
@@ -29,18 +30,26 @@ const tableColumns: Column<Attendee>[] = [
 
 const attendees = ref<Attendee[]>([])
 
+let unsubscribe: null | (() => void) = null
+
 onMounted(() => {
   const q = query(collection(db, 'attendees'), orderBy('checkInTime', 'desc'))
-  onSnapshot(q, (snapshot) => {
-    const tempAttendees: Attendee[] = []
-    snapshot.forEach((doc) => {
-      tempAttendees.push({
-        id: doc.id,
-        ...doc.data(),
-      } as Attendee)
-    })
-    attendees.value = tempAttendees
+
+  // 將 unsubscribe 存起來
+  unsubscribe = onSnapshot(q, (snapshot) => {
+    attendees.value = snapshot.docs.map(
+      (doc) =>
+        ({
+          id: doc.id,
+          ...doc.data(),
+        }) as Attendee,
+    )
   })
+})
+
+onUnmounted(() => {
+  // 離開頁面時取消監聽，防止記憶體洩漏
+  if (unsubscribe) unsubscribe()
 })
 
 // 時間格式化
@@ -97,21 +106,16 @@ const chartOptions: ChartOptions<'bar'> = {
   <div class="p-6 space-y-6">
     <div class="flex items-center justify-between">
       <div>
-        <h1 class="text-2xl font-bold text-gray-800 dark:text-gray-100">活動即時監控</h1>
-        <p class="text-gray-500 dark:text-gray-400 mt-1">即時同步 LINE 用戶的簽到狀況。</p>
+        <h1 class="page-title">活動即時監控</h1>
+        <p class="page-subtitle">即時同步 LINE 用戶的簽到狀況。</p>
       </div>
-      <div
-        class="bg-indigo-50 text-indigo-700 dark:text-indigo-300 px-4 py-2 rounded-lg font-medium"
-      >
-        目前人數：{{ attendees.length }} 人
-      </div>
+      <div class="badge badge-md badge-primary">目前人數：{{ attendees.length }} 人</div>
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
       <BaseChart :chart-data="chartData" :chart-options="chartOptions" />
-      <div
-        class="bg-gradient-to-br from-green-500 to-emerald-600 dark:from-green-700 dark:to-emerald-800 rounded-lg p-6 text-white shadow-md flex flex-col justify-between dark:text-gray-100"
-      >
+
+      <div class="card-gradient-green">
         <div>
           <h3 class="text-lg font-medium opacity-90">最新簽到</h3>
           <p class="text-3xl font-bold mt-2 truncate">
@@ -128,17 +132,12 @@ const chartOptions: ChartOptions<'bar'> = {
           <img
             v-if="row.pictureUrl"
             :src="row.pictureUrl"
-            class="w-10 h-10 rounded-full border border-gray-200 dark:border-gray-600 object-cover transition-all duration-300"
+            class="avatar"
             :class="{ 'blur-[3px]': authStore.isObserver }"
             alt="Avatar"
             title="個資已受保護 (觀察者模式)"
           />
-          <div
-            v-else
-            class="w-10 h-10 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-gray-500 dark:text-gray-300"
-          >
-            ?
-          </div>
+          <div v-else class="avatar-placeholder">?</div>
         </div>
       </template>
 
@@ -149,11 +148,7 @@ const chartOptions: ChartOptions<'bar'> = {
       </template>
 
       <template #cell-status="{ row }">
-        <span
-          class="px-3 py-1 rounded-full te xt-xs font-medium bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300"
-        >
-          {{ row.status }}
-        </span>
+        <StatusBadge :status="row.status" />
       </template>
 
       <template #cell-checkInTime="{ row }">

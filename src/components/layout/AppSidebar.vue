@@ -18,10 +18,8 @@ const isActive = (path: string) => {
 </script>
 
 <template>
-  <aside
-    class="w-64 bg-slate-900 dark:bg-gray-800 text-white flex flex-col shadow-xl z-20 shrink-0 transition-colors duration-300"
-  >
-    <div class="h-16 flex items-center justify-center border-b border-slate-700 bg-slate-800">
+  <aside class="layout-sidebar">
+    <div class="layout-sidebar-header">
       <span class="text-xl font-bold tracking-wider">Frontend Hub</span>
     </div>
 
@@ -33,7 +31,7 @@ const isActive = (path: string) => {
         class="flex items-center px-4 py-3 rounded-lg transition-colors duration-200"
         :class="[
           isActive(item.path)
-            ? 'bg-indigo-600 text-white shadow-md'
+            ? 'bg-primary-600 text-white shadow-md'
             : 'text-slate-300 hover:bg-slate-800 hover:text-white',
         ]"
       >

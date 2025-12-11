@@ -45,7 +45,7 @@ onUnmounted(() => {
   }
 })
 
-const handleAddProject = async (formData: any) => {
+const handleAddProject = async (formData: Project) => {
   if (!formData.name || !formData.tech) return alert('請填寫完整資訊')
 
   isSubmitting.value = true
@@ -93,24 +93,19 @@ const chartOptions: ChartOptions<'bar'> = {
   <div class="p-6 space-y-6">
     <div class="flex items-center justify-between">
       <div>
-        <h1 class="text-2xl font-bold text-gray-800 dark:text-gray-100">專案總覽</h1>
-        <p class="text-gray-500 dark:text-gray-400 mt-1">管理您的所有 MarTech 專案進度。</p>
+        <h1 class="page-title">專案總覽</h1>
+        <p class="page-subtitle">管理您的所有 MarTech 專案進度。</p>
       </div>
 
-      <button
-        v-if="authStore.isAdmin"
-        @click="isModalOpen = true"
-        class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition shadow-sm flex items-center gap-2"
-      >
+      <button v-if="authStore.isAdmin" @click="isModalOpen = true" class="btn btn-primary gap-2">
         <span>+</span> 新增專案
       </button>
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
       <BaseChart :chart-data="chartData" :chart-options="chartOptions" />
-      <div
-        class="bg-gradient-to-br from-indigo-500 to-purple-600 dark:from-indigo-700 dark:to-purple-800 rounded-lg p-6 text-white shadow-md flex flex-col justify-between"
-      >
+
+      <div class="card-gradient-indigo">
         <div>
           <h3 class="text-lg font-medium opacity-90">總專案數</h3>
           <p class="text-4xl font-bold mt-2">{{ projects.length }}</p>
@@ -121,10 +116,7 @@ const chartOptions: ChartOptions<'bar'> = {
 
     <BaseTable :columns="tableColumns" :data="projects">
       <template #cell-name="{ row }">
-        <RouterLink
-          :to="{ name: 'project-details', params: { id: row.id } }"
-          class="text-indigo-600 dark:text-indigo-300 hover:text-indigo-800 hover:underline font-medium transition-colors"
-        >
+        <RouterLink :to="{ name: 'project-details', params: { id: row.id } }" class="link">
           {{ row.name }}
         </RouterLink>
       </template>

@@ -16,11 +16,8 @@ defineEmits(['close'])
         @click="$emit('close')"
       ></div>
 
-      <div
-        class="relative bg-white dark:bg-gray-800 rounded-xl shadow-2xl w-full max-w-md overflow-hidden transform transition-all"
-      >
-        <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center">
-          <h3 class="text-lg font-bold text-gray-800">{{ title }}</h3>
+      <div class="relative card w-full max-w-md overflow-hidden transform transition-all">
+        <div class="px-6 py-4 border-b border-gray-100 flex justify-end items-center">
           <button @click="$emit('close')" class="text-gray-400 hover:text-gray-600">✕</button>
         </div>
 

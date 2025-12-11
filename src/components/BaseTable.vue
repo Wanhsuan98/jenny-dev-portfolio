@@ -8,9 +8,7 @@ defineProps<{
 </script>
 
 <template>
-  <div
-    class="overflow-x-auto bg-white dark:bg-gray-800 shadow-sm rounded-lg border border-gray-200 dark:border-gray-700"
-  >
+  <div class="card overflow-x-auto">
     <table class="min-w-full divide-y divide-gray-200">
       <thead class="bg-gray-50 dark:bg-gray-700">
         <tr>
