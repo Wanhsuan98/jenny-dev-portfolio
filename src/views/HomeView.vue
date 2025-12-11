@@ -3,6 +3,7 @@ import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { collection, addDoc, onSnapshot, query, orderBy, serverTimestamp } from 'firebase/firestore'
 import { db } from '@/firebase'
 import { useAuthStore } from '@/stores/auth'
+import { useToastStore } from '@/stores/toast'
 import BaseTable from '@/components/BaseTable.vue'
 import BaseChart from '@/components/BaseChart.vue'
 import BaseModal from '@/components/BaseModal.vue'
@@ -12,6 +13,7 @@ import type { Project } from '@/types/project'
 import type { ChartData, ChartOptions } from 'chart.js'
 
 const authStore = useAuthStore()
+const toast = useToastStore()
 
 const tableColumns: Column<Project>[] = [
   { key: 'name', label: '專案名稱', slot: true },
@@ -42,7 +44,7 @@ onUnmounted(() => {
   if (unsubscribe) unsubscribe()
 })
 
-const handleAddProject = async (formData: any) => {
+const handleAddProject = async (formData: Project) => {
   isSubmitting.value = true
   try {
     await addDoc(collection(db, 'projects'), {
@@ -53,9 +55,10 @@ const handleAddProject = async (formData: any) => {
     isModalOpen.value = false
   } catch (error) {
     console.error('新增失敗', error)
-    alert('新增失敗')
+    toast.error('新增失敗')
   } finally {
     isSubmitting.value = false
+    toast.success('新增成功')
   }
 }
 

@@ -1,7 +1,10 @@
 /** * 專案表單元件 */
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
+import { useToastStore } from '@/stores/toast'
 import type { Project } from '@/types/project'
+
+const toast = useToastStore()
 
 const props = defineProps<{
   loading: boolean
@@ -56,7 +59,7 @@ const removeScreenshot = (index: number) => {
 // 送出表單
 const handleSubmit = () => {
   if (!form.value.name || !form.value.tech) {
-    alert('請填寫完整資訊')
+    toast.error('請填寫完整資訊')
     return
   }
   emit('submit', { ...form.value })

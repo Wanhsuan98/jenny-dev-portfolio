@@ -1,11 +1,13 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { useLiffStore } from '@/stores/liff'
+import { useToastStore } from '@/stores/toast'
 import { db } from '@/firebase'
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore'
 import liff from '@line/liff'
 
 const liffStore = useLiffStore()
+const toast = useToastStore()
 const isSigningIn = ref(false)
 const isFinished = ref(false)
 
@@ -37,10 +39,10 @@ const handleCheckIn = async () => {
     await addDoc(collection(db, 'attendees'), checkInData)
 
     isFinished.value = true
-    alert('簽到成功！資料已同步至後台 Dashboard')
+    toast.success('簽到成功！資料已同步至後台 Dashboard')
   } catch (error) {
     console.error('簽到失敗:', error)
-    alert('簽到發生錯誤，請稍後再試')
+    toast.error('簽到發生錯誤，請稍後再試')
   } finally {
     isSigningIn.value = false
   }

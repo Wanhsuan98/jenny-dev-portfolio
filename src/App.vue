@@ -2,8 +2,12 @@
 import { RouterView } from 'vue-router'
 import { onMounted, onUnmounted, watch } from 'vue'
 import { useAuthStore } from '@/stores/auth'
+import { useToastStore } from '@/stores/toast'
+import BaseToast from '@/components/BaseToast.vue'
+import BaseConfirm from '@/components/BaseConfirm.vue'
 
 const authStore = useAuthStore()
+const toast = useToastStore()
 
 // --- 閒置自動登出設定 ---
 // 1 小時
@@ -18,7 +22,7 @@ const resetTimer = () => {
   if (inactivityTimer) clearTimeout(inactivityTimer)
 
   inactivityTimer = setTimeout(() => {
-    alert('由於您閒置時間過長，系統已自動登出以確保安全。')
+    toast.warning('由於您閒置時間過長，系統已自動登出以確保安全。')
     authStore.logout()
   }, TIMEOUT_DURATION)
 }
@@ -77,4 +81,6 @@ onUnmounted(() => {
 
 <template>
   <RouterView />
+  <BaseToast />
+  <BaseConfirm />
 </template>

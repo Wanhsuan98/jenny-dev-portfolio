@@ -4,6 +4,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { doc, getDoc, deleteDoc, updateDoc, Timestamp } from 'firebase/firestore'
 import { db } from '@/firebase'
 import { useAuthStore } from '@/stores/auth'
+import { useToastStore } from '@/stores/toast'
 import StatusBadge from '@/components/StatusBadge.vue'
 import ProjectForm from '@/components/ProjectForm.vue'
 import type { Project } from '@/types/project'
@@ -11,6 +12,7 @@ import type { Project } from '@/types/project'
 const route = useRoute()
 const router = useRouter()
 const authStore = useAuthStore()
+const toast = useToastStore()
 
 const projectId = route.params.id as string
 
@@ -42,7 +44,7 @@ onMounted(async () => {
 
 // 儲存修改
 const handleUpdate = async (formData: Project) => {
-  if (!authStore.isAdmin) return alert('權限不足')
+  if (!authStore.isAdmin) return toast.error('權限不足')
 
   isSaving.value = true
   try {
@@ -64,11 +66,11 @@ const handleUpdate = async (formData: Project) => {
       }
     }
 
-    alert('✅ 更新成功！')
+    toast.success('更新成功！')
     isEditing.value = false
   } catch (error) {
     console.error(error)
-    alert('❌ 更新失敗')
+    toast.error('更新失敗')
   } finally {
     isSaving.value = false
   }
@@ -77,16 +79,22 @@ const handleUpdate = async (formData: Project) => {
 // 刪除專案
 const handleDelete = async () => {
   if (!authStore.isAdmin) return
-  if (!confirm('確定要刪除這個專案嗎？此動作無法復原。')) return
+
+  const confirmed = await toast.confirm(
+    `確定要刪除專案「${project.value?.name}」嗎？此動作無法復原。`,
+    '危險操作',
+  )
+
+  if (!confirmed) return
 
   isDeleting.value = true
   try {
     await deleteDoc(doc(db, 'projects', projectId))
-    alert('專案已刪除')
+    toast.success('專案已成功刪除')
     router.push('/')
   } catch (error) {
     console.error(error)
-    alert('刪除失敗')
+    toast.error('刪除失敗')
   } finally {
     isDeleting.value = false
   }
