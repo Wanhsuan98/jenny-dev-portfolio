@@ -70,6 +70,29 @@ export const useLiffStore = defineStore('liff', () => {
     window.location.reload()
   }
 
+  const sendMessage = async (text: string) => {
+    // 1. 檢查是否在 LINE App 內 (外部瀏覽器不支援 sendMessages)
+    if (!liff.isInClient()) {
+      console.warn('liff.sendMessages 僅支援 LINE App 內建瀏覽器')
+      return false // 回傳 false 代表沒發送
+    }
+
+    // 2. 嘗試發送
+    try {
+      await liff.sendMessages([
+        {
+          type: 'text',
+          text: text,
+        },
+      ])
+      console.log('訊息發送成功')
+      return true
+    } catch (error) {
+      console.error('訊息發送失敗:', error)
+      throw error
+    }
+  }
+
   return {
     // State
     profile,
@@ -80,5 +103,6 @@ export const useLiffStore = defineStore('liff', () => {
     initLiff,
     login,
     logout,
+    sendMessage,
   }
 })

@@ -38,6 +38,15 @@ const handleCheckIn = async () => {
 
     await addDoc(collection(db, 'attendees'), checkInData)
 
+    try {
+      await liffStore.sendMessage(
+        `✅ 簽到成功！\n\n我是 ${profile.displayName}，我已抵達活動現場。`,
+      )
+    } catch (err) {
+      // 這裡報錯不需要中斷流程，使用者可能是在電腦版 Chrome 開的
+      console.warn('無法發送 LINE 訊息 (可能是在外部瀏覽器)', err)
+    }
+
     isFinished.value = true
     toast.success('簽到成功！資料已同步至後台 Dashboard')
   } catch (error) {
