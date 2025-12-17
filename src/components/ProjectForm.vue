@@ -1,4 +1,3 @@
-/** * 專案表單元件 */
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
 import { useToastStore } from '@/stores/toast'
@@ -18,9 +17,13 @@ const emit = defineEmits<{
 
 const isEditMode = computed(() => !!props.initialData)
 
+// 初始化表單結構
 const form = ref({
   name: '',
-  tech: '',
+  techFrontend: '',
+  techDatabase: '',
+  techDeployment: '',
+  techCore: '',
   status: 'Active' as 'Active' | 'Pending' | 'Completed',
   screenshots: [] as string[],
   description: '',
@@ -32,9 +35,11 @@ watch(
     if (newData) {
       form.value = {
         name: newData.name || '',
-        tech: newData.tech || '',
+        techFrontend: newData.techFrontend || '',
+        techDatabase: newData.techDatabase || '',
+        techDeployment: newData.techDeployment || '',
+        techCore: newData.techCore || '',
         status: newData.status as 'Active' | 'Pending' | 'Completed',
-        // 確保陣列是複製的，避免參照污染
         screenshots: [...(newData.screenshots || [])],
         description: newData.description || '',
       }
@@ -43,23 +48,25 @@ watch(
   { immediate: true },
 )
 
-// 暫存圖片網址
 const tempImageUrl = ref('')
-
 const addScreenshot = () => {
   if (!tempImageUrl.value.trim()) return
   form.value.screenshots.push(tempImageUrl.value.trim())
   tempImageUrl.value = ''
 }
-
 const removeScreenshot = (index: number) => {
   form.value.screenshots.splice(index, 1)
 }
 
-// 送出表單
 const handleSubmit = () => {
-  if (!form.value.name || !form.value.tech) {
-    toast.error('請填寫完整資訊')
+  // 檢查必填欄位
+  if (
+    !form.value.name ||
+    !form.value.techFrontend ||
+    !form.value.techDatabase ||
+    !form.value.techDeployment
+  ) {
+    toast.error('請填寫完整技術棧資訊')
     return
   }
   emit('submit', { ...form.value })
@@ -68,26 +75,60 @@ const handleSubmit = () => {
 
 <template>
   <form @submit.prevent="handleSubmit" class="space-y-4">
-    <div>
-      <label class="form-label">專案名稱</label>
-      <input
-        v-model="form.name"
-        type="text"
-        required
-        class="input-base"
-        placeholder="例如：後台管理系統"
-      />
-    </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div class="md:col-span-2">
+        <label class="form-label">專案名稱</label>
+        <input
+          v-model="form.name"
+          type="text"
+          required
+          class="input-base"
+          placeholder="例如：LINE 即時簽到系統"
+        />
+      </div>
 
-    <div>
-      <label class="form-label">使用技術</label>
-      <input
-        v-model="form.tech"
-        type="text"
-        required
-        class="input-base"
-        placeholder="例如：Vue3, Tailwind"
-      />
+      <div>
+        <label class="form-label">前端技術</label>
+        <input
+          v-model="form.techFrontend"
+          type="text"
+          required
+          class="input-base"
+          placeholder="Vue 3, Tailwind CSS"
+        />
+      </div>
+
+      <div>
+        <label class="form-label">資料庫 / 後端服務</label>
+        <input
+          v-model="form.techDatabase"
+          type="text"
+          required
+          class="input-base"
+          placeholder="Firebase Firestore"
+        />
+      </div>
+
+      <div>
+        <label class="form-label">部署平台</label>
+        <input
+          v-model="form.techDeployment"
+          type="text"
+          required
+          class="input-base"
+          placeholder="Vercel, Google Cloud"
+        />
+      </div>
+
+      <div>
+        <label class="form-label">核心套件 (選填)</label>
+        <input
+          v-model="form.techCore"
+          type="text"
+          class="input-base"
+          placeholder="@line/liff, Chart.js"
+        />
+      </div>
     </div>
 
     <div>
@@ -103,15 +144,14 @@ const handleSubmit = () => {
       <label class="form-label">專案描述</label>
       <textarea
         v-model="form.description"
-        rows="5"
+        rows="4"
         class="w-full input-base resize-none"
-        placeholder="請輸入專案詳細介紹、亮點功能..."
+        placeholder="描述專案亮點..."
       ></textarea>
     </div>
 
     <div>
-      <label class="form-label">專案截圖連結 (Imgur 網址)</label>
-
+      <label class="form-label">專案截圖連結</label>
       <div class="flex gap-2 mb-2">
         <input
           v-model="tempImageUrl"
@@ -122,27 +162,17 @@ const handleSubmit = () => {
         />
         <button type="button" @click="addScreenshot" class="btn btn-ghost">新增</button>
       </div>
-
-      <div v-if="form.screenshots.length > 0" class="space-y-2">
+      <div v-if="form.screenshots.length > 0" class="space-y-2 max-h-40 overflow-y-auto pr-2">
         <div
           v-for="(url, index) in form.screenshots"
           :key="index"
-          class="flex items-center justify-between bg-gray-50 dark:bg-gray-600 p-2 rounded text-sm"
+          class="flex items-center justify-between bg-gray-50 dark:bg-gray-700 p-2 rounded text-sm border border-gray-200 dark:border-gray-600"
         >
-          <a
-            :href="url"
-            target="_blank"
-            class="flex items-center gap-2 overflow-hidden"
-            title="點擊預覽圖片"
-          >
-            <span class="truncate link">{{ url }}</span>
-          </a>
-
+          <span class="truncate text-gray-500 flex-1 mr-2">{{ url }}</span>
           <button
             type="button"
             @click="removeScreenshot(index)"
-            class="btn btn-danger"
-            title="移除此圖片"
+            class="text-red-500 hover:text-red-700"
           >
             ✕
           </button>
@@ -152,8 +182,7 @@ const handleSubmit = () => {
 
     <div class="flex justify-end gap-3 mt-6">
       <button type="button" @click="$emit('cancel')" class="btn btn-ghost">取消</button>
-      <button type="submit" :disabled="loading" class="btn btn-primary">
-        <span v-if="loading" class="animate-spin mr-2">⚪</span>
+      <button type="submit" :disabled="loading" class="btn btn-primary min-w-[100px]">
         {{ loading ? '儲存中...' : isEditMode ? '確認更新' : '確認新增' }}
       </button>
     </div>

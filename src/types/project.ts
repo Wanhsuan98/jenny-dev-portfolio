@@ -5,7 +5,10 @@ export interface Project {
   id?: string
   name?: string
   status?: 'Active' | 'Completed' | 'Pending'
-  tech?: string
+  techFrontend: string
+  techDatabase: string
+  techDeployment: string
+  techCore?: string
   screenshots?: string[]
   description?: string
   createdAt?: Timestamp

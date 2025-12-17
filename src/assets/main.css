@@ -324,4 +324,47 @@
   .sidebar-footer {
     @apply p-4 border-t border-slate-700/50 bg-slate-900/50;
   }
+
+  /* =========================================
+     9. 專案細節元件 (Project Details)
+     ========================================= */
+
+  /* 技術棧項目容器 */
+  .tech-stack-item {
+    @apply flex items-start gap-3;
+  }
+
+  /* 技術棧圖示基礎樣式 */
+  .tech-icon {
+    @apply w-5 h-5 mt-1;
+  }
+
+  /* 技術棧類別標籤 */
+  .tech-category-label {
+    @apply text-xs text-slate-400 font-bold uppercase;
+  }
+
+  /* 技術棧內容文字 */
+  .tech-content-text {
+    @apply text-slate-600 dark:text-slate-300 font-medium;
+  }
+
+  /* 成果展示截圖容器 */
+  .screenshot-card {
+    @apply block overflow-hidden rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 relative;
+  }
+
+  /* 截圖圖片樣式 */
+  .screenshot-img {
+    @apply w-full h-40 object-cover group-hover:scale-110 transition-transform duration-500;
+  }
+
+  /* 截圖懸浮遮罩 */
+  .screenshot-overlay {
+    @apply absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity duration-300;
+  }
+
+  .screenshot-overlay-text {
+    @apply text-white text-sm font-bold;
+  }
 }
