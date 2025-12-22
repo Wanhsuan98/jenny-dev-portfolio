@@ -1,9 +1,8 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted } from 'vue'
-import { collection, addDoc, onSnapshot, query, orderBy, serverTimestamp } from 'firebase/firestore'
-import { db } from '@/firebase'
+import { ref, computed, onMounted } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import { useToastStore } from '@/stores/toast'
+import { useProjects } from '@/composables/useProjects'
 import BaseTable from '@/components/BaseTable.vue'
 import BaseChart from '@/components/BaseChart.vue'
 import BaseModal from '@/components/BaseModal.vue'
@@ -15,50 +14,32 @@ import type { ChartData, ChartOptions } from 'chart.js'
 const authStore = useAuthStore()
 const toast = useToastStore()
 
+const { projects, initProjectsListener, addProject } = useProjects()
+
 const tableColumns: Column<Project>[] = [
   { key: 'name', label: '專案名稱', slot: true },
-  { key: 'tech', label: '使用技術' },
+  { key: 'techFrontend', label: '主要技術Stack', slot: true },
   { key: 'status', label: '狀態', slot: true, align: 'center' },
 ]
 
-const projects = ref<Project[]>([])
 const isModalOpen = ref(false)
 const isSubmitting = ref(false)
 
-let unsubscribe: null | (() => void) = null
-
 onMounted(() => {
-  const q = query(collection(db, 'projects'), orderBy('createdAt', 'desc'))
-  unsubscribe = onSnapshot(q, (snapshot) => {
-    projects.value = snapshot.docs.map(
-      (doc) =>
-        ({
-          id: doc.id,
-          ...doc.data(),
-        }) as Project,
-    )
-  })
-})
-
-onUnmounted(() => {
-  if (unsubscribe) unsubscribe()
+  initProjectsListener()
 })
 
 const handleAddProject = async (formData: Project) => {
   isSubmitting.value = true
   try {
-    await addDoc(collection(db, 'projects'), {
-      ...formData,
-      createdAt: serverTimestamp(),
-    })
-
+    await addProject(formData)
+    toast.success('新增成功')
     isModalOpen.value = false
   } catch (error) {
-    console.error('新增失敗', error)
+    console.log(error)
     toast.error('新增失敗')
   } finally {
     isSubmitting.value = false
-    toast.success('新增成功')
   }
 }
 
@@ -135,6 +116,21 @@ const chartOptions: ChartOptions<'bar'> = {
           {{ row.name }}
         </RouterLink>
       </template>
+
+      <template #cell-techFrontend="{ row }">
+        <div class="whitespace-nowrap overflow-hidden text-ellipsis">
+          <span class="detail-label">
+            {{ row.techFrontend }}
+          </span>
+          <template v-if="row.techCore">
+            <span class="mx-1.5 text-slate-400 font-light">&</span>
+            <span class="detail-label">
+              {{ row.techCore }}
+            </span>
+          </template>
+        </div>
+      </template>
+
       <template #cell-status="{ row }">
         <span
           class="badge badge-sm"

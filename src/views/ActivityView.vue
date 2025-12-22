@@ -1,25 +1,18 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted } from 'vue'
-import { collection, onSnapshot, query, orderBy, Timestamp } from 'firebase/firestore'
-import { db } from '@/firebase'
+import { computed, onMounted } from 'vue'
 import { useAuthStore } from '@/stores/auth'
+import { useAttendees } from '@/composables/useAttendees'
+import { formatDate } from '@/utils/date'
 import BaseTable from '@/components/BaseTable.vue'
 import BaseChart from '@/components/BaseChart.vue'
 import StatusBadge from '@/components/StatusBadge.vue'
 import type { Column } from '@/types/table'
+import type { Attendee } from '@/types/attendee'
 import type { ChartData, ChartOptions } from 'chart.js'
 
 const authStore = useAuthStore()
 
-// 定義資料介面
-interface Attendee {
-  id: string
-  userId: string
-  displayName: string
-  pictureUrl: string
-  status: string
-  checkInTime: Timestamp | null
-}
+const { attendees, initAttendeesListener } = useAttendees()
 
 const tableColumns: Column<Attendee>[] = [
   { key: 'pictureUrl', label: '用戶', slot: true, width: '80px', align: 'center' },
@@ -28,43 +21,9 @@ const tableColumns: Column<Attendee>[] = [
   { key: 'checkInTime', label: '簽到時間', slot: true, align: 'right' },
 ]
 
-const attendees = ref<Attendee[]>([])
-
-let unsubscribe: null | (() => void) = null
-
 onMounted(() => {
-  const q = query(collection(db, 'attendees'), orderBy('checkInTime', 'desc'))
-
-  // 將 unsubscribe 存起來
-  unsubscribe = onSnapshot(q, (snapshot) => {
-    attendees.value = snapshot.docs.map(
-      (doc) =>
-        ({
-          id: doc.id,
-          ...doc.data(),
-        }) as Attendee,
-    )
-  })
+  initAttendeesListener()
 })
-
-onUnmounted(() => {
-  // 離開頁面時取消監聽，防止記憶體洩漏
-  if (unsubscribe) unsubscribe()
-})
-
-// 時間格式化
-const formatDate = (ts: Timestamp | null) => {
-  if (!ts) return '-'
-  const date = ts.toDate()
-  return date.toLocaleString('zh-TW', {
-    hour12: false,
-    month: '2-digit',
-    day: '2-digit',
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit',
-  })
-}
 
 // 名字模糊處理函式
 const maskName = (name: string) => {
@@ -153,7 +112,16 @@ const chartOptions: ChartOptions<'bar'> = {
 
       <template #cell-checkInTime="{ row }">
         <span class="text-gray-500 dark:text-gray-300 font-mono text-sm">
-          {{ formatDate(row.checkInTime) }}
+          {{
+            formatDate(row.checkInTime, {
+              hour12: false,
+              month: '2-digit',
+              day: '2-digit',
+              hour: '2-digit',
+              minute: '2-digit',
+              second: '2-digit',
+            })
+          }}
         </span>
       </template>
     </BaseTable>

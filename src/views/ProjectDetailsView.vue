@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { doc, getDoc, deleteDoc, updateDoc, Timestamp } from 'firebase/firestore'
-import { db } from '@/firebase'
 import { useAuthStore } from '@/stores/auth'
 import { useToastStore } from '@/stores/toast'
+import { useProject } from '@/composables/useProject'
+import { formatDate } from '@/utils/date'
 import StatusBadge from '@/components/StatusBadge.vue'
 import ProjectForm from '@/components/ProjectForm.vue'
 import type { Project } from '@/types/project'
@@ -17,55 +17,22 @@ const toast = useToastStore()
 
 const projectId = route.params.id as string
 
-const project = ref<Project | null>(null)
-const isLoading = ref(true)
-const errorMsg = ref('')
+const { project, isLoading, errorMsg, fetchProject, updateProject, deleteProject } = useProject()
 
 const isDeleting = ref(false)
 const isEditing = ref(false)
 const isSaving = ref(false)
 
-onMounted(async () => {
-  try {
-    const docRef = doc(db, 'projects', projectId)
-    const docSnap = await getDoc(docRef)
-
-    if (docSnap.exists()) {
-      project.value = { id: docSnap.id, ...docSnap.data() } as Project
-    } else {
-      errorMsg.value = '找不到此專案，可能已被刪除。'
-    }
-  } catch (err) {
-    console.error(err)
-    errorMsg.value = '讀取資料失敗'
-  } finally {
-    isLoading.value = false
-  }
+onMounted(() => {
+  fetchProject(projectId)
 })
 
-// 儲存修改 ✨ 修改為細分欄位
 const handleUpdate = async (formData: Project) => {
   if (!authStore.isAdmin) return toast.error('權限不足')
 
   isSaving.value = true
   try {
-    const docRef = doc(db, 'projects', projectId)
-
-    await updateDoc(docRef, {
-      name: formData.name,
-      techFrontend: formData.techFrontend,
-      techDatabase: formData.techDatabase,
-      techDeployment: formData.techDeployment,
-      techCore: formData.techCore || '',
-      status: formData.status,
-      description: formData.description,
-      screenshots: formData.screenshots,
-    })
-
-    if (project.value) {
-      project.value = { ...project.value, ...formData }
-    }
-
+    await updateProject(projectId, formData)
     toast.success('更新成功！')
     isEditing.value = false
   } catch (error) {
@@ -78,12 +45,17 @@ const handleUpdate = async (formData: Project) => {
 
 const handleDelete = async () => {
   if (!authStore.isAdmin) return
-  const confirmed = await toast.confirm(`確定要刪除專案「${project.value?.name}」嗎？`, '危險操作')
+
+  const confirmed = await toast.confirm(
+    `確定要刪除專案「${project.value?.name}」嗎？此動作無法復原。`,
+    '危險操作',
+  )
+
   if (!confirmed) return
 
   isDeleting.value = true
   try {
-    await deleteDoc(doc(db, 'projects', projectId))
+    await deleteProject(projectId)
     toast.success('專案已成功刪除')
     router.push('/')
   } catch (error) {
@@ -92,11 +64,6 @@ const handleDelete = async () => {
   } finally {
     isDeleting.value = false
   }
-}
-
-const formatDate = (ts: Timestamp) => {
-  if (!ts || !ts.toDate) return '-'
-  return ts.toDate().toLocaleString('zh-TW')
 }
 </script>
 
@@ -150,9 +117,7 @@ const formatDate = (ts: Timestamp) => {
                 <span class="text-meta">ID: {{ projectId }}</span>
               </div>
               <h1 class="page-title text-4xl">{{ project?.name }}</h1>
-              <p class="text-meta mt-2">
-                建立時間：{{ formatDate(project?.createdAt as Timestamp) }}
-              </p>
+              <p class="text-meta mt-2">建立時間：{{ formatDate(project?.createdAt) }}</p>
             </div>
           </div>
 

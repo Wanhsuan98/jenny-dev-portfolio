@@ -2,12 +2,13 @@
 import { ref, onMounted } from 'vue'
 import { useLiffStore } from '@/stores/liff'
 import { useToastStore } from '@/stores/toast'
-import { db } from '@/firebase'
-import { collection, addDoc, serverTimestamp } from 'firebase/firestore'
-import liff from '@line/liff'
+import { useAttendees } from '@/composables/useAttendees'
 
 const liffStore = useLiffStore()
 const toast = useToastStore()
+
+const { checkInUser } = useAttendees()
+
 const isSigningIn = ref(false)
 const isFinished = ref(false)
 
@@ -16,41 +17,35 @@ onMounted(() => {
 })
 
 const handleCheckIn = async () => {
-  if (isSigningIn.value) return
+  // 防呆
+  if (isSigningIn.value || isFinished.value) return
+
+  if (!liffStore.isLoggedIn || !liffStore.profile) {
+    liffStore.login()
+    return
+  }
 
   isSigningIn.value = true
 
   try {
-    if (!liff.isLoggedIn()) {
-      liff.login({ redirectUri: window.location.href })
-      return
-    }
-
-    const profile = await liff.getProfile()
-
-    const checkInData = {
-      userId: profile.userId,
-      displayName: profile.displayName,
-      pictureUrl: profile.pictureUrl || '',
-      checkInTime: serverTimestamp(),
-      status: 'Checked In',
-    }
-
-    await addDoc(collection(db, 'attendees'), checkInData)
+    await checkInUser({
+      userId: liffStore.profile.userId,
+      displayName: liffStore.profile.displayName,
+      pictureUrl: liffStore.profile.pictureUrl,
+    })
 
     try {
       await liffStore.sendMessage(
-        `✅ 簽到成功！\n\n我是 ${profile.displayName}，我已抵達活動現場。`,
+        `✅ 簽到成功！\n\n我是 ${liffStore.profile.displayName}，我已抵達活動現場。`,
       )
     } catch (err) {
-      // 這裡報錯不需要中斷流程，使用者可能是在電腦版 Chrome 開的
-      console.warn('無法發送 LINE 訊息 (可能是在外部瀏覽器)', err)
+      console.warn(err, '非 LINE App 環境，略過訊息發送')
     }
 
     isFinished.value = true
     toast.success('簽到成功！資料已同步至後台 Dashboard')
   } catch (error) {
-    console.error('簽到失敗:', error)
+    console.error(error)
     toast.error('簽到發生錯誤，請稍後再試')
   } finally {
     isSigningIn.value = false
