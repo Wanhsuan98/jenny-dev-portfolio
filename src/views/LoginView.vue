@@ -46,7 +46,7 @@ const handleLogin = async () => {
 </script>
 
 <template>
-  <div class="layout-login">
+  <div class="layout-login animate-in">
     <div class="card max-w-md w-full p-8 shadow-xl">
       <div class="text-center mb-8">
         <h1 class="page-title text-3xl">Frontend Hub</h1>

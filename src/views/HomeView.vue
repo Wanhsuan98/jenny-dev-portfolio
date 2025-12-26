@@ -7,6 +7,7 @@ import BaseTable from '@/components/BaseTable.vue'
 import BaseChart from '@/components/BaseChart.vue'
 import BaseModal from '@/components/BaseModal.vue'
 import ProjectForm from '@/components/ProjectForm.vue'
+import BaseLoading from '@/components/BaseLoading.vue'
 import type { Column } from '@/types/table'
 import type { Project } from '@/types/project'
 import type { ChartData, ChartOptions } from 'chart.js'
@@ -14,7 +15,7 @@ import type { ChartData, ChartOptions } from 'chart.js'
 const authStore = useAuthStore()
 const toast = useToastStore()
 
-const { projects, initProjectsListener, addProject } = useProjects()
+const { projects, initProjectsListener, addProject, isLoading } = useProjects()
 
 const tableColumns: Column<Project>[] = [
   { key: 'name', label: '專案名稱', slot: true },
@@ -69,12 +70,14 @@ const chartOptions: ChartOptions<'bar'> = {
 </script>
 
 <template>
-  <div class="p-6 space-y-6">
+  <div class="p-6 space-y-6 animate-in">
     <div class="flex items-center justify-between">
       <div>
         <h1 class="page-title">專案總覽</h1>
         <p class="page-subtitle">管理您的所有 MarTech 專案進度。</p>
       </div>
+
+      <BaseLoading v-if="isLoading" message="正在載入專案列表..." />
 
       <button
         v-if="authStore.isAdmin"

@@ -7,6 +7,7 @@ import { useProject } from '@/composables/useProject'
 import { formatDate } from '@/utils/date'
 import StatusBadge from '@/components/StatusBadge.vue'
 import ProjectForm from '@/components/ProjectForm.vue'
+import BaseLoading from '@/components/BaseLoading.vue'
 import type { Project } from '@/types/project'
 import { Monitor, Database, Cloud, Package, ChevronLeft, Edit2, Trash2 } from 'lucide-vue-next'
 
@@ -68,7 +69,7 @@ const handleDelete = async () => {
 </script>
 
 <template>
-  <div class="p-6 max-w-5xl mx-auto space-y-6">
+  <div class="p-6 max-w-5xl mx-auto space-y-6 animate-in">
     <div class="flex items-center justify-between">
       <button
         @click="router.push('/')"
@@ -88,9 +89,7 @@ const handleDelete = async () => {
       </div>
     </div>
 
-    <div v-if="isLoading" class="flex justify-center py-20">
-      <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-primary-600"></div>
-    </div>
+    <BaseLoading v-if="isLoading" message="正在取得專案詳情資料..." />
     <div v-else-if="errorMsg" class="card p-12 text-center">
       <div class="text-red-500 text-lg mb-4">{{ errorMsg }}</div>
       <button @click="router.push('/')" class="btn btn-primary">回到列表</button>

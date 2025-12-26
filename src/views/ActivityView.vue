@@ -6,13 +6,14 @@ import { formatDate } from '@/utils/date'
 import BaseTable from '@/components/BaseTable.vue'
 import BaseChart from '@/components/BaseChart.vue'
 import StatusBadge from '@/components/StatusBadge.vue'
+import BaseLoading from '@/components/BaseLoading.vue'
 import type { Column } from '@/types/table'
 import type { Attendee } from '@/types/attendee'
 import type { ChartData, ChartOptions } from 'chart.js'
 
 const authStore = useAuthStore()
 
-const { attendees, initAttendeesListener } = useAttendees()
+const { attendees, initAttendeesListener, isLoading } = useAttendees()
 
 const tableColumns: Column<Attendee>[] = [
   { key: 'pictureUrl', label: '用戶', slot: true, width: '80px', align: 'center' },
@@ -62,7 +63,7 @@ const chartOptions: ChartOptions<'bar'> = {
 </script>
 
 <template>
-  <div class="p-6 space-y-6">
+  <div class="p-6 space-y-6 animate-in">
     <div class="flex items-center justify-between">
       <div>
         <h1 class="page-title">活動即時監控</h1>
@@ -70,6 +71,8 @@ const chartOptions: ChartOptions<'bar'> = {
       </div>
       <div class="badge badge-md badge-primary">目前人數：{{ attendees.length }} 人</div>
     </div>
+
+    <BaseLoading v-if="isLoading" message="正在同步即時簽到資料..." />
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
       <BaseChart :chart-data="chartData" :chart-options="chartOptions" />

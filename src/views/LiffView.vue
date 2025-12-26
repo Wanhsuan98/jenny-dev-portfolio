@@ -3,6 +3,7 @@ import { ref, onMounted } from 'vue'
 import { useLiffStore } from '@/stores/liff'
 import { useToastStore } from '@/stores/toast'
 import { useAttendees } from '@/composables/useAttendees'
+import BaseLoading from '@/components/BaseLoading.vue'
 
 const liffStore = useLiffStore()
 const toast = useToastStore()
@@ -55,10 +56,7 @@ const handleCheckIn = async () => {
 
 <template>
   <div class="layout-login">
-    <div v-if="!liffStore.isInitialized" class="text-center">
-      <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-500 mx-auto"></div>
-      <p class="mt-4 text-meta">正在連接 LINE 服務...</p>
-    </div>
+    <BaseLoading v-if="!liffStore.isInitialized" message="正在連接 LINE 服務..." />
 
     <div
       v-else-if="liffStore.isLoggedIn && liffStore.profile"
