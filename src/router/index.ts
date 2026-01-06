@@ -11,7 +11,7 @@ const router = createRouter({
       path: '/',
       name: 'landing',
       component: () => import('@/views/AboutView.vue'),
-      meta: { requiresAuth: false },
+      meta: { requiresAuth: false, title: 'Jenny.Dev | Portfolio' },
     },
     {
       // 主版面 (包含側邊欄的頁面)
@@ -22,19 +22,19 @@ const router = createRouter({
           path: 'dashboard',
           name: 'dashboard',
           component: () => import('@/views/HomeView.vue'),
-          meta: { requiresAuth: true },
+          meta: { requiresAuth: true, title: 'Jenny.Dev | Dashboard' },
         },
         {
           path: 'activity',
           name: 'activity',
           component: () => import('@/views/ActivityView.vue'),
-          meta: { requiresAuth: true },
+          meta: { requiresAuth: true, title: 'Jenny.Dev | Activities' },
         },
         {
           path: 'projects/:id',
           name: 'project-details',
           component: () => import('@/views/ProjectDetailsView.vue'),
-          meta: { requiresAuth: true },
+          meta: { requiresAuth: true, title: 'Jenny.Dev | Project Details' },
         },
       ],
     },
@@ -49,7 +49,7 @@ const router = createRouter({
       path: '/liff',
       name: 'liff',
       component: () => import('@/views/LiffView.vue'),
-      meta: { requiresAuth: false },
+      meta: { requiresAuth: false, title: 'Jenny.Dev | Login' },
     },
 
     // 404 處理
@@ -73,6 +73,11 @@ const waitForAuthInit = () => {
 router.beforeEach(async (to, from, next) => {
   const authStore = useAuthStore()
 
+  // --- 1. 更新瀏覽器分頁標題 ---
+  const pageTitle = (to.meta.title as string) || 'Jenny.Dev'
+  document.title = pageTitle
+
+  // --- 2. Auth 初始化檢查 ---
   if (!authStore.isAuthReady) {
     await waitForAuthInit()
     authStore.isAuthReady = true
@@ -81,7 +86,7 @@ router.beforeEach(async (to, from, next) => {
     }
   }
 
-  // 檢查該頁面是否需要登入
+  // --- 3. 檢查登入權限 ---
   const requiresAuth = to.matched.some((record) => record.meta.requiresAuth)
 
   if (requiresAuth && !authStore.user) {
