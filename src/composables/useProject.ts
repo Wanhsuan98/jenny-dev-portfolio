@@ -38,16 +38,19 @@ export function useProject() {
   const updateProject = async (id: string, formData: Partial<Project>) => {
     try {
       const docRef = doc(db, 'projects', id)
-      await updateDoc(docRef, {
-        name: formData.name,
-        techFrontend: formData.techFrontend,
-        techDatabase: formData.techDatabase,
-        techDeployment: formData.techDeployment,
+      const updatePayload = {
+        name: formData.name || '',
+        techFrontend: formData.techFrontend || '',
+        techDatabase: formData.techDatabase || '',
+        techDeployment: formData.techDeployment || '',
         techCore: formData.techCore || '',
-        status: formData.status,
-        description: formData.description,
-        screenshots: formData.screenshots,
-      })
+        status: formData.status || 'Active',
+        isConfidential: formData.isConfidential ?? false,
+        description: formData.description || '',
+        tabs: formData.tabs || [],
+      }
+
+      await updateDoc(docRef, updatePayload)
 
       if (project.value) {
         Object.assign(project.value, formData)
