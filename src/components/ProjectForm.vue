@@ -227,28 +227,24 @@ const handleSubmit = () => {
         </select>
       </div>
       <div class="form-checkbox-card">
-      <div class="flex items-center h-5">
-        <input
-          id="isConfidential"
-          v-model="form.isConfidential"
-          type="checkbox"
-          class="form-checkbox"
-        />
+        <div class="flex items-center h-5">
+          <input
+            id="isConfidential"
+            v-model="form.isConfidential"
+            type="checkbox"
+            class="form-checkbox"
+          />
+        </div>
+        <div class="text-sm">
+          <label for="isConfidential" class="form-checkbox-label"> 顯示 NDA 保密聲明 </label>
+          <p class="form-checkbox-desc">勾選後，詳情頁將顯示紅色保密警示 (適用於後台系統)。</p>
+        </div>
       </div>
-      <div class="text-sm">
-        <label for="isConfidential" class="form-checkbox-label">
-          顯示 NDA 保密聲明
-        </label>
-        <p class="form-checkbox-desc">
-          勾選後，詳情頁將顯示紅色保密警示 (適用於後台系統)。
-        </p>
-      </div>
-    </div>
       <div class="md:col-span-2">
         <label class="form-label">專案描述</label>
         <textarea
           v-model="form.description"
-          rows="5"
+          rows="8"
           class="w-full input-base resize-none"
           placeholder="專案背景與核心貢獻..."
         ></textarea>
@@ -350,28 +346,30 @@ const handleSubmit = () => {
                   v-model="tempImage.url"
                   type="text"
                   class="input-base pl-10"
-                  placeholder="圖片路徑..."
+                  placeholder="圖片路徑 (URL)..."
                 />
               </div>
             </div>
-            <div class="md:col-span-4">
+
+            <div class="md:col-span-12">
               <input
                 v-model="tempImage.caption"
                 type="text"
                 class="input-base"
-                placeholder="標題 (Caption)"
+                placeholder="圖片標題 (Caption)"
               />
             </div>
-            <div class="md:col-span-8">
-              <input
+
+            <div class="md:col-span-12">
+              <textarea
                 v-model="tempImage.description"
-                type="text"
-                class="input-base"
+                rows="5"
+                class="input-base resize-none py-2 leading-relaxed"
                 placeholder="技術解說 (Description)..."
-                @keypress.enter.prevent="addImage"
-              />
+              ></textarea>
             </div>
           </div>
+
           <div class="flex justify-end">
             <button type="button" @click="addImage" class="btn btn-secondary">
               <Plus class="w-4 h-4 mr-2" /> 加入圖片
