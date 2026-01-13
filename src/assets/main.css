@@ -560,7 +560,7 @@
 
   /* 描述 (Description) */
   .details-desc {
-    @apply text-sm leading-relaxed border-l-2 pl-4 py-1;
+    @apply text-sm leading-relaxed border-l-2 pl-4 py-1 whitespace-pre-wrap;
   }
   .desc-tech {
     @apply text-slate-400 font-mono border-indigo-500/30;

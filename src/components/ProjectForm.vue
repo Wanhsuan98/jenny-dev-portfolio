@@ -407,7 +407,7 @@ const handleSubmit = () => {
                 />
                 <textarea
                   v-model="img.description"
-                  rows="2"
+                  rows="5"
                   class="w-full text-xs bg-transparent resize-none border-b border-transparent focus:border-primary-500 outline-none"
                   :class="currentTab.mode === 'tech' ? 'input-desc-tech' : 'input-desc-gallery'"
                   placeholder="輸入解說..."
