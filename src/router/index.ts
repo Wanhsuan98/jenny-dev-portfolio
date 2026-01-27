@@ -46,6 +46,15 @@ const router = createRouter({
       meta: { requiresAuth: false },
     },
     {
+      path: '/project/:id',
+      name: 'project-public',
+      component: () => import('../views/ProjectDetailsView.vue'),
+      meta: {
+        layout: 'default',
+        requiresAuth: false,
+      },
+    },
+    {
       path: '/liff',
       name: 'liff',
       component: () => import('@/views/LiffView.vue'),

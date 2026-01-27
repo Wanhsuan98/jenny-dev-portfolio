@@ -16,6 +16,9 @@ import {
   Globe,
   MapPin,
   Calendar,
+  Download,
+  GraduationCap,
+  Link as LinkIcon,
 } from 'lucide-vue-next'
 import type { ChartData, ChartOptions } from 'chart.js'
 
@@ -27,10 +30,21 @@ onMounted(() => {
   initProjectsListener()
 })
 
+type SkillTag = {
+  name: string
+  projectId?: string
+  projectName?: string
+}
+
 const techHighlights = computed(() => {
   // 預設
-  const defaultFrontend = ['Vue 3, TypeScript, Vite, Tailwind CSS']
-  const defaultBackend = ['Firebase, Vercel, Git']
+  const defaultFrontend: SkillTag[] = [
+    { name: 'Vue 3' },
+    { name: 'TypeScript' },
+    { name: 'Vite' },
+    { name: 'Tailwind CSS' },
+  ]
+  const defaultBackend: SkillTag[] = [{ name: 'Firebase' }, { name: 'Vercel' }, { name: 'Git' }]
 
   if (projects.value.length === 0) {
     return [
@@ -55,19 +69,29 @@ const techHighlights = computed(() => {
 
   // --- 輔助函式：提取並去重 ---
   const getUniqueTags = (fields: (keyof Project)[]) => {
-    const tags = new Set<string>()
+    const tagMap = new Map<string, SkillTag>()
+
     projects.value.forEach((p) => {
       fields.forEach((key) => {
         const val = p[key]
         if (typeof val === 'string' && val) {
           val.split(/[,、]/).forEach((t) => {
             const cleanTag = t.trim()
-            if (cleanTag) tags.add(cleanTag)
+            if (cleanTag) {
+              // 這裡只記錄「第一個找到該技能」的專案作為代表連結
+              if (!tagMap.has(cleanTag)) {
+                tagMap.set(cleanTag, {
+                  name: cleanTag,
+                  projectId: p.id, // 綁定專案 ID
+                  projectName: p.name, // 用於 Tooltip 顯示
+                })
+              }
+            }
           })
         }
       })
     })
-    return Array.from(tags)
+    return Array.from(tagMap.values())
   }
 
   const frontendTags = getUniqueTags(['techFrontend', 'techCore'])
@@ -77,7 +101,7 @@ const techHighlights = computed(() => {
   return [
     {
       label: 'Tech Stack',
-      tags: frontendTags.length ? frontendTags : defaultFrontend, // 使用陣列
+      tags: frontendTags.length ? frontendTags : defaultFrontend,
       icon: Cpu,
       color: 'text-indigo-500',
       bg: 'bg-indigo-50 dark:bg-indigo-500/10',
@@ -129,6 +153,8 @@ const skillData = computed<ChartData<'radar'> | null>(() => {
         borderColor: '#6366f1',
         pointBackgroundColor: '#6366f1',
         pointBorderColor: '#fff',
+        pointHoverRadius: 8,
+        pointRadius: 4,
         pointHoverBackgroundColor: '#fff',
         pointHoverBorderColor: '#6366f1',
         borderWidth: 2,
@@ -136,6 +162,13 @@ const skillData = computed<ChartData<'radar'> | null>(() => {
     ],
   }
 })
+
+const getSkillLevel = (score: number) => {
+  if (score >= 90) return 'Expert'
+  if (score >= 75) return 'Advanced'
+  if (score >= 50) return 'Intermediate'
+  return 'Beginner'
+}
 
 const skillOptions: ChartOptions<'radar'> = {
   responsive: true,
@@ -146,7 +179,7 @@ const skillOptions: ChartOptions<'radar'> = {
       grid: { color: 'rgba(148, 163, 184, 0.1)' },
       suggestedMin: 0,
       suggestedMax: 100,
-      ticks: { display: false },
+      ticks: { display: false, stepSize: 20 },
       pointLabels: {
         font: { size: 12, weight: 'bold', family: "'Inter', sans-serif" },
         color: '#94a3b8', // slate-400
@@ -161,7 +194,22 @@ const skillOptions: ChartOptions<'radar'> = {
       cornerRadius: 8,
       titleColor: '#fff',
       bodyColor: '#cbd5e1',
+      titleFont: { size: 14, weight: 'bold' },
+      bodyFont: { size: 13 },
+      callbacks: {
+        title: (context) => context[0]?.label,
+        label: (context) => {
+          const score = Number(context.raw)
+          return `  ${getSkillLevel(score)}`
+        },
+      },
     },
+  },
+  onHover: (event, chartElement) => {
+    if (event.native && event.native.target) {
+      const target = event.native.target as HTMLElement
+      target.style.cursor = chartElement[0] ? 'pointer' : 'default'
+    }
   },
 }
 </script>
@@ -208,12 +256,21 @@ const skillOptions: ChartOptions<'radar'> = {
                   />
                   {{ link.name }}
                 </a>
+                <a
+                  v-if="profile.basicInfo.resumeUrl"
+                  :href="profile.basicInfo.resumeUrl"
+                  download
+                  class="social-links-items group hover:bg-indigo-600 hover:text-white hover:border-indigo-600 cursor-pointer"
+                >
+                  <Download class="w-4 h-4 transition-transform group-hover:-translate-y-0.5" />
+                  Resume
+                </a>
               </div>
             </div>
           </section>
 
           <div class="layout-about-bottom">
-            <section id="skills" class="skills-exp-section flex flex-col">
+            <section id="skills" class="skills-exp-section flex flex-col h-fit">
               <div class="skille-exp-title-outter">
                 <div
                   class="p-2 bg-indigo-50 dark:bg-indigo-500/10 rounded-lg text-indigo-600 dark:text-indigo-400"
@@ -244,15 +301,63 @@ const skillOptions: ChartOptions<'radar'> = {
                       {{ tech.label }}
                     </p>
                     <div class="flex flex-wrap gap-2">
-                      <span
-                        v-for="tag in tech.tags"
-                        :key="tag"
-                        class="px-2.5 py-1 text-xs font-medium rounded-md transition-colors"
-                        :class="tech.tagBg"
-                      >
-                        {{ tag }}
-                      </span>
+                      <template v-for="tag in tech.tags" :key="tag.name">
+                        <RouterLink
+                          v-if="tag.projectId"
+                          :to="`/project/${tag.projectId}`"
+                          class="px-2.5 py-1 text-xs font-medium rounded-md transition-all hover:opacity-80 flex items-center gap-1 group/tag"
+                          :class="tech.tagBg"
+                          :title="`查看相關專案：${tag.projectName}`"
+                        >
+                          {{ tag.name }}
+                          <LinkIcon class="w-3 h-3 opacity-50 group-hover/tag:opacity-100" />
+                        </RouterLink>
+
+                        <span
+                          v-else
+                          class="px-2.5 py-1 text-xs font-medium rounded-md transition-colors"
+                          :class="tech.tagBg"
+                        >
+                          {{ tag.name }}
+                        </span>
+                      </template>
                     </div>
+                  </div>
+                </div>
+              </div>
+
+              <div id="education" class="scroll-mt-28 mt-5">
+                <div class="skille-exp-title-outter">
+                  <div
+                    class="p-2 bg-sky-50 dark:bg-sky-500/10 rounded-lg text-sky-600 dark:text-sky-400"
+                  >
+                    <GraduationCap class="w-6 h-6" />
+                  </div>
+                  <h2 class="skills-exp-title font-bold">學歷</h2>
+                </div>
+
+                <div class="edu-timeline-container">
+                  <div
+                    v-for="(edu, idx) in profile.educations"
+                    :key="idx"
+                    class="edu-timeline-item"
+                  >
+                    <div class="edu-timeline-dot"></div>
+
+                    <div class="flex flex-col mb-1">
+                      <h3 class="edu-title">
+                        {{ edu.major }}
+                      </h3>
+                      <span class="edu-subtitle">{{ edu.school }}</span>
+                    </div>
+
+                    <div class="edu-date-badge">
+                      {{ edu.date }}
+                    </div>
+
+                    <p v-if="edu.desc" class="edu-desc">
+                      {{ edu.desc }}
+                    </p>
                   </div>
                 </div>
               </div>
@@ -301,6 +406,34 @@ const skillOptions: ChartOptions<'radar'> = {
                     <p class="exp-desc">
                       {{ item.desc }}
                     </p>
+
+                    <div
+                      v-if="item.achievements && item.achievements.length > 0"
+                      class="bg-white dark:bg-slate-800 rounded-lg border border-slate-100 dark:border-slate-700/50 p-3 shadow-sm"
+                    >
+                      <ul class="space-y-2">
+                        <li
+                          v-for="(point, pIdx) in item.achievements"
+                          :key="pIdx"
+                          class="flex items-start gap-2.5 text-sm text-slate-600 dark:text-slate-400"
+                        >
+                          <svg
+                            class="w-4 h-4 text-indigo-500 mt-1 shrink-0"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                          >
+                            <path
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                              stroke-width="2"
+                              d="M9 12l2 2 4-4"
+                            />
+                          </svg>
+                          <span class="leading-relaxed">{{ point }}</span>
+                        </li>
+                      </ul>
+                    </div>
                   </div>
                 </div>
               </div>

@@ -89,6 +89,7 @@ onMounted(() => {
       <button @click="scrollToSection('about')" class="header-nav-item">個人簡介</button>
       <button @click="scrollToSection('skills')" class="header-nav-item">技能</button>
       <button @click="scrollToSection('experience')" class="header-nav-item">經歷</button>
+      <button @click="scrollToSection('education')" class="header-nav-item">學歷</button>
     </nav>
 
     <div class="flex items-center space-x-3 sm:space-x-4 z-10">

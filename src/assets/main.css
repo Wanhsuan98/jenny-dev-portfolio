@@ -528,7 +528,9 @@
   }
   /* 模式：Tech */
   .box-mode-tech {
-    @apply bg-slate-900 border-slate-800 shadow-xl;
+    @apply bg-slate-900 border border-slate-800;
+    @apply shadow-2xl shadow-indigo-500/10 dark:shadow-black/40;
+    @apply ring-1 ring-white/5;
   }
   /* 模式：Gallery */
   .box-mode-gallery {
@@ -563,7 +565,7 @@
     @apply text-sm leading-relaxed border-l-2 pl-4 py-1 whitespace-pre-wrap;
   }
   .desc-tech {
-    @apply text-slate-400 font-mono border-indigo-500/30;
+    @apply text-slate-300/80 font-mono border-l-2 border-indigo-500/50 pl-4;
   }
   .desc-gallery {
     @apply text-slate-600 dark:text-slate-400 border-primary-500/30;
@@ -586,7 +588,9 @@
     @apply rounded-lg border overflow-hidden shadow-lg transition-all duration-300;
   }
   .window-tech {
-    @apply bg-slate-950 border-slate-800 hover:shadow-indigo-500/10 hover:border-slate-600;
+    @apply bg-slate-950 border border-slate-800;
+    @apply rounded-lg transition-all duration-300;
+    @apply hover:border-indigo-500/30 hover:shadow-lg hover:shadow-indigo-500/10;
   }
   .window-gallery {
     @apply bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-600 hover:shadow-primary-500/10;
@@ -640,7 +644,7 @@
     @apply h-px my-12 w-full;
   }
   .divider-tech {
-    @apply bg-slate-800/50;
+    @apply bg-gradient-to-r from-transparent via-slate-700 to-transparent opacity-50;
   }
   .divider-gallery {
     @apply bg-slate-200 dark:bg-slate-700;
@@ -709,7 +713,7 @@
     @apply bg-slate-100 dark:bg-slate-700/50 text-slate-600 dark:text-slate-300;
   }
   .exp-desc {
-    @apply text-sm leading-relaxed p-3 rounded-lg border;
+    @apply text-sm leading-relaxed p-3 rounded-lg border whitespace-pre-line;
     @apply text-slate-600 dark:text-slate-300 bg-slate-50 dark:bg-slate-800/50 border-slate-100 dark:border-slate-700/50;
   }
 
@@ -726,6 +730,34 @@
   /* 時間軸卡片 */
   .timeline-content {
     @apply mb-10 ml-6 bg-white dark:bg-gray-800 p-5 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm hover:shadow-md transition-shadow;
+  }
+
+  .edu-timeline-container {
+    @apply space-y-6 pl-2;
+  }
+
+  .edu-timeline-item {
+    @apply relative pl-6 border-l-2 border-slate-200 dark:border-slate-700 last:border-0 pb-1;
+  }
+
+  .edu-timeline-dot {
+    @apply absolute -left-[5px] top-1.5 w-2.5 h-2.5 rounded-full bg-sky-500 ring-4 ring-white dark:ring-slate-900;
+  }
+
+  .edu-title {
+    @apply text-sm font-bold text-slate-800 dark:text-slate-100;
+  }
+  
+  .edu-subtitle {
+    @apply text-xs text-slate-500 font-medium;
+  }
+
+  .edu-date-badge {
+    @apply text-xs font-mono text-sky-600 dark:text-sky-400 mb-2 bg-sky-50 dark:bg-sky-900/20 inline-block px-1.5 py-0.5 rounded;
+  }
+
+  .edu-desc {
+    @apply text-xs text-slate-500 dark:text-slate-400 leading-relaxed;
   }
 
   /* =========================================

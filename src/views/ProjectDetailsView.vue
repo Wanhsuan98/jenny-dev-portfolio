@@ -28,6 +28,7 @@ const router = useRouter()
 const authStore = useAuthStore()
 const toast = useToastStore()
 const projectId = route.params.id as string
+const isPublicMode = computed(() => route.name === 'project-public')
 
 const { project, isLoading, errorMsg, fetchProject, updateProject, deleteProject } = useProject()
 
@@ -41,6 +42,14 @@ const activeTabId = ref<string>('')
 onMounted(() => {
   fetchProject(projectId)
 })
+
+const handleBack = () => {
+  if (isPublicMode.value) {
+    router.push('/')
+  } else {
+    router.push('/dashboard')
+  }
+}
 
 // 資料標準化 Computed
 const normalizedProject = computed(() => {
@@ -134,10 +143,11 @@ const handleDelete = async () => {
   <div class="p-6 max-w-7xl mx-auto space-y-6 animate-in">
     <div class="flex items-center justify-between">
       <button
-        @click="router.push('/dashboard')"
+        @click="handleBack"
         class="flex items-center gap-1 text-slate-500 hover:text-primary-600 transition-colors"
       >
-        <ChevronLeft class="w-4 h-4" /><span>返回列表</span>
+        <ChevronLeft class="w-4 h-4" />
+        <span>{{ isPublicMode ? '返回履歷' : '返回列表' }}</span>
       </button>
 
       <div v-if="authStore.isAdmin && !isEditing" class="flex gap-2">
