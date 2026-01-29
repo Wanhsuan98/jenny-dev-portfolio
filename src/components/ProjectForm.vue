@@ -217,8 +217,8 @@ const handleSubmit = () => {
       </div>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-      <div class="md:col-span-1">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div>
         <label class="form-label">目前狀態</label>
         <select v-model="form.status" class="input-base">
           <option value="Active">Active</option>
@@ -226,20 +226,25 @@ const handleSubmit = () => {
           <option value="Completed">Completed</option>
         </select>
       </div>
-      <div class="form-checkbox-card">
-        <div class="flex items-center h-5">
-          <input
-            id="isConfidential"
-            v-model="form.isConfidential"
-            type="checkbox"
-            class="form-checkbox"
-          />
-        </div>
-        <div class="text-sm">
-          <label for="isConfidential" class="form-checkbox-label"> 顯示 NDA 保密聲明 </label>
-          <p class="form-checkbox-desc">勾選後，詳情頁將顯示紅色保密警示 (適用於後台系統)。</p>
+
+      <div>
+        <label class="form-label">保密設定</label>
+        <div class="form-checkbox-card">
+          <div class="flex items-center h-5">
+            <input
+              id="isConfidential"
+              v-model="form.isConfidential"
+              type="checkbox"
+              class="form-checkbox"
+            />
+          </div>
+          <div class="text-sm">
+            <label for="isConfidential" class="form-checkbox-label"> 顯示 NDA 保密聲明 </label>
+            <p class="form-checkbox-desc">勾選後，詳情頁將顯示紅色保密警示。</p>
+          </div>
         </div>
       </div>
+
       <div class="md:col-span-2">
         <label class="form-label">專案描述</label>
         <textarea

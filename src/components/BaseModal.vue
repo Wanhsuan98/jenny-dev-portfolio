@@ -1,9 +1,15 @@
 /** * 基礎彈窗元件 */
 <script setup lang="ts">
-defineProps<{
-  isOpen: boolean
-  title: string
-}>()
+withDefaults(
+  defineProps<{
+    isOpen: boolean
+    title: string
+    maxWidth?: string
+  }>(),
+  {
+    maxWidth: 'max-w-md',
+  },
+)
 
 defineEmits(['close'])
 </script>
@@ -16,12 +22,21 @@ defineEmits(['close'])
         @click="$emit('close')"
       ></div>
 
-      <div class="relative card w-full max-w-md overflow-hidden transform transition-all">
-        <div class="px-6 py-4 border-b border-gray-100 flex justify-end items-center">
-          <button @click="$emit('close')" class="text-gray-400 hover:text-gray-600">✕</button>
+      <div
+        class="relative card w-full overflow-hidden transform transition-all flex flex-col max-h-[90vh]"
+        :class="maxWidth"
+      >
+        <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center shrink-0">
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">{{ title }}</h3>
+          <button
+            @click="$emit('close')"
+            class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+          >
+            ✕
+          </button>
         </div>
 
-        <div class="p-6">
+        <div class="p-6 overflow-y-auto">
           <slot></slot>
         </div>
       </div>

@@ -148,7 +148,12 @@ const chartOptions: ChartOptions<'bar'> = {
       </template>
     </BaseTable>
 
-    <BaseModal :is-open="isModalOpen" title="新增專案" @close="isModalOpen = false">
+    <BaseModal
+      :is-open="isModalOpen"
+      title="新增專案"
+      maxWidth="max-w-4xl"
+      @close="isModalOpen = false"
+    >
       <ProjectForm
         :loading="isSubmitting"
         @submit="handleAddProject"
