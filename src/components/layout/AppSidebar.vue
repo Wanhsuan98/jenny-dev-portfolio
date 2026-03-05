@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useAuthStore } from '@/stores/auth'
 import { RouterLink, useRoute } from 'vue-router'
-import { LayoutDashboard, User, Activity, LogOut } from 'lucide-vue-next'
+import { LayoutDashboard, User, Activity, LogOut, UserPlus } from 'lucide-vue-next'
 
 defineProps<{
   isOpen: boolean
@@ -74,6 +74,17 @@ const getLinkClass = (path: string) => {
             </span>
           </div>
         </RouterLink>
+        <RouterLink to="/liff" @click="emit('close')" :class="getLinkClass('/liff')">
+        <div class="relative">
+          <UserPlus 
+            class="w-5 h-5" 
+            :class="isActive('/liff') ? 'text-white' : 'text-indigo-400'" 
+          />
+        </div>
+        <div class="flex-1">
+          <span class="font-medium">簽到體驗點這裡</span>
+        </div>
+      </RouterLink>
       </div>
     </nav>
 

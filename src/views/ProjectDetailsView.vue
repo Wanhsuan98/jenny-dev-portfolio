@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted, computed, watch } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { useRoute, useRouter, RouterLink } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { useToastStore } from '@/stores/toast'
 import { useProject } from '@/composables/useProject'
@@ -183,7 +183,17 @@ const handleDelete = async () => {
                 <StatusBadge :status="project?.status || 'Active'" />
                 <span class="text-meta">ID: {{ projectId }}</span>
               </div>
-              <h1 class="page-title text-4xl">{{ project?.name }}</h1>
+              <div class="flex flex-col sm:flex-row sm:items-center gap-4">
+                <h1 class="page-title text-4xl">{{ project?.name }}</h1>
+                <RouterLink
+                  v-if="project?.name?.includes('LINE')"
+                  to="/liff"
+                  class="flex items-center gap-2 px-4 py-1.5 bg-[#00b900] hover:bg-[#00a300] text-white rounded-full text-sm font-bold transition-all shadow-md hover:shadow-[#00b900]/20 shrink-0 w-fit"
+                >
+                  <ExternalLink class="w-4 h-4" />
+                  立即體驗
+                </RouterLink>
+              </div>
               <p class="text-meta mt-2">建立時間：{{ formatDate(project?.createdAt) }}</p>
             </div>
           </div>
