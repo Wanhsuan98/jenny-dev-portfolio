@@ -74,7 +74,7 @@ const chartOptions: ChartOptions<'bar'> = {
     <div class="flex items-center justify-between">
       <div>
         <h1 class="page-title">專案總覽</h1>
-        <p class="page-subtitle">管理您的所有 MarTech 專案進度。</p>
+        <p class="page-subtitle">專案列表與進度。</p>
       </div>
 
       <BaseLoading v-if="isLoading" message="正在載入專案列表..." />
