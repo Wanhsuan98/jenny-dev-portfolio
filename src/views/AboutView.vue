@@ -19,11 +19,18 @@ import {
   Download,
   GraduationCap,
   Link as LinkIcon,
+  FlaskConical,
+  Database,
 } from 'lucide-vue-next'
 import type { ChartData, ChartOptions } from 'chart.js'
 
 const { profile, loading, fetchProfile } = useProfile()
 const { projects, initProjectsListener } = useProjects()
+
+// side project
+const labProjects = computed(() => {
+  return projects.value.filter((p) => p.isLab)
+})
 
 onMounted(() => {
   fetchProfile()
@@ -34,6 +41,7 @@ type SkillTag = {
   name: string
   projectId?: string
   projectName?: string
+  isLab?: boolean
 }
 
 const techHighlights = computed(() => {
@@ -67,7 +75,32 @@ const techHighlights = computed(() => {
     ]
   }
 
-  // --- 輔助函式：提取並去重 ---
+  // --- 核心技能名單 ---
+  const CORE_SKILLS = new Set([
+    'Vue3',
+    'Nuxt4',
+    'TypeScript',
+    'Tailwind CSS',
+    'Vite',
+    'Element Plus',
+    'Vuetify',
+    'LIFF SDK',
+    'Python',
+    'FastAPI',
+    'Node.js',
+    'Firestore',
+    'PostgreSQL',
+    'SQLite',
+    'SQLAlchemy',
+    'Docker',
+    'Vercel',
+    'Railway',
+    'Git',
+    'vue-i18n',
+    'Sass',
+  ])
+
+  // --- 輔助函式：提取、去重並過濾 ---
   const getUniqueTags = (fields: (keyof Project)[]) => {
     const tagMap = new Map<string, SkillTag>()
 
@@ -75,15 +108,16 @@ const techHighlights = computed(() => {
       fields.forEach((key) => {
         const val = p[key]
         if (typeof val === 'string' && val) {
-          val.split(/[,、]/).forEach((t) => {
+          val.split(/[,、;/\n|]/).forEach((t) => {
             const cleanTag = t.trim()
-            if (cleanTag) {
+            if (cleanTag && (CORE_SKILLS.has(cleanTag) || projects.value.length === 0)) {
               // 這裡只記錄「第一個找到該技能」的專案作為代表連結
               if (!tagMap.has(cleanTag)) {
                 tagMap.set(cleanTag, {
                   name: cleanTag,
                   projectId: p.id, // 綁定專案 ID
                   projectName: p.name, // 用於 Tooltip 顯示
+                  isLab: p.isLab,
                 })
               }
             }
@@ -95,8 +129,7 @@ const techHighlights = computed(() => {
   }
 
   const frontendTags = getUniqueTags(['techFrontend', 'techCore'])
-
-  const backendTags = getUniqueTags(['techDeployment', 'techDatabase'])
+  const backendTags = getUniqueTags(['techDatabase', 'techDeployment'])
 
   return [
     {
@@ -105,15 +138,17 @@ const techHighlights = computed(() => {
       icon: Cpu,
       color: 'text-indigo-500',
       bg: 'bg-indigo-50 dark:bg-indigo-500/10',
-      tagBg: 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/50 dark:text-indigo-300',
+      tagBg:
+        'bg-indigo-50 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-300 border border-indigo-100 dark:border-indigo-500/20',
     },
     {
-      label: 'Deployment & Tools',
+      label: 'Backend & Database',
       tags: backendTags.length ? backendTags : defaultBackend,
-      icon: Globe,
+      icon: Database,
       color: 'text-emerald-500',
       bg: 'bg-emerald-50 dark:bg-emerald-500/10',
-      tagBg: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/50 dark:text-emerald-300',
+      tagBg:
+        'bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300 border border-emerald-100 dark:border-emerald-500/20',
     },
   ]
 })
@@ -304,7 +339,7 @@ const skillOptions: ChartOptions<'radar'> = {
                       <template v-for="tag in tech.tags" :key="tag.name">
                         <RouterLink
                           v-if="tag.projectId"
-                          :to="`/project/${tag.projectId}`"
+                          :to="tag.isLab ? `/lab/${tag.projectId}` : `/project/${tag.projectId}`"
                           class="px-2.5 py-1 text-xs font-medium rounded-md transition-all hover:opacity-80 flex items-center gap-1 group/tag"
                           :class="tech.tagBg"
                           :title="`查看相關專案：${tag.projectName}`"
@@ -358,6 +393,54 @@ const skillOptions: ChartOptions<'radar'> = {
                     <p v-if="edu.desc" class="edu-desc">
                       {{ edu.desc }}
                     </p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Side Projects -->
+              <div
+                v-if="labProjects.length > 0"
+                class="mt-8 pt-8 border-t border-slate-100 dark:border-slate-700/50"
+              >
+                <div class="skille-exp-title-outter">
+                  <div
+                    class="p-2 bg-emerald-50 dark:bg-emerald-500/10 rounded-lg text-emerald-600 dark:text-emerald-400"
+                  >
+                    <FlaskConical class="w-6 h-6" />
+                  </div>
+                  <h2 class="skills-exp-title font-bold">技術研究室</h2>
+                </div>
+
+                <div class="space-y-4">
+                  <div
+                    v-for="lab in labProjects"
+                    :key="lab.id"
+                    class="group relative p-4 rounded-xl border border-slate-100 dark:border-slate-700/50 bg-slate-50/50 dark:bg-slate-800/30 hover:border-emerald-500/30 transition-all duration-300"
+                  >
+                    <div class="flex flex-col gap-3">
+                      <div class="space-y-1">
+                        <div class="flex items-center justify-between gap-2">
+                          <h3
+                            class="text-sm font-bold text-slate-800 dark:text-white group-hover:text-emerald-500 transition-colors"
+                          >
+                            {{ lab.name }}
+                          </h3>
+                          <span class="badge-demo shrink-0">Lab Project</span>
+                        </div>
+                        <p
+                          class="text-[11px] text-slate-500 dark:text-slate-400 leading-snug line-clamp-2"
+                        >
+                          {{ lab.description }}
+                        </p>
+                      </div>
+                      <RouterLink
+                        :to="`/lab/${lab.id}`"
+                        class="flex items-center justify-center gap-2 px-3 py-1.5 rounded-lg bg-white dark:bg-slate-700 text-slate-600 dark:text-slate-200 text-[10px] font-bold shadow-sm hover:shadow-md transition-all"
+                      >
+                        查看 Side Project
+                        <LinkIcon class="w-2.5 h-2.5" />
+                      </RouterLink>
+                    </div>
                   </div>
                 </div>
               </div>

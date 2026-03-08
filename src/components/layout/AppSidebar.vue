@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useAuthStore } from '@/stores/auth'
 import { RouterLink, useRoute } from 'vue-router'
-import { LayoutDashboard, User, Activity, LogOut, UserPlus } from 'lucide-vue-next'
+import { LayoutDashboard, User, LogOut, MessageSquare, Database } from 'lucide-vue-next'
 
 defineProps<{
   isOpen: boolean
@@ -59,32 +59,37 @@ const getLinkClass = (path: string) => {
           <span class="badge-demo">Demo</span>
         </div>
 
-        <RouterLink to="/activity" @click="emit('close')" :class="getLinkClass('/activity')">
+        <RouterLink
+          to="/lab/line-checkin-lab"
+          @click="emit('close')"
+          :class="getLinkClass('/lab/line-checkin-lab')"
+        >
           <div class="relative">
-            <Activity
+            <MessageSquare
               class="w-5 h-5"
-              :class="isActive('/activity') ? 'text-white' : 'text-indigo-400'"
+              :class="isActive('/lab/line-checkin-lab') ? 'text-white' : 'text-green-400'"
             />
           </div>
-          <div class="flex-1 flex items-center justify-between">
-            <span class="font-medium">活動監控 (Live)</span>
-            <span class="pulse-container">
-              <span class="pulse-ping"></span>
-              <span class="pulse-dot"></span>
-            </span>
+          <div class="flex-1">
+            <span class="font-medium">LINE 簽到系統</span>
           </div>
         </RouterLink>
-        <RouterLink to="/liff" @click="emit('close')" :class="getLinkClass('/liff')">
-        <div class="relative">
-          <UserPlus 
-            class="w-5 h-5" 
-            :class="isActive('/liff') ? 'text-white' : 'text-indigo-400'" 
-          />
-        </div>
-        <div class="flex-1">
-          <span class="font-medium">簽到體驗點這裡</span>
-        </div>
-      </RouterLink>
+
+        <RouterLink
+          to="/lab/lego-moc-hub"
+          @click="emit('close')"
+          :class="getLinkClass('/lab/lego-moc-hub')"
+        >
+          <div class="relative">
+            <Database
+              class="w-5 h-5"
+              :class="isActive('/lab/lego-moc-hub') ? 'text-white' : 'text-indigo-400'"
+            />
+          </div>
+          <div class="flex-1">
+            <span class="font-medium">全端登入系統</span>
+          </div>
+        </RouterLink>
       </div>
     </nav>
 

@@ -17,6 +17,11 @@ const toast = useToastStore()
 
 const { projects, initProjectsListener, addProject, isLoading } = useProjects()
 
+// 過濾掉 side project
+const displayProjects = computed(() => {
+  return projects.value.filter((p) => !p.isLab)
+})
+
 const tableColumns: Column<Project>[] = [
   { key: 'name', label: '專案名稱', slot: true },
   { key: 'techFrontend', label: '主要技術Stack', slot: true },
@@ -45,9 +50,9 @@ const handleAddProject = async (formData: Project) => {
 }
 
 const chartData = computed<ChartData<'bar'>>(() => {
-  const active = projects.value.filter((p) => p.status === 'Active').length
-  const completed = projects.value.filter((p) => p.status === 'Completed').length
-  const pending = projects.value.filter((p) => p.status === 'Pending').length
+  const active = displayProjects.value.filter((p) => p.status === 'Active').length
+  const completed = displayProjects.value.filter((p) => p.status === 'Completed').length
+  const pending = displayProjects.value.filter((p) => p.status === 'Pending').length
 
   return {
     labels: ['Active', 'Completed', 'Pending'],
@@ -107,13 +112,13 @@ const chartOptions: ChartOptions<'bar'> = {
       <div class="card-gradient-indigo">
         <div>
           <h3 class="text-lg font-medium opacity-90">總專案數</h3>
-          <p class="text-4xl font-bold mt-2">{{ projects.length }}</p>
+          <p class="text-4xl font-bold mt-2">{{ displayProjects.length }}</p>
         </div>
         <div class="text-sm opacity-75">資料來自 Firestore</div>
       </div>
     </div>
 
-    <BaseTable :columns="tableColumns" :data="projects">
+    <BaseTable :columns="tableColumns" :data="displayProjects">
       <template #cell-name="{ row }">
         <RouterLink :to="{ name: 'project-details', params: { id: row.id } }" class="link">
           {{ row.name }}

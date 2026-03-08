@@ -31,6 +31,12 @@ const router = createRouter({
           meta: { requiresAuth: true, title: 'Jenny.Dev | Activities' },
         },
         {
+          path: 'lab/:id',
+          name: 'lab-dashboard',
+          component: () => import('@/views/LabDetailView.vue'),
+          meta: { requiresAuth: false, title: 'Jenny.Dev | Lab' },
+        },
+        {
           path: 'projects/:id',
           name: 'project-details',
           component: () => import('@/views/ProjectDetailsView.vue'),

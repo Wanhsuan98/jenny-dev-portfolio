@@ -6,8 +6,11 @@ import { useToastStore } from '@/stores/toast'
 import BaseToast from '@/components/BaseToast.vue'
 import BaseConfirm from '@/components/BaseConfirm.vue'
 
+import { useTheme } from '@/composables/useTheme'
+
 const authStore = useAuthStore()
 const toast = useToastStore()
+const { initTheme } = useTheme()
 
 // --- 閒置自動登出設定 ---
 // 1 小時
@@ -62,16 +65,7 @@ watch(
 
 onMounted(() => {
   authStore.initAuth()
-
-  // 登入頁主題判斷
-  const userTheme = localStorage.getItem('theme')
-  const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches
-
-  if (userTheme === 'dark' || (!userTheme && systemDark)) {
-    document.documentElement.classList.add('dark')
-  } else {
-    document.documentElement.classList.remove('dark')
-  }
+  initTheme()
 })
 
 onUnmounted(() => {

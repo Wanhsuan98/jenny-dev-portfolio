@@ -15,11 +15,32 @@ export interface ProjectTab {
   images: ImageDetail[]
 }
 
+export interface LabHighlight {
+  iconType: 'server' | 'shield' | 'key' | 'database' | 'code' | 'check'
+  title: string
+  description: string
+}
+
+export interface LabPipelineStep {
+  title: string
+  description: string
+}
+
+export interface LabAction {
+  label: string
+  description: string
+  iconType: 'zap' | 'dashboard' | 'external' | 'link'
+  themeColor: 'indigo' | 'green' | 'blue'
+  to?: string
+  href?: string
+}
+
 export interface Project {
   id?: string
   name?: string
   status?: 'Active' | 'Completed' | 'Pending'
   isConfidential: boolean
+  isLab?: boolean
   techFrontend: string
   techDatabase: string
   techDeployment: string
@@ -28,5 +49,9 @@ export interface Project {
   screenshots?: (string | ImageDetail)[]
   architectureImages?: (string | ImageDetail)[]
   tabs: ProjectTab[]
+  labHighlights?: LabHighlight[]
+  labPipeline?: LabPipelineStep[]
+  labActions?: LabAction[]
+  externalUrl?: string
   createdAt?: Timestamp
 }

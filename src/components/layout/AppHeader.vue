@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { computed } from 'vue'
 import { RouterLink, useRoute } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
+import { useTheme } from '@/composables/useTheme'
 import { Menu, Moon, Sun, LogIn, LayoutDashboard } from 'lucide-vue-next'
 
 const emit = defineEmits(['toggle-sidebar'])
@@ -24,10 +25,10 @@ const scrollToSection = (id: string) => {
 }
 
 // --- 使用者資訊 ---
-const displayRole = computed(() => {
-  if (!authStore.role) return 'Guest'
-  return authStore.role.charAt(0).toUpperCase() + authStore.role.slice(1)
-})
+// const displayRole = computed(() => {
+//   if (!authStore.role) return 'Guest'
+//   return authStore.role.charAt(0).toUpperCase() + authStore.role.slice(1)
+// })
 
 const avatarLetter = computed(() => {
   if (authStore.user && authStore.user.email) {
@@ -36,30 +37,7 @@ const avatarLetter = computed(() => {
   return '?'
 })
 
-// --- 暗色模式 ---
-const isDark = ref(false)
-
-const toggleDark = () => {
-  isDark.value = !isDark.value
-  updateTheme()
-}
-
-const updateTheme = () => {
-  if (isDark.value) {
-    document.documentElement.classList.add('dark')
-    localStorage.setItem('theme', 'dark')
-  } else {
-    document.documentElement.classList.remove('dark')
-    localStorage.setItem('theme', 'light')
-  }
-}
-
-onMounted(() => {
-  const userTheme = localStorage.getItem('theme')
-  const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches
-  isDark.value = userTheme === 'dark' || (!userTheme && systemDark)
-  updateTheme()
-})
+const { isDark, toggleDark } = useTheme()
 </script>
 
 <template>
