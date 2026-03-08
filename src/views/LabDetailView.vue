@@ -18,6 +18,8 @@ import {
   Database,
   Key,
   Link as LinkIcon,
+  Cpu,
+  Layers,
 } from 'lucide-vue-next'
 import BaseLoading from '@/components/BaseLoading.vue'
 
@@ -50,6 +52,8 @@ const getIcon = (type: string) => {
     eye: EyeOff,
     code: Code2,
     check: CheckCircle2,
+    cpu: Cpu,
+    layers: Layers,
     // Action Icons
     dashboard: LayoutDashboard,
     external: ExternalLink,
@@ -160,12 +164,57 @@ const isPublicMode = computed(() => route.name === 'lab-public')
           </a>
         </div>
 
+        <!-- Technical Architecture Section -->
+        <section v-if="project.labTechArchitecture" class="space-y-4 py-4">
+          <!-- Section Header -->
+          <div class="lab-section-header">
+            <div class="flex items-center gap-3">
+               <div class="p-2.5 bg-indigo-500/10 rounded-xl">
+                  <Cpu class="w-5 h-5 text-indigo-500" />
+               </div>
+               <div>
+                 <h2 class="text-2xl font-black text-slate-800 dark:text-white tracking-tight">Technical Architecture</h2>
+               </div>
+            </div>
+          </div>
+
+          <!-- Cards Grid -->
+          <div 
+            class="lab-tech-grid"
+            :class="project.labTechArchitecture.length === 1 ? 'grid-cols-1' : 'md:grid-cols-2'"
+          >
+            <div 
+              v-for="tech in project.labTechArchitecture" 
+              :key="tech.label"
+              class="lab-tech-card group"
+            >
+              <!-- Decorative Accent Line -->
+              <div class="lab-tech-accent"></div>
+              
+              <div class="flex flex-col gap-6">
+                <div class="flex items-center justify-between">
+                  <h4 class="lab-tech-label">
+                    {{ tech.label }}
+                  </h4>
+                  <div v-if="tech.iconType" class="p-2 rounded-lg bg-slate-50 dark:bg-slate-800/50">
+                    <component :is="getIcon(tech.iconType)" class="w-4 h-4 text-slate-400" />
+                  </div>
+                </div>
+                
+                <p class="lab-tech-content">
+                  {{ tech.content }}
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
         <!-- Highlights Grid -->
         <div v-if="project.labHighlights" class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div
             v-for="item in project.labHighlights"
             :key="item.title"
-            class="card group p-6 hover:border-indigo-500/50 transition-all duration-300"
+            class="lab-highlight-card group"
           >
             <div class="flex items-start gap-5 text-left">
               <div :class="['p-3 rounded-xl shrink-0 transition-colors', getStyle(item.iconType)]">

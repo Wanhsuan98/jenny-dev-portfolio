@@ -35,6 +35,12 @@ export interface LabAction {
   href?: string
 }
 
+export interface LabTechDetail {
+  label: string
+  content: string
+  iconType?: 'code' | 'server' | 'database' | 'cpu' | 'layers'
+}
+
 export interface Project {
   id?: string
   name?: string
@@ -49,6 +55,7 @@ export interface Project {
   screenshots?: (string | ImageDetail)[]
   architectureImages?: (string | ImageDetail)[]
   tabs: ProjectTab[]
+  labTechArchitecture?: LabTechDetail[]
   labHighlights?: LabHighlight[]
   labPipeline?: LabPipelineStep[]
   labActions?: LabAction[]
