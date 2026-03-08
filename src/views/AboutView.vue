@@ -425,7 +425,7 @@ const skillOptions: ChartOptions<'radar'> = {
                           >
                             {{ lab.name }}
                           </h3>
-                          <span class="badge-demo shrink-0">Lab Project</span>
+                          <span class="badge-demo shrink-0">Side Project</span>
                         </div>
                         <p
                           class="text-[11px] text-slate-500 dark:text-slate-400 leading-snug line-clamp-2"

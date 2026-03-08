@@ -45,7 +45,7 @@ const getLinkClass = (path: string) => {
       </div>
 
       <div v-if="authStore.user" class="space-y-1">
-        <div class="nav-label mt-2">後台管理</div>
+        <div class="nav-label mt-2">正式專案</div>
 
         <RouterLink to="/dashboard" @click="emit('close')" :class="getLinkClass('/dashboard')">
           <LayoutDashboard class="w-5 h-5" />
@@ -55,7 +55,7 @@ const getLinkClass = (path: string) => {
 
       <div v-if="authStore.user" class="space-y-1">
         <div class="nav-label flex items-center gap-2 mt-2">
-          實驗室
+          Side Projects
           <span class="badge-demo">Demo</span>
         </div>
 
