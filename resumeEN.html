@@ -1,0 +1,508 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Wan-Hsuan (Lin) | Senior Front-end Engineer Resume</title>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+      :root {
+        --accent-color: #084d73; /* 您偏好的深藍色 */
+        --text-main: #0f172a;
+        --text-sub: #64748b;
+        --line-color: #e2e8f0;
+        --bg-page: #ffffff;
+        --bg-outside: #f1f5f9;
+      }
+
+      @media print {
+        @page {
+          margin: 0;
+          size: A4;
+        }
+        body {
+          background: white !important;
+          -webkit-print-color-adjust: exact;
+          print-color-adjust: exact;
+        }
+        .resume-container {
+          margin: 0;
+          box-shadow: none;
+          border-radius: 0;
+          width: 210mm;
+          min-height: auto;
+          border: none;
+        }
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+
+      body {
+        font-family: 'Helvetica', 'Microsoft JhengHei', '微軟正黑體', sans-serif;
+        background-color: var(--bg-outside);
+        color: var(--text-main);
+        line-height: 1.5;
+      }
+
+      .resume-container {
+        width: 210mm;
+        min-height: 297mm;
+        margin: 0px auto;
+        background: var(--bg-page);
+        padding: 50px 40px;
+        display: flex;
+        flex-direction: column;
+      }
+
+      /* --- Global Header --- */
+      .main-header {
+        margin-bottom: 40px;
+        border-bottom: 2px solid var(--line-color);
+        padding-bottom: 30px;
+      }
+
+      .main-header h1 {
+        font-size: 52px;
+        font-weight: 800;
+        color: var(--accent-color);
+        line-height: 1;
+        margin-bottom: 5px;
+      }
+
+      .main-header .title {
+        font-size: 22px;
+        font-weight: 500;
+        color: var(--text-sub);
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        margin-bottom: 22px;
+      }
+
+      .summary-box {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .motto-text {
+        font-size: 16px;
+        font-weight: 900;
+        color: var(--accent-color);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-style: italic;
+      }
+
+      .summary-text {
+        font-size: 15.5px;
+        color: var(--text-main);
+        line-height: 1.7;
+      }
+
+      /* --- Column Layout --- */
+      .content-body {
+        display: grid;
+        grid-template-columns: 210px 1fr;
+        gap: 35px;
+      }
+
+      /* --- Left Column --- */
+      .left-col {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+      }
+
+      .avatar-box {
+        width: 100%;
+        border-radius: 12px;
+        overflow: hidden;
+        border: 1px solid var(--line-color);
+      }
+
+      .avatar-box img {
+        width: 100%;
+        display: block;
+      }
+
+      .section-header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 20px;
+      }
+
+      .icon-circle {
+        width: 34px;
+        height: 34px;
+        background: var(--accent-color);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        flex-shrink: 0;
+      }
+
+      .section-header h3 {
+        font-size: 20px;
+        font-weight: 800;
+        color: var(--accent-color);
+        text-transform: uppercase;
+      }
+
+      .contact-list {
+        list-style: none;
+        font-size: 14.5px;
+        color: var(--text-main);
+      }
+
+      .contact-list li {
+        margin-bottom: 14px;
+      }
+
+      .contact-label {
+        font-weight: 800;
+        display: block;
+        margin-bottom: 3px;
+        color: var(--text-sub);
+        font-size: 13px;
+      }
+
+      .skill-list {
+        list-style: none;
+      }
+
+      .skill-list li {
+        font-size: 14.5px;
+        margin-bottom: 10px;
+        padding-left: 15px;
+        position: relative;
+      }
+
+      .skill-list li::before {
+        content: '•';
+        position: absolute;
+        left: 0;
+        color: var(--accent-color);
+      }
+
+      .page-break {
+        page-break-before: always;
+        padding-top: 50px;
+      }
+
+      /* --- Right Column --- */
+      .right-col {
+        display: flex;
+        flex-direction: column;
+        gap: 40px;
+      }
+
+      .history-item {
+        display: grid;
+        grid-template-columns: 110px 1fr;
+        gap: 20px;
+        margin-bottom: 30px;
+      }
+
+      .date-col {
+        font-size: 14.5px;
+        font-weight: 700;
+        color: var(--text-sub);
+        padding-top: 4px;
+      }
+
+      .content-col h4 {
+        font-size: 20px;
+        font-weight: 800;
+        margin-bottom: 4px;
+      }
+
+      .content-col .company {
+        font-size: 15px;
+        font-weight: 700;
+        font-style: italic;
+        color: var(--text-sub);
+        margin-bottom: 12px;
+        display: block;
+      }
+
+      .bullet-list {
+        list-style: none;
+      }
+
+      .bullet-list li {
+        font-size: 14.5px;
+        margin-bottom: 8px;
+        padding-left: 15px;
+        position: relative;
+      }
+
+      .bullet-list li::before {
+        content: '•';
+        position: absolute;
+        left: 0;
+        color: var(--accent-color);
+        font-weight: bold;
+      }
+
+      .edu-item {
+        margin-bottom: 20px;
+      }
+
+      .card-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+      }
+
+      .mini-card {
+        background: #f8fafc;
+        border: 1px solid var(--line-color);
+        padding: 15px;
+        border-radius: 8px;
+      }
+
+      .mini-card-title {
+        font-size: 16px;
+        font-weight: 800;
+        margin-bottom: 6px;
+        color: var(--accent-color);
+      }
+
+      .mini-card-desc {
+        font-size: 13px;
+        color: var(--text-sub);
+        line-height: 1.5;
+      }
+
+      .footer {
+        margin-top: auto;
+        border-top: 1px solid var(--line-color);
+        padding-top: 20px;
+        display: flex;
+        justify-content: space-between;
+        font-size: 12px;
+        font-weight: 700;
+        color: var(--text-sub);
+        text-transform: uppercase;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="resume-container">
+      <!-- Full Width Header -->
+      <header class="main-header">
+        <h1>Wan-Hsuan (Lin)</h1>
+        <div class="title">Senior Front-end Engineer</div>
+        <div class="summary-box">
+          <div class="motto-text">"Code my way, chase my day"</div>
+          <p class="summary-text">
+            Senior Front-end Engineer with <b>4+ years of expertise in the Vue/Nuxt ecosystem</b>.
+            Transitioning from a legal background, I leverage rigorous analytical logic and
+            structured thinking to build scalable web architectures. I have a proven track record of
+            spearheading front-end development and independently achieving
+            <b>WCAG 2.1 AA accessibility certification</b>. Experienced in high-performance
+            optimization for rendering datasets exceeding 10,000 entries, I am dedicated to bridging
+            cutting-edge technology with high-standard, maintainable production environments.
+          </p>
+        </div>
+      </header>
+
+      <div class="content-body">
+        <!-- Left Side Column -->
+        <aside class="left-col">
+          <div class="avatar-box">
+            <img src="S__54362145.jpg" alt="Wan-Hsuan (Lin)" />
+          </div>
+
+          <div class="side-section">
+            <ul class="contact-list">
+              <li>
+                <span class="contact-label">Email</span>
+                wanhsuan98@gmail.com
+              </li>
+              <li>
+                <span class="contact-label">Location</span>
+                Taipei, Taiwan
+              </li>
+              <li>
+                <span class="contact-label">GitHub</span>
+                github.com/Wanhsuan98
+              </li>
+              <li>
+                <span class="contact-label">Portfolio</span>
+                jenny-dev-portfolio.vercel.app
+              </li>
+            </ul>
+          </div>
+
+          <div class="side-section" style="margin-top: 3px">
+            <div class="section-header">
+              <div class="icon-circle"><i data-lucide="zap" style="width: 18px"></i></div>
+              <h3>Skills</h3>
+            </div>
+            <ul class="skill-list">
+              <li><b>Frontend</b>: Vue 3, Nuxt 3/4 (SSR), TypeScript, React Native (Expo)</li>
+              <li><b>Standards</b>: Web Accessibility (WCAG 2.1 AA), SEO Optimization</li>
+              <li><b>Styles</b>: Tailwind CSS, SCSS, Responsive Web Design (RWD)</li>
+              <li><b>Quality</b>: Playwright (E2E), Vitest (Unit), AI Code Review</li>
+              <li><b>DevOps</b>: Git, GitHub Actions (CI/CD), Docker</li>
+              <li><b>Backend</b>: FastAPI, Firebase, Firestore, RESTful API</li>
+            </ul>
+          </div>
+          <div class="side-section">
+            <div class="section-header">
+              <div class="icon-circle"><i data-lucide="shield" style="width: 18px"></i></div>
+              <h3>Core Competencies</h3>
+            </div>
+            <ul class="skill-list" style="font-size: 13.5px; line-height: 1.4">
+              <li style="margin-bottom: 12px">Systems Thinking & Architecture Design</li>
+              <li style="margin-bottom: 12px">Cross-functional Collaboration (with PM/SD/UI)</li>
+              <li style="margin-bottom: 12px">Code Quality Governance (CI/CD)</li>
+              <li style="margin-bottom: 12px">Technical Leadership & Code Review</li>
+              <li style="margin-bottom: 12px">Problem Solving & System Stability</li>
+            </ul>
+          </div>
+          <div class="side-section">
+            <div class="section-header">
+              <div class="icon-circle">
+                <i data-lucide="graduation-cap" style="width: 18px"></i>
+              </div>
+              <h3>Education</h3>
+            </div>
+            <ul class="contact-list" style="font-size: 13.5px">
+              <li style="margin-bottom: 15px">
+                <span class="contact-label">Feb 2022 – Aug 2022</span>
+                Front-end Development Program<br />
+                Chinese Culture University (SCE)
+              </li>
+              <li>
+                <span class="contact-label">2017 – 2021</span>
+                Bachelor of Laws (LL.B.)<br />
+                Fu Jen Catholic University
+              </li>
+            </ul>
+          </div>
+        </aside>
+
+        <!-- Right Main Column -->
+        <main class="right-col">
+          <div class="main-section">
+            <div class="section-header">
+              <div class="icon-circle"><i data-lucide="briefcase" style="width: 18px"></i></div>
+              <h3>Work History</h3>
+            </div>
+
+            <!-- Blue Planet -->
+            <div class="history-item">
+              <div class="date-col">Apr 2025 – Present</div>
+              <div class="content-col">
+                <h4>Senior Front-end Engineer</h4>
+                <span class="company">Blue Planet Information Co., Ltd. | Taipei</span>
+
+                <div style="margin-bottom: 12px">
+                  <b style="font-size: 13.5px; color: var(--accent-color)"
+                    >Key Projects: GCTF Official Site & WRA Cloud Data Platform</b
+                  >
+                  <ul class="bullet-list" style="margin-top: 5px">
+                    <li>
+                      <b>Architecture & Modernization</b>: Spearheaded the development of the GCTF
+                      platform using Nuxt 4 (SSR), implementing a robust vue-i18n framework and a
+                      state-driven dynamic breadcrumb system to enhance SEO and navigation flow.
+                    </li>
+                    <li>
+                      <b>Accessibility Excellence</b>: Independently led the implementation of WCAG
+                      2.1 AA standards, optimizing semantic HTML and keyboard navigation to secure
+                      national-level accessibility certification.
+                    </li>
+                    <li>
+                      <b>Performance Optimization</b>: Resolved rendering bottlenecks for
+                      large-scale datasets (10k+ records) by implementing asynchronous loading
+                      strategies, Debounce throttling, and custom virtualization techniques.
+                    </li>
+                    <li>
+                      <b>Efficiency Gains</b>: Developed high-level CRUD abstractions using internal
+                      component libraries (BpTable/BpForm), reducing redundant code by over 40%.
+                    </li>
+                    <li>
+                      <b>AI-Driven Development</b>: Leveraged AI Code Review tools (Devstral-24b) to
+                      pre-screen logic, resolving 80% of potential errors before manual review and
+                      boosting delivery efficiency by 20%.
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <!-- Top Path -->
+            <div class="history-item">
+              <div class="date-col">May 2024 – <br />Mar 2025</div>
+              <div class="content-col">
+                <h4>Front-end Engineer</h4>
+                <span class="company">Top Path International | Taipei</span>
+                <ul class="bullet-list">
+                  <li>
+                    <b>Complex State Management</b>: Orchestrated intricate UI logic using Vue 3 and
+                    TypeScript, ensuring zero-latency interactions in data-heavy, highly reactive
+                    scenarios.
+                  </li>
+                  <li>
+                    <b>Type Safety & Stability</b>: Led refactoring efforts to enforce strict
+                    TypeScript definitions, drastically reducing runtime errors and improving
+                    codebase scalability for multi-developer collaboration.
+                  </li>
+                  <li>
+                    <b>Maintainable Design</b>: Advocated for "Design for Maintainability" through
+                    rigorous Peer Code Reviews, establishing standardized patterns for future
+                    feature iterations.
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            <!-- Smart Sec -->
+            <div class="history-item" style="margin-bottom: 0px">
+              <div class="date-col">Sep 2022 – <br />May 2024</div>
+              <div class="content-col">
+                <h4>Programmer</h4>
+                <span class="company">Wisdom Secure Technology Co., Ltd. | Taipei</span>
+
+                <div style="margin-bottom: 12px">
+                  <b style="font-size: 13.5px; color: var(--accent-color)">Key Achievements:</b>
+                  <ul class="bullet-list" style="margin-top: 5px">
+                    <li>
+                      <b>Modernization & CI/CD</b>: Led jQuery to Vue.js migration and implemented
+                      vue-i18n and Jenkins, enhancing system maintainability and global market
+                      readiness.
+                    </li>
+                    <li>
+                      <b>Performance & Mobile</b>: Engineered a Virtual Scroll solution for 60fps
+                      rendering of 10k+ records and developed a React Native mobile app to improve
+                      accessibility.
+                    </li>
+                    <li>
+                      <b>Commercialization</b>: Transformed internal tools into SaaS products and
+                      successfully delivered to government agencies like the NCC, driving company
+                      revenue.
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </main>
+      </div>
+    </div>
+    <script>
+      lucide.createIcons()
+    </script>
+  </body>
+</html>
