@@ -37,7 +37,7 @@ onUnmounted(() => {
         <div class="footer-cta-section">
           <div class="footer-cta-text">
             <h3 class="footer-cta-title">Let's Connect.</h3>
-            <p class="footer-cta-desc">正在尋找技術夥伴或單純想交流開發心得嗎？</p>
+            <p class="footer-cta-desc">歡迎與我聯繫</p>
           </div>
 
           <div class="footer-cta-actions">
