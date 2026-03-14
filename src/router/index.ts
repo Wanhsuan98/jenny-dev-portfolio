@@ -61,6 +61,16 @@ const router = createRouter({
       },
     },
     {
+      path: '/report/:id',
+      name: 'report-detail',
+      component: () => import('@/views/ReportDetailView.vue'),
+      meta: {
+        layout: 'default',
+        requiresAuth: false,
+        title: 'Jenny.Dev | Report',
+      },
+    },
+    {
       path: '/liff',
       name: 'liff',
       component: () => import('@/views/LiffView.vue'),

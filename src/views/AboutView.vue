@@ -1,58 +1,72 @@
 <script setup lang="ts">
-import { computed, onMounted } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useProfile } from '@/composables/useProfile'
 import { useProjects } from '@/composables/useProjects'
-import BaseRadarChart from '@/components/BaseRadarChart.vue'
 import AppHeader from '@/components/layout/AppHeader.vue'
+import AppFooter from '@/components/layout/AppFooter.vue'
 import BaseLoading from '@/components/BaseLoading.vue'
-import type { Project } from '@/types/project'
-import {
-  Github,
-  Linkedin,
-  Mail,
-  Briefcase,
-  Code2,
-  Cpu,
-  Globe,
-  MapPin,
-  Calendar,
-  Download,
-  GraduationCap,
-  Link as LinkIcon,
-  FlaskConical,
-  Database,
-} from 'lucide-vue-next'
+import type { Project, ImageDetail } from '@/types/project'
+import { Github, Linkedin, Mail, Globe, Database, Cpu } from 'lucide-vue-next'
 import type { ChartData, ChartOptions } from 'chart.js'
+
+// --- 頁面子元件 ---
+import DashboardHero from '@/components/dashboard/DashboardHero.vue'
+import ResearchReportsSection from '@/components/dashboard/ResearchReportsSection.vue'
+import EngineeringStandardsSection from '@/components/dashboard/EngineeringStandardsSection.vue'
+import ExperienceTimeline from '@/components/dashboard/ExperienceTimeline.vue'
+import TechStackSidebar from '@/components/dashboard/TechStackSidebar.vue'
+import TechExplorerModal from '@/components/dashboard/TechExplorerModal.vue'
+import ProjectShowcaseSection from '@/components/dashboard/ProjectShowcaseSection.vue'
+
+import { useReports } from '@/composables/useReports'
 
 const { profile, loading, fetchProfile } = useProfile()
 const { projects, initProjectsListener } = useProjects()
+const { reports: researchReports, fetchReports } = useReports()
 
-// side project
-const labProjects = computed(() => {
-  return projects.value.filter((p) => p.isLab)
+// 重點專案
+const featuredProjects = computed(() => {
+  return projects.value.filter((p) => {
+    return p.isLab || p.isFeatured || p.name?.includes('水利署') || p.name?.includes('外交部')
+  })
 })
 
 onMounted(() => {
   fetchProfile()
   initProjectsListener()
+  fetchReports()
 })
+
+type RelatedProject = {
+  id?: string
+  name?: string
+  isLab?: boolean
+  description?: string
+  screenshots?: (string | ImageDetail)[]
+  techFrontend?: string
+}
 
 type SkillTag = {
   name: string
-  projectId?: string
-  projectName?: string
-  isLab?: boolean
+  projects: RelatedProject[]
 }
+
+const isTechExplorerOpen = ref(false)
+const selectedExplorerTech = ref<SkillTag | null>(null)
 
 const techHighlights = computed(() => {
   // 預設
   const defaultFrontend: SkillTag[] = [
-    { name: 'Vue 3' },
-    { name: 'TypeScript' },
-    { name: 'Vite' },
-    { name: 'Tailwind CSS' },
+    { name: 'Vue 3', projects: [] },
+    { name: 'TypeScript', projects: [] },
+    { name: 'Vite', projects: [] },
+    { name: 'Tailwind CSS', projects: [] },
   ]
-  const defaultBackend: SkillTag[] = [{ name: 'Firebase' }, { name: 'Vercel' }, { name: 'Git' }]
+  const defaultBackend: SkillTag[] = [
+    { name: 'Firebase', projects: [] },
+    { name: 'Vercel', projects: [] },
+    { name: 'Git', projects: [] },
+  ]
 
   if (projects.value.length === 0) {
     return [
@@ -97,7 +111,7 @@ const techHighlights = computed(() => {
     'Railway',
     'Git',
     'vue-i18n',
-    'Sass',
+    'Sass/SCSS',
   ])
 
   // --- 輔助函式：提取、去重並過濾 ---
@@ -111,13 +125,20 @@ const techHighlights = computed(() => {
           val.split(/[,、;/\n|]/).forEach((t) => {
             const cleanTag = t.trim()
             if (cleanTag && (CORE_SKILLS.has(cleanTag) || projects.value.length === 0)) {
-              // 這裡只記錄「第一個找到該技能」的專案作為代表連結
               if (!tagMap.has(cleanTag)) {
                 tagMap.set(cleanTag, {
                   name: cleanTag,
-                  projectId: p.id, // 綁定專案 ID
-                  projectName: p.name, // 用於 Tooltip 顯示
-                  isLab: p.isLab,
+                  projects: [],
+                })
+              }
+              const currentTag = tagMap.get(cleanTag)!
+              // 防止同一個專案被重複加入同一個技術標籤
+              if (!currentTag.projects.find((proj) => proj.id === p.id)) {
+                currentTag.projects.push({
+                  id: p.id,
+                  name: p.name,
+                  isLab: !!p.isLab,
+                  description: p.description,
                 })
               }
             }
@@ -153,6 +174,11 @@ const techHighlights = computed(() => {
   ]
 })
 
+const handleTechClick = (tag: SkillTag) => {
+  selectedExplorerTech.value = tag
+  isTechExplorerOpen.value = true
+}
+
 const socialLinks = [
   {
     name: 'GitHub',
@@ -174,16 +200,14 @@ const socialLinks = [
   },
 ]
 
-// --- 圖表設定 ---
+// --- 儀表板圖表 ---
 const skillData = computed<ChartData<'radar'> | null>(() => {
-  if (!profile.value || !profile.value.skills) return null
-
   return {
-    labels: profile.value.skills.map((s) => s.label),
+    labels: ['TypeScript', 'Vue 生態系', '效能優化', '測試涵蓋率', '工程架構'],
     datasets: [
       {
-        label: '能力評分',
-        data: profile.value.skills.map((s) => s.value),
+        label: '技術掌握度',
+        data: [92, 95, 88, 85, 90],
         backgroundColor: 'rgba(99, 102, 241, 0.2)',
         borderColor: '#6366f1',
         pointBackgroundColor: '#6366f1',
@@ -193,6 +217,7 @@ const skillData = computed<ChartData<'radar'> | null>(() => {
         pointHoverBackgroundColor: '#fff',
         pointHoverBorderColor: '#6366f1',
         borderWidth: 2,
+        fill: true,
       },
     ],
   }
@@ -216,8 +241,8 @@ const skillOptions: ChartOptions<'radar'> = {
       suggestedMax: 100,
       ticks: { display: false, stepSize: 20 },
       pointLabels: {
-        font: { size: 12, weight: 'bold', family: "'Inter', sans-serif" },
-        color: '#94a3b8', // slate-400
+        font: { size: 11, weight: 'bold', family: "'Inter', sans-serif" },
+        color: '#94a3b8',
       },
     },
   },
@@ -227,24 +252,13 @@ const skillOptions: ChartOptions<'radar'> = {
       backgroundColor: '#1e293b',
       padding: 12,
       cornerRadius: 8,
-      titleColor: '#fff',
-      bodyColor: '#cbd5e1',
-      titleFont: { size: 14, weight: 'bold' },
-      bodyFont: { size: 13 },
       callbacks: {
-        title: (context) => context[0]?.label,
         label: (context) => {
           const score = Number(context.raw)
-          return `  ${getSkillLevel(score)}`
+          return `  ${getSkillLevel(score)} (${score}%)`
         },
       },
     },
-  },
-  onHover: (event, chartElement) => {
-    if (event.native && event.native.target) {
-      const target = event.native.target as HTMLElement
-      target.style.cursor = chartElement[0] ? 'pointer' : 'default'
-    }
   },
 }
 </script>
@@ -258,274 +272,52 @@ const skillOptions: ChartOptions<'radar'> = {
         <BaseLoading v-if="loading" message="正在從 Firebase 載入個人資料..." />
 
         <template v-else-if="profile">
-          <section id="about" class="layout-about-top">
-            <div class="relative group">
-              <img src="/public/avatar.jpg" class="avatar-about" alt="Avatar" />
+          <DashboardHero
+            :profile="profile"
+            :socialLinks="socialLinks"
+            :skillData="skillData"
+            :skillOptions="skillOptions"
+          />
+
+          <!-- 專案與技能 -->
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            <!-- 專案 -->
+            <div class="lg:col-span-8 space-y-8">
+              <ProjectShowcaseSection :projects="featuredProjects" />
             </div>
-            <div class="flex-1 text-center md:text-left space-y-4">
-              <div>
-                <h1 class="page-title">
-                  {{ profile.basicInfo.name }}
-                </h1>
-                <p class="title-about">
-                  {{ profile.basicInfo.title }}
-                </p>
-              </div>
 
-              <p class="page-subtitle">
-                {{ profile.basicInfo.bio }}
-              </p>
-
-              <div class="social-links-container">
-                <a
-                  v-for="link in socialLinks"
-                  :key="link.name"
-                  :href="link.url"
-                  target="_blank"
-                  class="social-links-items group"
-                  :class="link.hoverClass"
-                >
-                  <component
-                    :is="link.icon"
-                    class="w-4 h-4 transition-transform group-hover:scale-110"
-                  />
-                  {{ link.name }}
-                </a>
-                <a
-                  v-if="profile.basicInfo.resumeUrl"
-                  :href="profile.basicInfo.resumeUrl"
-                  download
-                  class="social-links-items group hover:bg-indigo-600 hover:text-white hover:border-indigo-600 cursor-pointer"
-                >
-                  <Download class="w-4 h-4 transition-transform group-hover:-translate-y-0.5" />
-                  Resume
-                </a>
-              </div>
+            <!-- 技能與學歷 -->
+            <div class="lg:col-span-4 space-y-8">
+              <TechStackSidebar
+                :techHighlights="techHighlights"
+                :educations="profile.educations"
+                @tag-click="handleTechClick"
+              />
             </div>
-          </section>
-
-          <div class="layout-about-bottom">
-            <section id="skills" class="skills-exp-section flex flex-col h-fit">
-              <div class="skille-exp-title-outter">
-                <div
-                  class="p-2 bg-indigo-50 dark:bg-indigo-500/10 rounded-lg text-indigo-600 dark:text-indigo-400"
-                >
-                  <Code2 class="w-6 h-6" />
-                </div>
-                <h2 class="skills-exp-title font-bold">核心技能</h2>
-              </div>
-
-              <div class="flex-1 min-h-[300px] relative">
-                <BaseRadarChart
-                  v-if="skillData"
-                  :chart-data="skillData"
-                  :chart-options="skillOptions"
-                />
-              </div>
-
-              <div class="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div v-for="(tech, idx) in techHighlights" :key="idx" class="skille-bottom-outter">
-                  <div
-                    class="p-2.5 rounded-lg shadow-sm bg-white dark:bg-slate-800"
-                    :class="tech.color"
-                  >
-                    <component :is="tech.icon" class="w-5 h-5" />
-                  </div>
-                  <div>
-                    <p class="tech-category-label mb-2">
-                      {{ tech.label }}
-                    </p>
-                    <div class="flex flex-wrap gap-2">
-                      <template v-for="tag in tech.tags" :key="tag.name">
-                        <RouterLink
-                          v-if="tag.projectId"
-                          :to="tag.isLab ? `/lab/${tag.projectId}` : `/project/${tag.projectId}`"
-                          class="px-2.5 py-1 text-xs font-medium rounded-md transition-all hover:opacity-80 flex items-center gap-1 group/tag"
-                          :class="tech.tagBg"
-                          :title="`查看相關專案：${tag.projectName}`"
-                        >
-                          {{ tag.name }}
-                          <LinkIcon class="w-3 h-3 opacity-50 group-hover/tag:opacity-100" />
-                        </RouterLink>
-
-                        <span
-                          v-else
-                          class="px-2.5 py-1 text-xs font-medium rounded-md transition-colors"
-                          :class="tech.tagBg"
-                        >
-                          {{ tag.name }}
-                        </span>
-                      </template>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div id="education" class="scroll-mt-28 mt-5">
-                <div class="skille-exp-title-outter">
-                  <div
-                    class="p-2 bg-sky-50 dark:bg-sky-500/10 rounded-lg text-sky-600 dark:text-sky-400"
-                  >
-                    <GraduationCap class="w-6 h-6" />
-                  </div>
-                  <h2 class="skills-exp-title font-bold">學歷</h2>
-                </div>
-
-                <div class="edu-timeline-container">
-                  <div
-                    v-for="(edu, idx) in profile.educations"
-                    :key="idx"
-                    class="edu-timeline-item"
-                  >
-                    <div class="edu-timeline-dot"></div>
-
-                    <div class="flex flex-col mb-1">
-                      <h3 class="edu-title">
-                        {{ edu.major }}
-                      </h3>
-                      <span class="edu-subtitle">{{ edu.school }}</span>
-                    </div>
-
-                    <div class="edu-date-badge">
-                      {{ edu.date }}
-                    </div>
-
-                    <p v-if="edu.desc" class="edu-desc">
-                      {{ edu.desc }}
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Side Projects -->
-              <div
-                v-if="labProjects.length > 0"
-                class="mt-8 pt-8 border-t border-slate-100 dark:border-slate-700/50"
-              >
-                <div class="skille-exp-title-outter">
-                  <div
-                    class="p-2 bg-emerald-50 dark:bg-emerald-500/10 rounded-lg text-emerald-600 dark:text-emerald-400"
-                  >
-                    <FlaskConical class="w-6 h-6" />
-                  </div>
-                  <h2 class="skills-exp-title font-bold">技術研究室</h2>
-                </div>
-
-                <div class="space-y-4">
-                  <div
-                    v-for="lab in labProjects"
-                    :key="lab.id"
-                    class="group relative p-4 rounded-xl border border-slate-100 dark:border-slate-700/50 bg-slate-50/50 dark:bg-slate-800/30 hover:border-emerald-500/30 transition-all duration-300"
-                  >
-                    <div class="flex flex-col gap-3">
-                      <div class="space-y-1">
-                        <div class="flex items-center justify-between gap-2">
-                          <h3
-                            class="text-sm font-bold text-slate-800 dark:text-white group-hover:text-emerald-500 transition-colors"
-                          >
-                            {{ lab.name }}
-                          </h3>
-                          <span class="badge-demo shrink-0">Side Project</span>
-                        </div>
-                        <p
-                          class="text-[11px] text-slate-500 dark:text-slate-400 leading-snug line-clamp-2"
-                        >
-                          {{ lab.description }}
-                        </p>
-                      </div>
-                      <RouterLink
-                        :to="`/lab/${lab.id}`"
-                        class="flex items-center justify-center gap-2 px-3 py-1.5 rounded-lg bg-white dark:bg-slate-700 text-slate-600 dark:text-slate-200 text-[10px] font-bold shadow-sm hover:shadow-md transition-all"
-                      >
-                        查看 Side Project
-                        <LinkIcon class="w-2.5 h-2.5" />
-                      </RouterLink>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </section>
-
-            <section id="experience" class="skills-exp-section">
-              <div class="skille-exp-title-outter">
-                <div
-                  class="p-2 bg-pink-50 dark:bg-pink-500/10 rounded-lg text-pink-600 dark:text-pink-400"
-                >
-                  <Briefcase class="w-6 h-6" />
-                </div>
-                <h2 class="skills-exp-title font-bold">經歷旅程</h2>
-              </div>
-
-              <div class="relative pl-2 space-y-8">
-                <div
-                  class="absolute left-[19px] top-2 bottom-2 w-0.5 bg-slate-200 dark:bg-slate-700"
-                ></div>
-
-                <div
-                  v-for="(item, index) in profile.experiences"
-                  :key="index"
-                  class="relative pl-10 group"
-                >
-                  <div class="absolute left-0 top-1.5 w-[40px] flex justify-center">
-                    <div class="exp-dot"></div>
-                  </div>
-
-                  <div class="space-y-2">
-                    <div class="exp-date">
-                      <Calendar class="w-3 h-3" />
-                      {{ item.date }}
-                    </div>
-
-                    <div>
-                      <h3 class="skills-exp-title">
-                        {{ item.title }}
-                      </h3>
-                      <div class="text-meta flex items-center gap-1 m-1.5">
-                        <MapPin class="w-3.5 h-3.5" />
-                        {{ item.company }}
-                      </div>
-                    </div>
-
-                    <p class="exp-desc">
-                      {{ item.desc }}
-                    </p>
-
-                    <div
-                      v-if="item.achievements && item.achievements.length > 0"
-                      class="bg-white dark:bg-slate-800 rounded-lg border border-slate-100 dark:border-slate-700/50 p-3 shadow-sm"
-                    >
-                      <ul class="space-y-2">
-                        <li
-                          v-for="(point, pIdx) in item.achievements"
-                          :key="pIdx"
-                          class="flex items-start gap-2.5 text-sm text-slate-600 dark:text-slate-400"
-                        >
-                          <svg
-                            class="w-4 h-4 text-indigo-500 mt-1 shrink-0"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                          >
-                            <path
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
-                              stroke-width="2"
-                              d="M9 12l2 2 4-4"
-                            />
-                          </svg>
-                          <span class="leading-relaxed">{{ point }}</span>
-                        </li>
-                      </ul>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </section>
           </div>
+
+          <!-- 個人研究 -->
+          <div class="space-y-16 mt-16">
+            <ResearchReportsSection :reports="researchReports" />
+
+            <!-- 開發標準 -->
+            <EngineeringStandardsSection />
+
+            <!-- 經歷 -->
+            <ExperienceTimeline :experiences="profile.experiences" />
+          </div>
+
+          <!-- 技術探索 -->
+          <TechExplorerModal
+            :is-open="isTechExplorerOpen"
+            :selected-tech="selectedExplorerTech"
+            @close="isTechExplorerOpen = false"
+          />
         </template>
         <p v-else class="text-error">無法載入個人資料，請確認 Firebase 資料。</p>
       </div>
     </div>
+    <AppFooter />
   </div>
 </template>
 

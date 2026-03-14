@@ -47,6 +47,7 @@ export interface Project {
   status?: 'Active' | 'Completed' | 'Pending'
   isConfidential: boolean
   isLab?: boolean
+  isFeatured?: boolean
   techFrontend: string
   techDatabase: string
   techDeployment: string

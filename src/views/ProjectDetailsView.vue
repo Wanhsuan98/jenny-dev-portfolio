@@ -9,6 +9,7 @@ import StatusBadge from '@/components/StatusBadge.vue'
 import ProjectForm from '@/components/ProjectForm.vue'
 import BaseLoading from '@/components/BaseLoading.vue'
 import AppHeader from '@/components/layout/AppHeader.vue'
+import AppFooter from '@/components/layout/AppFooter.vue'
 import type { Project, ImageDetail } from '@/types/project'
 import {
   Monitor,
@@ -436,5 +437,6 @@ const handleDelete = async () => {
         </div>
       </template>
     </div>
+    <AppFooter v-if="isPublicMode" />
   </div>
 </template>

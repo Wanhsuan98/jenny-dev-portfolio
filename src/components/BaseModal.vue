@@ -3,10 +3,11 @@
 withDefaults(
   defineProps<{
     isOpen: boolean
-    title: string
+    title?: string
     maxWidth?: string
   }>(),
   {
+    title: '',
     maxWidth: 'max-w-md',
   },
 )
@@ -26,11 +27,16 @@ defineEmits(['close'])
         class="relative card w-full overflow-hidden transform transition-all flex flex-col max-h-[90vh]"
         :class="maxWidth"
       >
-        <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center shrink-0">
-          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">{{ title }}</h3>
+        <div
+          class="px-6 py-4 border-b border-gray-100 dark:border-slate-800/60 flex items-center shrink-0"
+          :class="title ? 'justify-between' : 'justify-end'"
+        >
+          <h3 v-if="title" class="text-lg font-medium text-gray-900 dark:text-gray-100">
+            {{ title }}
+          </h3>
           <button
             @click="$emit('close')"
-            class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+            class="p-2 -mr-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
           >
             ✕
           </button>

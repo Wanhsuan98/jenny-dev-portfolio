@@ -271,9 +271,9 @@
   }
 
   .layout-header {
-    @apply h-16 shadow-sm flex items-center justify-between px-6 sticky w-full top-0 z-10 border-b;
-    @apply bg-white/80 dark:bg-slate-900/80 border-gray-200 dark:border-gray-800 backdrop-blur-md;
-    @apply transition-colors duration-300;
+    @apply h-16 flex items-center justify-between px-6 sticky w-full top-0 z-50 border-b relative;
+    @apply bg-white/70 dark:bg-slate-950/70 border-slate-200/60 dark:border-slate-800/60 backdrop-blur-xl;
+    @apply transition-all duration-300;
   }
 
   .layout-content {
@@ -450,11 +450,88 @@
     @apply px-3 mb-2 text-xs font-semibold text-slate-500 uppercase tracking-wider;
   }
   .header-nav {
-    @apply hidden md:flex items-center gap-12 absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2;
+    @apply hidden md:flex items-center gap-6;
   }
-  .header-nav-item {
-    @apply font-medium;
-    @apply text-slate-500 hover:text-indigo-300 dark:text-slate-400 dark:hover:text-indigo-400 transition-colors;
+
+  .header-glow-line {
+    @apply absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-indigo-500/50 to-transparent;
+  }
+
+  .header-side-wrapper {
+    @apply flex items-center gap-4 z-10 shrink-0;
+  }
+
+  .header-logo-container {
+    @apply font-bold text-lg tracking-tight cursor-pointer;
+  }
+
+  .header-logo-span {
+    @apply text-slate-800 dark:text-slate-100;
+  }
+
+  .header-logo-accent {
+    @apply text-indigo-600 dark:text-indigo-400 italic font-black;
+  }
+
+  .header-logo-underline {
+    @apply absolute -bottom-1 left-0 w-full h-1 bg-indigo-500/20 rounded-full scale-x-0 group-hover:scale-x-100 transition-transform origin-left;
+  }
+
+  .header-logo-suffix {
+    @apply text-slate-400 dark:text-slate-600 font-light;
+  }
+
+  .header-center-area {
+    @apply hidden md:flex flex-1 items-center justify-center gap-6 px-4;
+  }
+
+  .header-v-divider {
+    @apply h-4 w-px bg-slate-200 dark:bg-slate-800 mx-1;
+  }
+
+  .header-avatar-mini {
+    @apply w-8 h-8 rounded-xl bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 flex items-center justify-center font-black text-sm border border-indigo-200 dark:border-indigo-800/50;
+  }
+
+  /* 置中的 Dock 導覽列 */
+  .header-nav-dock {
+    @apply flex items-center gap-1 p-1 bg-slate-100/80 dark:bg-slate-800/80 backdrop-blur-xl border border-slate-200/50 dark:border-slate-700/50 rounded-2xl shadow-inner;
+  }
+
+  .header-nav-dock-btn {
+    @apply px-4 py-1.5 rounded-xl text-xs font-bold transition-all duration-300 relative overflow-hidden;
+    @apply text-slate-500 dark:text-slate-400 shadow-sm hover:shadow-md;
+    @apply hover:text-indigo-600 dark:hover:text-white hover:bg-white dark:hover:bg-slate-700;
+  }
+
+  /* 頂部狀態標籤 */
+  .header-live-status {
+    @apply flex items-center gap-2 px-3 py-1 rounded-lg border backdrop-blur-sm transition-colors;
+    @apply bg-slate-100/50 dark:bg-slate-800/50 border-slate-200/50 dark:border-slate-700/50;
+  }
+
+  .header-live-status-text {
+    @apply text-[11px] font-mono text-slate-700 dark:text-slate-300 font-bold tracking-tight uppercase;
+  }
+
+  /* 頂部操作按鈕 */
+  .header-btn {
+    @apply flex items-center gap-2 rounded-xl text-xs font-black transition-all;
+    @apply bg-slate-900 dark:bg-white text-white dark:text-slate-900;
+  }
+
+  .header-btn-primary {
+    @apply header-btn px-5 py-2 shadow-xl shadow-indigo-500/5 hover:bg-indigo-600 dark:hover:bg-indigo-500 dark:hover:text-white;
+  }
+
+  .header-btn-secondary {
+    @apply header-btn px-4 py-1.5 shadow-lg shadow-indigo-500/10 hover:scale-105 active:scale-95;
+  }
+
+  /* 主題切換按鈕 */
+  .header-theme-toggle {
+    @apply p-2 rounded-xl transition-all duration-300;
+    @apply hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400 dark:text-yellow-400;
   }
 
   /* 側邊欄 Logo 容器 */
@@ -700,7 +777,7 @@
     @apply border-slate-100 dark:border-slate-700/50;
   }
   .skills-exp-title {
-    @apply text-xl text-slate-800 dark:text-white;
+    @apply text-xl font-black text-slate-800 dark:text-white tracking-tight;
   }
   .skille-bottom-outter {
     @apply flex items-start gap-3 p-4 rounded-xl;
@@ -717,8 +794,8 @@
     @apply bg-slate-100 dark:bg-slate-700/50 text-slate-600 dark:text-slate-300;
   }
   .exp-desc {
-    @apply text-sm leading-relaxed p-3 rounded-lg border whitespace-pre-line;
-    @apply text-slate-600 dark:text-slate-300 bg-slate-50 dark:bg-slate-800/50 border-slate-100 dark:border-slate-700/50;
+    @apply text-base leading-relaxed p-4 rounded-2xl border whitespace-pre-line font-medium;
+    @apply text-slate-700 dark:text-slate-200 bg-white dark:bg-slate-800/40 border-slate-200 dark:border-slate-700/50 shadow-sm shadow-slate-200/50 dark:shadow-none;
   }
 
   /* 時間軸容器 */
@@ -771,6 +848,10 @@
     animation: fadeIn 0.5s ease-out forwards;
   }
 
+  .fade-in {
+    animation: fadeIn 0.5s ease-out forwards;
+  }
+
   @keyframes fadeIn {
     from {
       opacity: 0;
@@ -809,5 +890,602 @@
 
   .lab-btn {
     @apply flex items-center justify-center gap-2 w-full py-4 text-white rounded-xl font-bold transition-all shadow-lg active:scale-95;
+  }
+
+  /* Technical Architecture Specifics */
+  .lab-section-header {
+    @apply flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-4 mb-8;
+  }
+
+  .lab-tech-grid {
+    @apply grid gap-6;
+  }
+
+  .lab-tech-card {
+    @apply relative p-8 rounded-3xl bg-white dark:bg-slate-900/40 border border-slate-100 dark:border-slate-800/60 shadow-xl shadow-slate-200/5 transition-all hover:border-indigo-500/30 overflow-hidden;
+  }
+
+  .lab-tech-accent {
+    @apply absolute top-0 left-0 w-1.5 h-full bg-indigo-500 opacity-10 group-hover:opacity-100 transition-opacity;
+  }
+
+  .lab-tech-label {
+    @apply text-[10px] font-black text-indigo-500 dark:text-indigo-400 uppercase tracking-[0.3em];
+  }
+
+  .lab-tech-content {
+    @apply text-base text-slate-600 dark:text-slate-300 leading-relaxed font-medium whitespace-pre-line;
+  }
+
+  .lab-highlight-card {
+    @apply card p-6 hover:border-indigo-500/50 transition-all duration-300;
+  }
+
+  .lab-detail-page-wrapper {
+    @apply min-h-screen bg-slate-50 dark:bg-slate-900 transition-colors duration-300;
+  }
+
+  .lab-detail-container {
+    @apply p-6 max-w-7xl mx-auto space-y-12 animate-in;
+  }
+
+  .lab-error-card {
+    @apply card p-12 text-center text-red-500 flex flex-col items-center gap-4;
+  }
+
+  .lab-section-icon-box {
+    @apply p-2.5 bg-indigo-500/10 rounded-xl;
+  }
+
+  .lab-section-title-lg {
+    @apply text-2xl font-black text-slate-800 dark:text-white tracking-tight;
+  }
+
+  .lab-tech-icon-wrapper {
+    @apply p-2 rounded-lg bg-slate-50 dark:bg-slate-800/50;
+  }
+
+  .lab-highlight-inner {
+    @apply flex items-start gap-5 text-left;
+  }
+
+  .lab-highlight-icon-box {
+    @apply p-3 rounded-xl shrink-0 transition-colors;
+  }
+
+  .lab-highlight-title {
+    @apply text-lg font-bold text-slate-800 dark:text-slate-100;
+  }
+
+  .lab-highlight-desc {
+    @apply text-sm text-slate-600 dark:text-slate-400 leading-relaxed;
+  }
+
+  .lab-pipeline-header {
+    @apply text-xl font-bold mb-8 flex items-center gap-2 text-left;
+  }
+
+  .lab-pipeline-visual {
+    @apply relative;
+  }
+
+  .lab-pipeline-line-bg {
+    @apply absolute inset-0 flex items-center;
+  }
+
+  .lab-pipeline-line-inner {
+    @apply w-full border-t border-slate-200 dark:border-slate-700;
+  }
+
+  .lab-pipeline-steps-wrapper {
+    @apply relative flex justify-between;
+  }
+
+  .lab-pipeline-step-dot-container {
+    @apply bg-slate-50 dark:bg-slate-900 px-2 flex flex-col items-center;
+  }
+
+  .lab-pipeline-text-grid {
+    @apply grid grid-cols-1 md:grid-cols-4 gap-6 mt-6;
+  }
+
+  .lab-pipeline-text-item {
+    @apply text-center md:text-left;
+  }
+
+  .lab-pipeline-text-title {
+    @apply font-bold text-sm text-slate-800 dark:text-slate-200;
+  }
+
+  .lab-pipeline-text-desc {
+    @apply text-xs text-slate-500 mt-1;
+  }
+
+  .lab-action-grid {
+    @apply grid grid-cols-1 md:grid-cols-2 gap-8 pt-6;
+  }
+
+  .lab-action-status {
+    @apply text-left space-y-4 mb-6;
+  }
+
+  .lab-action-icon-wrapper {
+    @apply p-3 rounded-xl w-fit;
+  }
+
+  .lab-action-label {
+    @apply text-2xl font-bold text-slate-800 dark:text-white;
+  }
+
+  .lab-action-description {
+    @apply text-sm text-slate-500 dark:text-slate-400 leading-relaxed;
+  }
+
+  /* =========================================
+     13. 儀表板組件 (Dashboard UI)
+     ========================================= */
+
+  /* 區塊標題 */
+  .db-section-header {
+    @apply flex items-center gap-3 mb-8;
+  }
+
+  .db-section-icon {
+    @apply p-2 rounded-lg flex items-center justify-center;
+  }
+
+  .db-section-title {
+    @apply text-2xl font-black dark:text-white tracking-tight;
+  }
+
+  .db-section-desc {
+    @apply text-slate-500 dark:text-slate-400 mt-1;
+  }
+
+  .db-section-subtitle {
+    @apply text-xs text-slate-400 font-bold uppercase tracking-widest mt-0.5;
+  }
+
+  /* 卡片容器 */
+  .db-card {
+    @apply bg-white dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/50 rounded-3xl p-6 transition-all duration-300;
+  }
+
+  .db-card-hover {
+    @apply hover:border-primary-500/50 hover:shadow-lg hover:shadow-primary-500/5;
+  }
+
+  /* 技術標籤 (小) */
+  .db-tag-sm {
+    @apply text-[10px] px-2 py-1 bg-slate-50 dark:bg-slate-800 rounded border border-slate-100 dark:border-slate-700 text-slate-500 font-bold uppercase tracking-wider;
+  }
+
+  /* 解決方案徽章 */
+  .db-badge-solution {
+    @apply px-2 py-0.5 text-[10px] font-bold bg-indigo-50 text-indigo-600 dark:bg-indigo-900/30 dark:text-indigo-400 rounded-lg uppercase tracking-wider;
+  }
+
+  /* 狀態徽章 (脈衝式) */
+  .db-status-pulse {
+    @apply flex items-center gap-2;
+  }
+
+  .db-status-dot {
+    @apply w-2 h-2 rounded-full animate-pulse;
+  }
+
+  /* 儀表板按鈕 */
+  .db-btn {
+    @apply flex items-center gap-2 px-5 py-2 rounded-xl text-xs font-black transition-all;
+  }
+
+  .db-btn-primary {
+    @apply bg-slate-900 dark:bg-white text-white dark:text-slate-900 hover:bg-primary-600 dark:hover:bg-primary-400;
+  }
+
+  /* 專案預覽圖容器 */
+  .db-project-visual {
+    @apply w-full md:w-48 h-32 rounded-2xl bg-slate-100 dark:bg-slate-700 overflow-hidden shrink-0 shadow-inner relative transition-transform duration-300;
+  }
+
+  /* 社交連結按鈕 (Hero) */
+  .db-hero-link {
+    @apply flex items-center gap-2 px-4 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm font-medium text-slate-600 dark:text-slate-300 transition-all hover:border-indigo-500 hover:text-indigo-600 dark:hover:text-indigo-400;
+  }
+
+  /* 雷達圖容器 */
+  .db-radar-container {
+    @apply relative bg-white/50 dark:bg-slate-800/50 backdrop-blur-sm border border-slate-100 dark:border-slate-700/50 rounded-3xl p-6 h-[320px];
+  }
+
+  /* 成就/亮點卡片 */
+  .db-achievement-card {
+    @apply bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700/50 p-6 shadow-sm;
+  }
+
+  .db-achievement-header {
+    @apply text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-2;
+  }
+
+  .db-achievement-item {
+    @apply flex items-start gap-3 text-sm font-medium text-slate-700 dark:text-slate-300 leading-relaxed;
+  }
+
+  .db-keyword-highlight {
+    @apply text-indigo-600 dark:text-indigo-400 font-bold;
+  }
+
+  /* 側邊欄區塊 */
+  .db-sidebar-section {
+    @apply rounded-3xl p-6 border transition-all duration-300;
+  }
+
+  /* 教育經歷項目 */
+  .db-edu-item {
+    @apply border-l-2 pl-4 space-y-1 transition-colors;
+    @apply border-slate-100 dark:border-slate-700;
+  }
+
+  /* 統計/小資訊卡片 */
+  .db-stat-card {
+    @apply p-4 rounded-xl border border-slate-100 dark:border-slate-700;
+  }
+
+  /* 亮點項目 */
+  .db-highlight-item {
+    @apply flex items-center gap-3 text-sm text-slate-600 dark:text-slate-400;
+  }
+
+  /*Hero Profile */
+  .db-hero-avatar {
+    @apply w-20 h-20 md:w-24 md:h-24 rounded-2xl object-cover border-2 border-white dark:border-slate-800 shadow-xl;
+  }
+
+  .db-hero-name {
+    @apply text-3xl md:text-4xl font-black text-slate-800 dark:text-white tracking-tight;
+  }
+
+  .db-hero-role {
+    @apply text-indigo-600 dark:text-indigo-400 font-bold flex items-center gap-2;
+  }
+
+  .db-hero-bio {
+    @apply text-slate-600 dark:text-slate-400 leading-relaxed text-lg max-w-2xl;
+  }
+
+  .db-badge-pill {
+    @apply inline-flex items-center gap-2 px-4 py-2 rounded-full bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 text-xs font-black uppercase tracking-widest;
+  }
+
+  .db-workflow-container {
+    @apply mt-12 p-8 rounded-3xl bg-slate-900 dark:bg-indigo-950/20 border border-slate-800 dark:border-indigo-500/10 overflow-hidden relative;
+  }
+
+  .db-workflow-step {
+    @apply flex items-center gap-2 px-4 py-3 bg-white/5 rounded-xl border border-white/10 text-white w-full lg:w-auto;
+  }
+
+  .db-workflow-step-active {
+    @apply flex items-center gap-2 px-4 py-3 bg-indigo-500 text-white rounded-xl shadow-lg shadow-indigo-500/20 w-full lg:w-auto;
+  }
+
+  .db-workflow-divider {
+    @apply hidden lg:block w-8 h-px bg-slate-700;
+  }
+
+  .db-modal-card {
+    @apply bg-slate-50 dark:bg-slate-900/50 hover:bg-white dark:hover:bg-slate-800 border-slate-200 dark:border-slate-800 hover:border-indigo-500/50 p-5 rounded-2xl transition-all duration-300 flex items-center justify-between border;
+  }
+
+  .db-modal-note {
+    @apply p-5 rounded-2xl bg-indigo-500 text-white shadow-xl shadow-indigo-500/20 relative overflow-hidden;
+  }
+
+  /* Project Showcase */
+  .db-project-visual-placeholder {
+    @apply w-full h-full flex items-center justify-center bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-800/50 dark:to-slate-900/50 relative overflow-hidden;
+  }
+  .db-project-title {
+    @apply text-lg font-black text-slate-800 dark:text-white;
+  }
+  .db-project-desc {
+    @apply text-sm text-slate-600 dark:text-slate-400 leading-relaxed font-medium line-clamp-2;
+  }
+  .db-card-inner {
+    @apply flex flex-col md:flex-row gap-6 items-start;
+  }
+
+  /* Engineering Standards Accordion */
+  .std-accordion-item {
+    @apply border rounded-2xl overflow-hidden bg-white dark:bg-slate-800 transition-colors duration-300;
+  }
+  .std-accordion-trigger {
+    @apply w-full flex items-center justify-between p-6 text-left focus:outline-none transition-colors;
+  }
+  .std-accordion-title {
+    @apply text-lg font-black dark:text-white transition-colors;
+  }
+  .std-accordion-icon-box {
+    @apply w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-colors;
+  }
+  .std-accordion-content {
+    @apply transition-all duration-300 ease-in-out grid overflow-hidden;
+  }
+  .std-accordion-body {
+    @apply p-6 pt-0 border-t border-slate-100 dark:border-slate-700/50 mt-2 space-y-4 mx-6 overflow-hidden;
+  }
+  .std-workflow-accent-icon {
+    @apply absolute top-0 right-0 p-8 opacity-10 pointer-events-none;
+  }
+  .std-workflow-label {
+    @apply text-emerald-400 font-black uppercase tracking-widest text-sm flex items-center gap-3;
+  }
+
+  .workflow-tool-tag {
+    @apply text-xs font-bold px-2 py-0.5 rounded bg-slate-800 text-slate-400 border border-slate-700/50 mt-1 block w-fit;
+  }
+  .workflow-status-active {
+    @apply text-indigo-400;
+  }
+
+  /* Research Reports */
+  .db-report-tag {
+    @apply px-2.5 py-1 text-[10px] font-black bg-amber-50 text-amber-600 dark:bg-amber-900/30 dark:text-amber-400 rounded-lg uppercase tracking-wider;
+  }
+  .db-report-date {
+    @apply text-[10px] font-mono text-slate-400;
+  }
+  .db-report-title {
+    @apply text-lg font-black text-slate-800 dark:text-white mb-3 leading-tight group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors;
+  }
+  .db-report-desc {
+    @apply text-sm text-slate-600 dark:text-slate-400 leading-relaxed mb-6 flex-1 line-clamp-2;
+  }
+  .db-report-footer {
+    @apply flex items-center justify-between mt-auto pt-4 border-t border-slate-100/50 dark:border-slate-700/30;
+  }
+  .db-report-meta {
+    @apply flex items-center gap-2 text-xs font-bold text-slate-400;
+  }
+  .db-report-action {
+    @apply text-xs font-black text-amber-600 dark:text-amber-400 flex items-center gap-1 hover:gap-2 transition-all uppercase tracking-widest;
+  }
+
+  /* Tech Stack Sidebar */
+  .db-sidebar-title {
+    @apply text-lg font-bold flex items-center gap-2 dark:text-white;
+  }
+  .db-tech-tag {
+    @apply px-3 py-1.5 text-[11px] font-bold rounded-xl transition-all hover:scale-105 flex items-center gap-1.5 shadow-sm border border-transparent text-left;
+  }
+  .db-tech-badge {
+    @apply w-4 h-4 rounded-full bg-white/20 flex items-center justify-center text-[9px];
+  }
+  .db-sidebar-section-tech {
+    @apply db-sidebar-section bg-indigo-50/50 dark:bg-indigo-500/5 border-indigo-100/50 dark:border-indigo-500/10;
+  }
+  .db-sidebar-section-edu {
+    @apply db-sidebar-section bg-white dark:bg-slate-800/50 border-slate-100 dark:border-slate-700/50 shadow-sm;
+  }
+  .db-sidebar-interactive-badge {
+    @apply flex items-center gap-1.5 bg-indigo-500/5 px-2 py-1 rounded-lg border border-indigo-500/10 transition-all hover:bg-indigo-500/10 dark:text-indigo-400/60;
+  }
+
+  /* Specific Components */
+  .db-btn-resume {
+    @apply db-btn bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-xl shadow-indigo-600/30 hover:shadow-indigo-600/40 hover:-translate-y-1 transition-all !px-6 !py-3 !text-sm;
+  }
+  .db-badge-latest {
+    @apply text-[10px] bg-indigo-100 text-indigo-600 dark:bg-indigo-900/30 dark:text-indigo-400 px-2 py-0.5 rounded-full font-bold;
+  }
+  .db-icon-amber {
+    @apply db-section-icon bg-amber-50 dark:bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-100 dark:border-amber-500/20;
+  }
+  .db-icon-indigo {
+    @apply db-section-icon bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border border-indigo-100 dark:border-indigo-500/20;
+  }
+  .db-report-bg-icon {
+    @apply absolute -right-6 -bottom-6 w-32 h-32 text-slate-100 dark:text-slate-700/30 opacity-20 transition-transform;
+  }
+  .db-project-mockup-badge {
+    @apply absolute bottom-2 right-2 bg-slate-900/70 backdrop-blur-md text-white/90 text-[10px] px-2 py-1 rounded border border-white/10 shadow-sm flex items-center gap-1.5 font-bold tracking-wider pointer-events-none z-20;
+  }
+  .db-load-more-btn {
+    @apply flex items-center gap-2 px-6 py-2.5 rounded-full bg-indigo-50 hover:bg-indigo-100 dark:bg-indigo-500/10 dark:hover:bg-indigo-500/20 text-sm font-semibold text-indigo-600 dark:text-indigo-400 transition-all duration-300;
+  }
+
+  /* Experience Timeline */
+  .db-icon-pink {
+    @apply db-section-icon bg-pink-50 dark:bg-pink-500/10 text-pink-600 dark:text-pink-400 border border-pink-100 dark:border-pink-500/20;
+  }
+  .exp-container {
+    @apply relative pl-2 space-y-8 mt-8;
+  }
+  .exp-line {
+    @apply absolute left-[19px] top-2 bottom-2 w-0.5 bg-slate-200 dark:bg-slate-700;
+  }
+  .exp-item {
+    @apply relative pl-10 fade-list-item;
+  }
+  .exp-dot-wrapper {
+    @apply absolute left-0 top-1.5 w-[40px] flex justify-center;
+  }
+  .exp-dot {
+    @apply w-2.5 h-2.5 rounded-full border-2 border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 group-hover:scale-125 group-hover:border-indigo-500 dark:group-hover:border-indigo-400 transition-all duration-300;
+  }
+  .exp-date {
+    @apply flex items-center gap-1.5 text-xs font-mono text-indigo-600 dark:text-indigo-400 opacity-80;
+  }
+  .skills-exp-title {
+    @apply text-lg font-black text-slate-800 dark:text-white leading-tight;
+  }
+  .text-meta {
+    @apply text-xs font-bold text-slate-500 dark:text-slate-400 mt-1;
+  }
+  .exp-desc {
+    @apply text-sm text-slate-600 dark:text-slate-400 leading-relaxed max-w-2xl;
+  }
+  .exp-expand-btn {
+    @apply flex items-center gap-2 px-6 py-2.5 rounded-full bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-sm font-semibold text-slate-700 dark:text-slate-300 transition-all duration-300;
+  }
+
+  /* Animations */
+  .fade-list-item {
+    @apply transition-all duration-500;
+  }
+  .fade-list-enter-active,
+  .fade-list-leave-active {
+    transition: all 0.5s ease;
+  }
+  .fade-list-enter-from,
+  .fade-list-leave-to {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  /* --- Research Report Detail View --- */
+  .report-detail-layout {
+    @apply min-h-screen bg-slate-50 dark:bg-slate-900 transition-colors duration-300;
+  }
+  .report-detail-container {
+    @apply max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12;
+  }
+  .report-back-btn {
+    @apply flex items-center gap-2 text-slate-500 hover:text-indigo-600 dark:text-slate-400 dark:hover:text-indigo-400 font-medium mb-8 transition-colors;
+  }
+  .report-back-btn-icon {
+    @apply w-5 h-5 group-hover:-translate-x-1 transition-transform;
+  }
+  .report-detail-tag {
+    @apply db-report-tag !bg-indigo-100 dark:!bg-indigo-900/30 !text-indigo-700 dark:!text-indigo-300 !border-indigo-200 dark:!border-indigo-800/50 px-3 py-1 rounded text-xs font-bold uppercase tracking-wider;
+  }
+  .report-detail-date {
+    @apply text-sm text-slate-500 dark:text-slate-400 font-mono;
+  }
+  .report-detail-title {
+    @apply text-3xl sm:text-4xl font-black text-slate-900 dark:text-white leading-tight;
+  }
+  .report-detail-section-title {
+    @apply flex items-center gap-2 text-lg font-bold text-slate-800 dark:text-slate-200;
+  }
+  .report-detail-card {
+    @apply bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700/50 shadow-sm leading-relaxed text-slate-600 dark:text-slate-300 whitespace-pre-line;
+  }
+  .report-takeaway-item {
+    @apply flex items-start gap-3;
+  }
+  .report-takeaway-icon {
+    @apply flex items-center justify-center w-6 h-6 rounded-full bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 text-sm font-bold shrink-0 mt-0.5;
+  }
+  .report-outline-container {
+    @apply bg-indigo-50/50 dark:bg-indigo-900/10 p-6 rounded-2xl border border-indigo-100 dark:border-indigo-800/30;
+  }
+  .report-outline-list {
+    @apply list-decimal list-inside space-y-2 text-slate-600 dark:text-slate-300;
+  }
+  .report-side-card {
+    @apply sticky top-28 bg-white dark:bg-slate-800 p-6 rounded-3xl border border-slate-200 dark:border-slate-700/50 shadow-xl shadow-slate-200/50 dark:shadow-none space-y-6;
+  }
+  .report-file-preview {
+    @apply aspect-[4/3] bg-slate-100 dark:bg-slate-900 rounded-xl flex items-center justify-center border-2 border-dashed border-slate-200 dark:border-slate-700 relative overflow-hidden;
+  }
+  .report-preview-icon {
+    @apply w-16 h-16 text-slate-300 dark:text-slate-700 group-hover:scale-110 transition-transform duration-500;
+  }
+  .report-info-row {
+    @apply flex items-center justify-between text-sm text-slate-500 dark:text-slate-400 border-b border-slate-100 dark:border-slate-700/50;
+  }
+  .report-download-btn {
+    @apply w-full py-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl shadow-lg shadow-indigo-600/20 flex flex-col items-center justify-center gap-1 transition-all hover:scale-[1.02] active:scale-95;
+  }
+
+  /* --- Contact Section --- */
+  .contact-section-container {
+    @apply mt-24 mb-12 border-t border-slate-100 dark:border-slate-800 pt-24;
+  }
+  .contact-section-inner {
+    @apply text-center space-y-10 max-w-3xl mx-auto;
+  }
+  .contact-title {
+    @apply text-3xl md:text-5xl font-black text-slate-800 dark:text-white tracking-tight leading-tight;
+  }
+  .contact-desc {
+    @apply text-slate-500 dark:text-slate-400 text-lg leading-relaxed;
+  }
+  .contact-actions {
+    @apply flex flex-col sm:flex-row items-center justify-center gap-4;
+  }
+  .contact-btn-main {
+    @apply flex items-center gap-3 px-10 py-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-2xl font-bold text-lg transition-all hover:scale-105 active:scale-95 shadow-xl shadow-indigo-600/20;
+  }
+  .contact-btn-secondary {
+    @apply flex items-center gap-3 px-8 py-4 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 rounded-2xl font-bold text-base transition-all hover:scale-105 active:scale-95;
+  }
+
+  /* --- App Footer --- */
+  .app-footer {
+    @apply bg-white dark:bg-slate-950 border-t border-slate-100 dark:border-slate-800/60 transition-colors duration-300;
+  }
+  .footer-container {
+    @apply max-w-7xl mx-auto px-6;
+  }
+  .footer-inner {
+    @apply flex flex-col md:flex-row justify-between items-center gap-4 py-8;
+  }
+  .footer-cta-section {
+    @apply flex flex-col md:flex-row items-center justify-between gap-6 py-12 border-b border-slate-100 dark:border-slate-800/60;
+  }
+  .footer-cta-text {
+    @apply text-center md:text-left;
+  }
+  .footer-cta-title {
+    @apply text-xl font-black text-slate-800 dark:text-white;
+  }
+  .footer-cta-desc {
+    @apply text-sm text-slate-500 dark:text-slate-400 mt-1;
+  }
+  .footer-cta-actions {
+    @apply flex items-center gap-3;
+  }
+  .footer-btn-primary {
+    @apply flex items-center gap-2 px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-sm font-black transition-all hover:scale-105 active:scale-95 shadow-lg shadow-indigo-600/20;
+  }
+  .footer-copyright {
+    @apply flex items-center gap-2 text-sm font-medium text-slate-500 dark:text-slate-400;
+  }
+  .footer-location-tag {
+    @apply hidden sm:flex items-center gap-1.5 grayscale opacity-50 hover:grayscale-0 hover:opacity-100 transition-all cursor-default;
+    @apply dark:opacity-60 dark:hover:opacity-100;
+  }
+  .footer-resume-link {
+    @apply flex items-center gap-2 px-4 py-2 text-sm font-bold transition-colors;
+    @apply text-slate-600 hover:text-indigo-600;
+    @apply dark:text-slate-300 dark:hover:text-indigo-400;
+  }
+  .footer-right-side {
+    @apply flex items-center gap-6;
+  }
+  .footer-status-badge {
+    @apply flex items-center gap-2 text-[10px] font-mono uppercase tracking-widest;
+    @apply text-slate-400 dark:text-slate-300;
+  }
+  .footer-status-dot {
+    @apply w-1.5 h-1.5 rounded-full bg-emerald-500/50;
+  }
+  .animation-pulse {
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+  @keyframes pulse {
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.3;
+    }
+  }
+  .footer-version-label {
+    @apply text-xs font-mono;
+    @apply text-slate-400 dark:text-slate-400;
   }
 }

@@ -20,7 +20,9 @@ export interface ProfileData {
     title: string
     bio: string
     avatar: string
+    email?: string
     resumeUrl?: string
+    resumeUrlEn?: string
   }
   skills: Array<{
     label: string
