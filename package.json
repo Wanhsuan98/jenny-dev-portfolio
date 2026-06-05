@@ -11,7 +11,7 @@
     "build": "nuxt build",
     "preview": "nuxt preview",
     "test:unit": "vitest",
-    "build-only": "vite build",
+    "build-only": "nuxt build",
     "type-check": "nuxi typecheck",
     "lint": "eslint . --fix --cache",
     "format": "prettier --write --experimental-cli src/",
