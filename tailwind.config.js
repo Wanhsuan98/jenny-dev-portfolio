@@ -1,10 +1,7 @@
 /** @type {import('tailwindcss').Config} */
 export default {
   darkMode: 'class',
-  content: [
-    "./index.html",
-    "./src/**/*.{vue,js,ts,jsx,tsx}",
-  ],
+  content: ['./app/**/*.{vue,js,ts,jsx,tsx}', './app.vue'],
   theme: {
     extend: {
       colors: {
@@ -25,8 +22,8 @@ export default {
           light: '#ffffff',
           dark: '#1f2937',
           darker: '#111827',
-        }
-      }
+        },
+      },
     },
   },
   plugins: [],
