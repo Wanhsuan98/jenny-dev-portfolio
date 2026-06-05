@@ -12,7 +12,7 @@
     "preview": "nuxt preview",
     "test:unit": "vitest",
     "build-only": "vite build",
-    "type-check": "vue-tsc --build",
+    "type-check": "nuxi typecheck",
     "lint": "eslint . --fix --cache",
     "format": "prettier --write --experimental-cli src/",
     "test:e2e": "playwright test",
