@@ -1,0 +1,8 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Component: BaseLoading.vue > 回歸測試：元件結構與快照必須與前次一致 (Snapshot Testing) 1`] = `
+"<div class="flex flex-col items-center justify-center py-20 space-y-4">
+  <div class="animate-in rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
+  <p class="page-subtitle animate-pulse font-medium">載入中...</p>
+</div>"
+`;

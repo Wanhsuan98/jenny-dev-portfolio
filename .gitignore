@@ -43,3 +43,9 @@ __screenshots__/
 playwright-report/
 test-results/
 playwright-debug.png
+
+# Nuxt dev/build outputs
+.nuxt/
+.output/
+.nitro/
+

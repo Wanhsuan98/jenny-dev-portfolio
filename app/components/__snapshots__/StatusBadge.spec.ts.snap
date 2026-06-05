@@ -1,0 +1,3 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Component: StatusBadge.vue > 回歸測試：確保不同狀態下的 DOM 結構與 class 組合沒有被意外更動 1`] = `"<div><span class="badge badge-sm badge-success">Active</span><span class="badge badge-sm badge-danger">Error</span><span class="badge badge-sm badge-warning">Pending</span><span class="badge badge-sm badge-secondary">Unknown</span></div>"`;
