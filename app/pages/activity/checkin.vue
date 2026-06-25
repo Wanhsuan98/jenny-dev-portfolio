@@ -1,6 +1,10 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 
+definePageMeta({
+  alias: ['/liff'],
+})
+
 const liffStore = useLiffStore()
 const toast = useToastStore()
 

@@ -1,6 +1,5 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-import { auth, db } from '../plugins/firebase.client'
 import { doc, getDoc } from 'firebase/firestore'
 import { signInWithEmailAndPassword, signOut, onAuthStateChanged, type User } from 'firebase/auth'
 
@@ -13,8 +12,11 @@ export const useAuthStore = defineStore('auth', () => {
   const isAuthReady = ref(false)
 
   const fetchUserRole = async (email: string) => {
+    const { $db } = useNuxtApp()
+    if (!$db) return
+
     try {
-      const docRef = doc(db, 'users', email)
+      const docRef = doc($db, 'users', email)
       const docSnap = await getDoc(docRef)
 
       if (docSnap.exists()) {
@@ -31,7 +33,10 @@ export const useAuthStore = defineStore('auth', () => {
 
   // 監聽登入狀態變化
   const initAuth = () => {
-    onAuthStateChanged(auth, async (currentUser) => {
+    const { $auth } = useNuxtApp()
+    if (!$auth) return
+
+    onAuthStateChanged($auth, async (currentUser) => {
       if (currentUser) {
         user.value = currentUser
         if (currentUser.email) {
@@ -47,8 +52,11 @@ export const useAuthStore = defineStore('auth', () => {
 
   // 登入功能
   const login = async (email: string, pass: string) => {
+    const { $auth } = useNuxtApp()
+    if (!$auth) throw new Error('Auth not initialized')
+
     try {
-      await signInWithEmailAndPassword(auth, email, pass)
+      await signInWithEmailAndPassword($auth, email, pass)
     } catch (error: unknown) {
       console.error('登入失敗:', error)
       throw error
@@ -57,7 +65,10 @@ export const useAuthStore = defineStore('auth', () => {
 
   // 3. 登出功能
   const logout = async () => {
-    await signOut(auth)
+    const { $auth } = useNuxtApp()
+    if (!$auth) return
+
+    await signOut($auth)
     user.value = null
     role.value = null
     navigateTo('/login')

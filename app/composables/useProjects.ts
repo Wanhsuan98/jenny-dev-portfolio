@@ -5,7 +5,6 @@
  */
 import { ref, onUnmounted } from 'vue'
 import { collection, query, orderBy, onSnapshot, addDoc, serverTimestamp } from 'firebase/firestore'
-import { db } from '../plugins/firebase.client'
 import type { Project } from '../types/project'
 
 export function useProjects() {
@@ -17,8 +16,11 @@ export function useProjects() {
 
   // 初始化
   const initProjectsListener = () => {
+    const { $db } = useNuxtApp()
+    if (!$db) return
+
     isLoading.value = true
-    const q = query(collection(db, 'projects'), orderBy('createdAt', 'desc'))
+    const q = query(collection($db, 'projects'), orderBy('createdAt', 'desc'))
 
     unsubscribe = onSnapshot(
       q,
@@ -44,8 +46,11 @@ export function useProjects() {
 
   // 新增專案
   const addProject = async (formData: Project) => {
+    const { $db } = useNuxtApp()
+    if (!$db) throw new Error('Database not initialized')
+
     try {
-      await addDoc(collection(db, 'projects'), {
+      await addDoc(collection($db, 'projects'), {
         ...formData,
         createdAt: serverTimestamp(),
       })

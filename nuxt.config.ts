@@ -5,6 +5,12 @@ export default defineNuxtConfig({
     compatibilityVersion: 4,
   },
   compatibilityDate: '2026-06-02',
+  routeRules: {
+    '/login': { ssr: false },
+    '/dashboard/**': { ssr: false },
+    '/activity/**': { ssr: false },
+    '/liff': { ssr: false },
+  },
   components: [
     {
       path: '~/components',

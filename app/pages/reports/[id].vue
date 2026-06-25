@@ -1,23 +1,31 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue'
+import { computed } from 'vue'
 import { ChevronLeft, Download, CheckCircle, Info, BookOpen } from 'lucide-vue-next'
-import type { ResearchReport } from '../../composables/useReports'
+
+definePageMeta({
+  alias: ['/report/:id'],
+})
 
 const route = useRoute()
-const { getReportById, loading } = useReports()
+const { getReportById } = useReports()
 
 const reportId = computed(() => route.params.id as string)
-const report = ref<ResearchReport | null>(null)
 
 const goBack = () => {
   navigateTo('/#research-reports')
 }
 
-onMounted(async () => {
-  if (reportId.value) {
-    report.value = await getReportById(reportId.value)
-  }
-})
+const { data: report, pending } = await useAsyncData(
+  () => `report-${reportId.value}`,
+  () => getReportById(reportId.value),
+  {
+    server: false,
+    default: () => null,
+    watch: [reportId],
+  },
+)
+
+const loading = computed(() => import.meta.server || pending.value)
 </script>
 
 <template>
