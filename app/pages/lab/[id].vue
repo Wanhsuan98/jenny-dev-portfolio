@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, watch, computed } from 'vue'
+import { computed } from 'vue'
 
 definePageMeta({
   layout: 'dashboard',
@@ -24,19 +24,7 @@ import {
 } from 'lucide-vue-next'
 
 const route = useRoute()
-const { project, isLoading, errorMsg, fetchProject } = useProject()
-
-// 當路由 ID 改變時需要重新讀取資料
-onMounted(() => {
-  fetchProject(route.params.id as string)
-})
-
-watch(
-  () => route.params.id,
-  (newId) => {
-    if (newId) fetchProject(newId as string)
-  },
-)
+const { project, isLoading, errorMsg } = useProject(() => route.params.id as string)
 
 // 圖標映射表
 const getIcon = (type: string) => {

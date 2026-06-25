@@ -4,40 +4,61 @@
  * 2. 更新 (Update): 修改特定專案的內容。
  * 3. 刪除 (Delete): 移除特定專案。
  */
-import { ref } from 'vue'
+import { ref, computed, nextTick } from 'vue'
 import { doc, getDoc, updateDoc, deleteDoc } from 'firebase/firestore'
-import { db } from '../plugins/firebase.client'
 import type { Project } from '../types/project'
 
-export function useProject() {
-  const project = ref<Project | null>(null)
-  const isLoading = ref(false)
-  const errorMsg = ref('')
+export function useProject(idSource?: string | (() => string)) {
+  const { $db } = useNuxtApp()
+  const manualId = ref('')
 
-  const fetchProject = async (id: string) => {
-    isLoading.value = true
-    errorMsg.value = ''
-    try {
-      const docRef = doc(db, 'projects', id)
+  const id = computed(() => {
+    if (idSource) {
+      return typeof idSource === 'function' ? idSource() : idSource
+    }
+    return manualId.value
+  })
+
+  const {
+    data: project,
+    pending,
+    error,
+    refresh,
+  } = useAsyncData(
+    () => (id.value ? `project-${id.value}` : 'project-empty'),
+    async () => {
+      if (!id.value || !$db) return null
+      const docRef = doc($db, 'projects', id.value)
       const docSnap = await getDoc(docRef)
 
       if (docSnap.exists()) {
-        project.value = { id: docSnap.id, ...docSnap.data() } as Project
-      } else {
-        errorMsg.value = '找不到此專案，可能已被刪除。'
+        return { id: docSnap.id, ...docSnap.data() } as Project
       }
-    } catch (err) {
-      console.error(err)
-      errorMsg.value = '讀取資料失敗'
-    } finally {
-      isLoading.value = false
+      throw new Error('找不到此專案，可能已被刪除。')
+    },
+    {
+      server: false,
+      default: () => null,
+      watch: [id],
+    },
+  )
+
+  const isLoading = computed(() => import.meta.server || pending.value)
+  const errorMsg = computed(() => (error.value ? error.value.message : ''))
+
+  const fetchProject = async (targetId?: string) => {
+    if (targetId && !idSource) {
+      manualId.value = targetId
+      await nextTick()
     }
+    await refresh()
   }
 
   // 更新專案
-  const updateProject = async (id: string, formData: Partial<Project>) => {
+  const updateProject = async (targetId: string, formData: Partial<Project>) => {
+    if (!$db) throw new Error('Database not initialized')
     try {
-      const docRef = doc(db, 'projects', id)
+      const docRef = doc($db, 'projects', targetId)
       const updatePayload = {
         name: formData.name || '',
         techFrontend: formData.techFrontend || '',
@@ -63,9 +84,10 @@ export function useProject() {
   }
 
   // 刪除專案
-  const deleteProject = async (id: string) => {
+  const deleteProject = async (targetId: string) => {
+    if (!$db) throw new Error('Database not initialized')
     try {
-      await deleteDoc(doc(db, 'projects', id))
+      await deleteDoc(doc($db, 'projects', targetId))
       return true
     } catch (error) {
       console.error(error)

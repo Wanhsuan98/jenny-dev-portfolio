@@ -6,7 +6,6 @@
 
 import { ref, onUnmounted } from 'vue'
 import { collection, query, orderBy, onSnapshot, addDoc, serverTimestamp } from 'firebase/firestore'
-import { db } from '../plugins/firebase.client'
 import type { Attendee } from '../types/attendee'
 
 interface CheckInPayload {
@@ -22,8 +21,11 @@ export function useAttendees() {
 
   // 監聽名單
   const initAttendeesListener = () => {
+    const { $db } = useNuxtApp()
+    if (!$db) return
+
     isLoading.value = true
-    const q = query(collection(db, 'attendees'), orderBy('checkInTime', 'desc'))
+    const q = query(collection($db, 'attendees'), orderBy('checkInTime', 'desc'))
     unsubscribe = onSnapshot(q, (snapshot) => {
       attendees.value = snapshot.docs.map((doc) => ({
         id: doc.id,
@@ -40,9 +42,12 @@ export function useAttendees() {
 
   // 使用者簽到
   const checkInUser = async (payload: CheckInPayload) => {
+    const { $db } = useNuxtApp()
+    if (!$db) throw new Error('Database not initialized')
+
     try {
       // 封裝資料並寫入資料庫
-      await addDoc(collection(db, 'attendees'), {
+      await addDoc(collection($db, 'attendees'), {
         userId: payload.userId,
         displayName: payload.displayName,
         pictureUrl: payload.pictureUrl || '',

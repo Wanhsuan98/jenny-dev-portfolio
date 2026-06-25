@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, computed, watch } from 'vue'
+import { ref, computed, watch } from 'vue'
 
 definePageMeta({
   layout: false,
@@ -27,7 +27,9 @@ const toast = useToastStore()
 const projectId = route.params.id as string
 const isPublicMode = computed(() => route.path.startsWith('/project/'))
 
-const { project, isLoading, errorMsg, fetchProject, updateProject, deleteProject } = useProject()
+const { project, isLoading, errorMsg, fetchProject, updateProject, deleteProject } = useProject(
+  () => projectId,
+)
 
 const isDeleting = ref(false)
 const isEditing = ref(false)
@@ -35,10 +37,6 @@ const isSaving = ref(false)
 
 // 當前選中的 Tab ID
 const activeTabId = ref<string>('')
-
-onMounted(() => {
-  fetchProject(projectId)
-})
 
 const handleBack = () => {
   if (isPublicMode.value) {

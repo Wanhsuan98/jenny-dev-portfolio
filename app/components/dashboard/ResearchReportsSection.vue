@@ -58,7 +58,7 @@ const props = defineProps<{
             <div class="db-report-meta"><Clock class="w-3.5 h-3.5" /> {{ report.readTime }}</div>
             <!-- 報告導讀頁面連結 -->
             <NuxtLink
-              :to="`/report/${report.id}`"
+              :to="`/reports/${report.id}`"
               class="db-report-action inline-flex items-center gap-1 font-bold"
             >
               VIEW REPORT <ChevronRight class="w-3.5 h-3.5" />
