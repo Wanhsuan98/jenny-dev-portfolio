@@ -19,6 +19,12 @@ export default defineNuxtConfig({
   ],
   modules: ['@pinia/nuxt', '@nuxtjs/tailwindcss'],
   css: ['~/assets/main.css'],
+  nitro: {
+    compressPublicAssets: {
+      gzip: true,
+      brotli: true,
+    },
+  },
   runtimeConfig: {
     public: {
       firebaseApiKey: '',
