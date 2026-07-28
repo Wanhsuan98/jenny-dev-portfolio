@@ -1,6 +1,7 @@
 import { computed } from 'vue'
 import { doc, getDoc } from 'firebase/firestore'
 import type { ProfileData } from '../types/profile'
+import profileFallback from '../assets/profile-fallback.json'
 
 export function useProfile() {
   const {
@@ -22,11 +23,11 @@ export function useProfile() {
     },
     {
       server: false,
-      default: () => null,
+      default: () => profileFallback as ProfileData,
     },
   )
 
-  const loading = computed(() => import.meta.server || pending.value)
+  const loading = computed(() => pending.value && !profile.value)
 
   return { profile, loading, fetchProfile }
 }
