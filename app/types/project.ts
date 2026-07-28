@@ -30,7 +30,7 @@ export interface LabAction {
   label: string
   description: string
   iconType: 'zap' | 'dashboard' | 'external' | 'link'
-  themeColor: 'indigo' | 'green' | 'blue'
+  themeColor: 'cyan' | 'green' | 'blue'
   to?: string
   href?: string
 }

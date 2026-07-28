@@ -15,9 +15,9 @@ const engineeringStandards = [
   {
     title: 'Code Quality (ESLint)',
     icon: ShieldCheck,
-    color: 'text-indigo-500',
-    bg: 'bg-indigo-50 dark:bg-indigo-500/10',
-    border: 'border-indigo-100 dark:border-indigo-500/20',
+    color: 'text-cyan-500',
+    bg: 'bg-cyan-50 dark:bg-cyan-500/10',
+    border: 'border-cyan-100 dark:border-cyan-500/20',
     details: ['Vue 3 PascalCase enforced', 'Strict TS recommended', 'No-console production block'],
   },
   {
@@ -67,9 +67,9 @@ const toggleTab = (title: string) => {
         <div class="flex items-center gap-2">
           <span class="relative flex h-2 w-2">
             <span
-              class="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"
+              class="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"
             ></span>
-            <span class="relative inline-flex rounded-full h-2 w-2 bg-indigo-500"></span>
+            <span class="relative inline-flex rounded-full h-2 w-2 bg-cyan-500"></span>
           </span>
           Applied to this Project
         </div>
@@ -178,7 +178,7 @@ const toggleTab = (title: string) => {
           <!-- Step 4 -->
           <div class="db-workflow-step-active">
             <div class="flex flex-col">
-              <span class="text-indigo-200 text-xs">04. DELIVERY</span>
+              <span class="text-cyan-200 text-xs">04. DELIVERY</span>
               <span class="text-base font-bold">Edge Deployment</span>
               <span
                 class="text-xs font-bold px-2 py-0.5 rounded bg-white/20 text-white mt-1 block w-fit"
@@ -192,7 +192,7 @@ const toggleTab = (title: string) => {
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 pt-8 border-t border-white/5">
           <div class="space-y-2">
             <div class="text-sm font-bold text-slate-300 flex items-center gap-2">
-              <ShieldCheck class="w-3.5 h-3.5 text-indigo-400" /> Commit Integrity
+              <ShieldCheck class="w-3.5 h-3.5 text-cyan-400" /> Commit Integrity
             </div>
             <p class="text-sm text-slate-500 leading-relaxed font-medium">
               透過 Husky 強制執行 Prettier 與 ESLint，確保每一行進入知識庫的程式碼都符合團隊規範。

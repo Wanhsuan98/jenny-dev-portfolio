@@ -138,11 +138,17 @@ const handleDelete = async () => {
   <NuxtLayout :name="isPublicMode ? false : 'dashboard'">
     <div
       :class="{
-        'min-h-screen bg-slate-50 dark:bg-slate-900 transition-colors duration-300': isPublicMode,
+        'min-h-screen bg-slate-50 dark:bg-slate-900 transition-colors duration-300 flex flex-col':
+          isPublicMode,
       }"
     >
       <AppHeader v-if="isPublicMode" />
-      <div class="p-6 max-w-7xl mx-auto space-y-6 animate-in">
+      <div
+        :class="{
+          'flex-grow': isPublicMode,
+        }"
+        class="p-6 max-w-7xl mx-auto space-y-6 animate-in"
+      >
         <div class="flex items-center justify-between">
           <button
             @click="handleBack"
@@ -235,7 +241,7 @@ const handleDelete = async () => {
                         </div>
                       </div>
                       <div v-if="project?.techDeployment" class="tech-stack-item">
-                        <Cloud class="tech-icon text-indigo-500" />
+                        <Cloud class="tech-icon text-cyan-500" />
                         <div>
                           <p class="tech-category-label">Deployment</p>
                           <p class="tech-content-text">{{ project?.techDeployment }}</p>

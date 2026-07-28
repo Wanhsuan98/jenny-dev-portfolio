@@ -85,7 +85,7 @@ const loading = computed(() => import.meta.server || pending.value)
 
           <section class="space-y-4">
             <div class="report-detail-section-title">
-              <BookOpen class="w-6 h-6 text-indigo-500" />
+              <BookOpen class="w-6 h-6 text-cyan-500" />
               章節大綱
             </div>
             <div class="report-outline-container">
@@ -127,7 +127,7 @@ const loading = computed(() => import.meta.server || pending.value)
                   <Download class="w-4 h-4" />
                   {{ report.readTime === 'PDF' ? '閱讀完整 PDF' : '下載完整報告' }}
                 </span>
-                <span class="text-[10px] text-indigo-200 uppercase tracking-widest hidden sm:block"
+                <span class="text-[10px] text-cyan-200 uppercase tracking-widest hidden sm:block"
                   >View Original Document</span
                 >
               </a>
@@ -141,7 +141,7 @@ const loading = computed(() => import.meta.server || pending.value)
         class="text-center py-20 flex flex-col items-center justify-center space-y-4"
       >
         <div
-          class="w-12 h-12 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin"
+          class="w-12 h-12 border-4 border-cyan-200 border-t-cyan-600 rounded-full animate-spin"
         ></div>
         <p class="text-slate-500 font-medium tracking-wide">載入報告中...</p>
       </div>
@@ -150,7 +150,7 @@ const loading = computed(() => import.meta.server || pending.value)
         <h2 class="text-2xl font-bold text-slate-700 dark:text-slate-300">找不到該報告</h2>
         <button
           @click="goBack"
-          class="mt-6 font-medium text-indigo-600 dark:text-indigo-400 hover:underline"
+          class="mt-6 font-medium text-cyan-600 dark:text-cyan-400 hover:underline"
         >
           返回首頁
         </button>
