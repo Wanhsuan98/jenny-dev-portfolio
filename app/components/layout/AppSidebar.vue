@@ -1,21 +1,11 @@
 <script setup lang="ts">
-import {
-  LayoutDashboard,
-  User,
-  LogOut,
-  MessageSquare,
-  Database,
-  Briefcase,
-  BookOpen,
-  ShieldCheck,
-} from 'lucide-vue-next'
+import { User, Briefcase, BookOpen, ShieldCheck } from 'lucide-vue-next'
 
 defineProps<{
   isOpen: boolean
 }>()
 
 const emit = defineEmits(['close'])
-const authStore = useAuthStore()
 const route = useRoute()
 
 const isActive = (path: string) => {
@@ -65,54 +55,6 @@ const getLinkClass = (path: string) => {
           <span class="font-medium">開發標準</span>
         </NuxtLink>
       </div>
-
-      <div v-if="authStore.user" class="space-y-1">
-        <div class="nav-label mt-2">正式專案</div>
-
-        <NuxtLink to="/dashboard" @click="emit('close')" :class="getLinkClass('/dashboard')">
-          <LayoutDashboard class="w-5 h-5" />
-          <span class="font-medium">專案總覽</span>
-        </NuxtLink>
-      </div>
-
-      <div v-if="authStore.user" class="space-y-1">
-        <div class="nav-label flex items-center gap-2 mt-2">
-          Side Projects
-          <span class="badge-demo">Demo</span>
-        </div>
-
-        <NuxtLink
-          to="/lab/line-checkin-lab"
-          @click="emit('close')"
-          :class="getLinkClass('/lab/line-checkin-lab')"
-        >
-          <div class="relative">
-            <MessageSquare
-              class="w-5 h-5"
-              :class="isActive('/lab/line-checkin-lab') ? 'text-white' : 'text-green-400'"
-            />
-          </div>
-          <div class="flex-1">
-            <span class="font-medium">LINE 簽到系統</span>
-          </div>
-        </NuxtLink>
-
-        <NuxtLink
-          to="/lab/lego-moc-hub"
-          @click="emit('close')"
-          :class="getLinkClass('/lab/lego-moc-hub')"
-        >
-          <div class="relative">
-            <Database
-              class="w-5 h-5"
-              :class="isActive('/lab/lego-moc-hub') ? 'text-white' : 'text-cyan-400'"
-            />
-          </div>
-          <div class="flex-1">
-            <span class="font-medium">全端登入系統</span>
-          </div>
-        </NuxtLink>
-      </div>
     </nav>
 
     <div class="sidebar-footer">
@@ -121,14 +63,6 @@ const getLinkClass = (path: string) => {
           <span class="text-xs text-slate-500">© 2025 Jenny</span>
           <span class="text-[10px] text-slate-600">v1.0.0 Dev</span>
         </div>
-        <button
-          v-if="authStore.user"
-          @click="authStore.logout"
-          class="flex items-center gap-2 px-2 py-1.5 text-xs font-medium btn-danger"
-        >
-          <LogOut class="w-3.5 h-3.5" />
-          <span>登出</span>
-        </button>
       </div>
     </div>
   </aside>

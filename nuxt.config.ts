@@ -6,10 +6,8 @@ export default defineNuxtConfig({
   },
   compatibilityDate: '2026-06-02',
   routeRules: {
-    '/login': { ssr: false },
-    '/dashboard/**': { ssr: false },
-    '/activity/**': { ssr: false },
     '/liff': { ssr: false },
+    '/activity/checkin': { ssr: false },
   },
   components: [
     {

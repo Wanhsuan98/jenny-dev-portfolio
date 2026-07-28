@@ -1,9 +1,7 @@
 import { initializeApp } from 'firebase/app'
 import { getFirestore, type Firestore } from 'firebase/firestore'
-import { getAuth, type Auth } from 'firebase/auth'
 
 let db: Firestore
-let auth: Auth
 
 export default defineNuxtPlugin(() => {
   const config = useRuntimeConfig()
@@ -19,14 +17,12 @@ export default defineNuxtPlugin(() => {
 
   const app = initializeApp(firebaseConfig)
   db = getFirestore(app)
-  auth = getAuth(app)
 
   return {
     provide: {
       db,
-      auth,
     },
   }
 })
 
-export { db, auth }
+export { db }
