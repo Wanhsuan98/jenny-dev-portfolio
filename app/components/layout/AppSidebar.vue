@@ -1,5 +1,14 @@
 <script setup lang="ts">
-import { LayoutDashboard, User, LogOut, MessageSquare, Database } from 'lucide-vue-next'
+import {
+  LayoutDashboard,
+  User,
+  LogOut,
+  MessageSquare,
+  Database,
+  Briefcase,
+  BookOpen,
+  ShieldCheck,
+} from 'lucide-vue-next'
 
 defineProps<{
   isOpen: boolean
@@ -10,7 +19,7 @@ const authStore = useAuthStore()
 const route = useRoute()
 
 const isActive = (path: string) => {
-  if (path === '/') return route.path === '/'
+  if (path === '/') return route.path === '/' || route.path === '/about'
   return route.path.startsWith(path)
 }
 
@@ -27,7 +36,7 @@ const getLinkClass = (path: string) => {
           <span class="text-white font-bold text-lg">J</span>
         </div>
         <span class="text-lg font-bold tracking-wide text-slate-100"
-          >Jenny Lin . <span class="text-indigo-600 dark:text-indigo-400"> Dev</span></span
+          >Jenny Lin . <span class="text-cyan-600 dark:text-cyan-400"> Dev</span></span
         >
       </div>
     </div>
@@ -36,9 +45,24 @@ const getLinkClass = (path: string) => {
       <div class="space-y-1">
         <div class="nav-label">個人品牌</div>
 
-        <NuxtLink to="/about" @click="emit('close')" :class="getLinkClass('/about')">
+        <NuxtLink to="/" @click="emit('close')" :class="getLinkClass('/')">
           <User class="w-5 h-5" />
           <span class="font-medium">個人履歷</span>
+        </NuxtLink>
+
+        <NuxtLink to="/projects" @click="emit('close')" :class="getLinkClass('/projects')">
+          <Briefcase class="w-5 h-5" />
+          <span class="font-medium">專案與技術</span>
+        </NuxtLink>
+
+        <NuxtLink to="/reports" @click="emit('close')" :class="getLinkClass('/reports')">
+          <BookOpen class="w-5 h-5" />
+          <span class="font-medium">深度研究</span>
+        </NuxtLink>
+
+        <NuxtLink to="/standards" @click="emit('close')" :class="getLinkClass('/standards')">
+          <ShieldCheck class="w-5 h-5" />
+          <span class="font-medium">開發標準</span>
         </NuxtLink>
       </div>
 
@@ -81,7 +105,7 @@ const getLinkClass = (path: string) => {
           <div class="relative">
             <Database
               class="w-5 h-5"
-              :class="isActive('/lab/lego-moc-hub') ? 'text-white' : 'text-indigo-400'"
+              :class="isActive('/lab/lego-moc-hub') ? 'text-white' : 'text-cyan-400'"
             />
           </div>
           <div class="flex-1">
