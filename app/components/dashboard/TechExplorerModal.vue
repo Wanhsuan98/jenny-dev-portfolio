@@ -36,7 +36,7 @@ const emit = defineEmits<{
     <div v-if="props.selectedTech" class="space-y-8 p-1">
       <div class="flex items-center gap-4">
         <div
-          class="db-section-icon bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400"
+          class="db-section-icon bg-cyan-50 dark:bg-cyan-900/30 text-cyan-600 dark:text-cyan-400"
         >
           <Code2 class="w-8 h-8" />
         </div>
@@ -62,7 +62,7 @@ const emit = defineEmits<{
                 proj.isLab ? 'Lab' : 'Production'
               }}</span>
               <h4
-                class="font-bold text-slate-800 dark:text-white group-hover:text-indigo-600 transition-colors"
+                class="font-bold text-slate-800 dark:text-white group-hover:text-cyan-600 transition-colors"
               >
                 {{ proj.name }}
               </h4>
@@ -72,7 +72,7 @@ const emit = defineEmits<{
             </p>
           </div>
           <ChevronRight
-            class="w-5 h-5 text-slate-300 group-hover:text-indigo-500 group-hover:translate-x-1 transition-all"
+            class="w-5 h-5 text-slate-300 group-hover:text-cyan-500 group-hover:translate-x-1 transition-all"
           />
         </NuxtLink>
       </div>

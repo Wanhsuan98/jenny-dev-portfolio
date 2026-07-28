@@ -48,7 +48,7 @@ const isMockupImage = (project: RelatedProject) => getProjectTheme(project)?.isM
 <template>
   <section id="showcase">
     <div class="db-section-header">
-      <div class="db-icon-indigo">
+      <div class="db-icon-cyan">
         <Zap class="w-6 h-6" />
       </div>
       <div>
@@ -69,7 +69,13 @@ const isMockupImage = (project: RelatedProject) => getProjectTheme(project)?.isM
             <!-- 專案展示容器 -->
             <div class="db-project-visual group-hover:scale-[1.02] relative">
               <template v-if="getProjectImage(project)">
-                <img :src="getProjectImage(project)" class="w-full h-full object-cover" />
+                <img
+                  :src="getProjectImage(project)"
+                  class="w-full h-full object-cover"
+                  loading="lazy"
+                  decoding="async"
+                  alt=""
+                />
                 <div v-if="isMockupImage(project)" class="db-project-mockup-badge">
                   <Layout class="w-3 h-3 opacity-70" />
                   此為示意圖

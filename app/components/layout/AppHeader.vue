@@ -1,25 +1,21 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { Menu, Moon, Sun, LogIn, LayoutDashboard, Cpu } from 'lucide-vue-next'
+import { Menu, Moon, Sun, LogIn, LayoutDashboard, Home } from 'lucide-vue-next'
 
 const emit = defineEmits(['toggle-sidebar'])
 const authStore = useAuthStore()
 const route = useRoute()
 
-// --- 滾動功能 ---
-const scrollToSection = (id: string) => {
-  const element = document.getElementById(id)
-  if (element) {
-    const headerOffset = 80
-    const elementPosition = element.getBoundingClientRect().top
-    const offsetPosition = elementPosition + window.pageYOffset - headerOffset
+const isPublicRoute = computed(() => {
+  return ['index', 'projects', 'reports', 'standards'].includes(route.name as string)
+})
 
-    window.scrollTo({
-      top: offsetPosition,
-      behavior: 'smooth',
-    })
-  }
-}
+const navItems = [
+  { path: '/', label: '首頁', icon: Home },
+  { path: '/projects', label: '專案與技術' },
+  { path: '/reports', label: '深度研究' },
+  { path: '/standards', label: '開發標準' },
+]
 
 // --- 使用者資訊 ---
 // const displayRole = computed(() => {
@@ -35,10 +31,6 @@ const avatarLetter = computed(() => {
 })
 
 const { isDark, toggleDark } = useTheme()
-
-const liveStatus = {
-  stack: 'Vue 3 • Nuxt 3, 4 • TypeScript • Tailwind CSS',
-}
 </script>
 
 <template>
@@ -47,12 +39,12 @@ const liveStatus = {
     <div class="header-glow-line"></div>
 
     <div class="header-side-wrapper">
-      <button v-if="route.name !== 'about'" @click="emit('toggle-sidebar')" class="btn-mode-toggle">
+      <button v-if="!isPublicRoute" @click="emit('toggle-sidebar')" class="btn-mode-toggle">
         <Menu class="h-6 w-6" />
       </button>
 
-      <h2 class="header-logo-container group" :class="{ 'md:hidden': route.name !== 'about' }">
-        <template v-if="authStore.user && route.name !== 'about'"> 控制台 </template>
+      <h2 class="header-logo-container group" :class="{ 'md:hidden': !isPublicRoute }">
+        <template v-if="authStore.user && !isPublicRoute"> 控制台 </template>
 
         <template v-else>
           <span class="header-logo-span">Jenny </span>
@@ -66,31 +58,21 @@ const liveStatus = {
     </div>
 
     <!-- 核心內容 -->
-    <div v-if="route.name === 'about'" class="header-center-area">
-      <!-- 即時動態 -->
-      <div class="hidden xl:flex items-center gap-3 mr-4">
-        <div class="header-live-status">
-          <Cpu class="w-3.5 h-3.5 text-indigo-400" />
-          <span class="header-live-status-text">{{ liveStatus.stack }}</span>
-        </div>
-      </div>
-
+    <div v-if="isPublicRoute" class="header-center-area">
       <!-- 主導覽列 -->
       <nav class="header-nav-dock">
-        <button
-          v-for="(item, key) in {
-            'dashboard-hero': '技術脈動',
-            showcase: '專案與技術',
-            'research-reports': '深度研究',
-            'engineering-standards': '開發標準',
-            experience: '經歷',
-          }"
-          :key="key"
-          @click="scrollToSection(key)"
+        <NuxtLink
+          v-for="item in navItems"
+          :key="item.path"
+          :to="item.path"
+          :title="item.label"
+          :aria-label="item.icon ? item.label : undefined"
           class="header-nav-dock-btn group/nav"
+          :class="item.icon ? 'flex items-center justify-center w-9 px-0' : ''"
         >
-          {{ item }}
-        </button>
+          <component :is="item.icon" v-if="item.icon" class="w-4 h-4" />
+          <template v-else>{{ item.label }}</template>
+        </NuxtLink>
       </nav>
     </div>
 
@@ -107,7 +89,7 @@ const liveStatus = {
       <div class="header-v-divider"></div>
 
       <template v-if="authStore.user">
-        <NuxtLink v-if="route.name === 'about'" to="/dashboard" class="group header-btn-secondary">
+        <NuxtLink v-if="isPublicRoute" to="/dashboard" class="group header-btn-secondary">
           <LayoutDashboard class="w-3.5 h-3.5 group-hover:rotate-12 transition-transform" />
           <span class="pt-[1px]">控制台</span>
         </NuxtLink>

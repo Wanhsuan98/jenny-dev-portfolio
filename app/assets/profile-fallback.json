@@ -1,0 +1,14 @@
+{
+  "basicInfo": {
+    "title": "Frontend Developer",
+    "name": "Jenny",
+    "resumeUrl": "/resumeZH.pdf",
+    "bio": [
+      "專注 Vue 3 / Nuxt 3 與 React / Next.js 開發，堅持嚴謹的 TypeScript 型別安全與模組化架構。",
+      "主導外交部官網（i18n 多語系）與水利署專案，符合 WCAG AA 無障礙與 SEO 滿分；獨立完成金融級 AI 輿情系統開發。",
+      "注重 Code Review 品質、權限邏輯（RBAC）與系統可維護性。"
+    ],
+    "resumeUrlEn": "/resumeEN.pdf",
+    "avatar": "url to image"
+  }
+}

@@ -52,11 +52,11 @@ const getIcon = (type: string) => {
 
 // 根據主題顏色與圖標類型生成樣式
 const getStyle = (type: string, theme?: string) => {
-  const activeTheme = theme || 'indigo'
+  const activeTheme = theme || 'cyan'
 
   // 動態計算 Tailwind class
   const colorMap: Record<string, string> = {
-    indigo: 'text-indigo-500 bg-indigo-50 dark:bg-indigo-900/20 border-indigo-500/20',
+    cyan: 'text-cyan-500 bg-cyan-50 dark:bg-cyan-900/20 border-cyan-500/20',
     green: 'text-green-500 bg-green-50 dark:bg-green-900/20 border-green-500/20',
     blue: 'text-blue-500 bg-blue-50 dark:bg-blue-900/20 border-blue-500/20',
     rose: 'text-rose-500 bg-rose-50 dark:bg-rose-900/20 border-rose-500/20',
@@ -67,7 +67,7 @@ const getStyle = (type: string, theme?: string) => {
   // 特殊圖標對應特定色系
   const iconSpecificColors: Record<string, string> = {
     server: 'text-blue-500 bg-blue-50 dark:bg-blue-900/20',
-    shield: 'text-indigo-500 bg-indigo-50 dark:bg-indigo-900/20',
+    shield: 'text-cyan-500 bg-cyan-50 dark:bg-cyan-900/20',
     key: 'text-amber-500 bg-amber-50 dark:bg-amber-900/20',
     database: 'text-emerald-500 bg-emerald-50 dark:bg-emerald-900/20',
     message: 'text-green-500 bg-green-50 dark:bg-green-900/20',
@@ -81,11 +81,11 @@ const getStyle = (type: string, theme?: string) => {
 
 const getBtnClass = (theme: string) => {
   const classes: Record<string, string> = {
-    indigo: 'bg-indigo-600 hover:bg-indigo-700 shadow-indigo-600/30',
+    cyan: 'bg-cyan-600 hover:bg-cyan-700 shadow-cyan-600/30',
     green: 'bg-green-600 hover:bg-green-700 shadow-green-600/30',
     blue: 'bg-blue-600 hover:bg-blue-700 shadow-blue-600/30',
   }
-  return classes[theme] || classes.indigo
+  return classes[theme] || classes.cyan
 }
 const isPublicMode = computed(() => route.name === 'lab-public')
 </script>
@@ -110,7 +110,7 @@ const isPublicMode = computed(() => route.name === 'lab-public')
             :class="
               project.id?.includes('line')
                 ? 'bg-green-100 dark:bg-green-900/30 text-green-600'
-                : 'bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600'
+                : 'bg-cyan-100 dark:bg-cyan-900/30 text-cyan-600'
             "
           >
             <Code2 class="w-3.5 h-3.5" /> Showcase
@@ -135,7 +135,7 @@ const isPublicMode = computed(() => route.name === 'lab-public')
             :class="
               project.id?.includes('line')
                 ? 'bg-green-600 hover:bg-green-700 shadow-green-600/20'
-                : 'bg-indigo-600 hover:bg-indigo-700 shadow-indigo-600/20'
+                : 'bg-cyan-600 hover:bg-cyan-700 shadow-cyan-600/20'
             "
           >
             啟動 Live Demo 網站
@@ -151,7 +151,7 @@ const isPublicMode = computed(() => route.name === 'lab-public')
           <div class="lab-section-header">
             <div class="flex items-center gap-3">
               <div class="lab-section-icon-box">
-                <Cpu class="w-5 h-5 text-indigo-500" />
+                <Cpu class="w-5 h-5 text-cyan-500" />
               </div>
               <div>
                 <h2 class="lab-section-title-lg">Technical Architecture</h2>
@@ -218,7 +218,7 @@ const isPublicMode = computed(() => route.name === 'lab-public')
           <h3 class="lab-pipeline-header">
             <ArrowRight
               class="w-5 h-5"
-              :class="project.id?.includes('line') ? 'text-green-500' : 'text-indigo-500'"
+              :class="project.id?.includes('line') ? 'text-green-500' : 'text-cyan-500'"
             />
             Technical Integration Pipeline
           </h3>
@@ -238,7 +238,7 @@ const isPublicMode = computed(() => route.name === 'lab-public')
                   :class="
                     project.id?.includes('line')
                       ? 'border-green-500 text-green-500'
-                      : 'border-indigo-500 text-indigo-500'
+                      : 'border-cyan-500 text-cyan-500'
                   "
                 >
                   {{ idx + 1 }}
@@ -273,7 +273,7 @@ const isPublicMode = computed(() => route.name === 'lab-public')
                 :class="
                   action.themeColor === 'green'
                     ? 'bg-green-500 text-white'
-                    : 'bg-indigo-500 text-white'
+                    : 'bg-cyan-500 text-white'
                 "
               >
                 <component :is="getIcon(action.iconType)" class="w-6 h-6" />
