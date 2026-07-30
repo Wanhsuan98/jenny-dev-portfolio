@@ -609,155 +609,16 @@
 
   /* --- 詳細頁 Tab 導航 --- */
   .details-tab-nav {
-    @apply flex border-b border-slate-200 dark:border-slate-700 mb-6 overflow-x-auto;
+    @apply flex items-center gap-2 p-1 w-fit rounded-full bg-slate-100 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/50 mb-6 overflow-x-auto;
   }
   .details-tab-btn {
-    @apply flex items-center gap-2 px-4 py-3 text-sm font-medium border-b-2 transition-colors duration-200 whitespace-nowrap;
+    @apply flex items-center gap-2 px-4 py-2 rounded-full text-sm font-bold transition-all duration-300 whitespace-nowrap;
   }
   .details-tab-btn-active {
-    @apply border-primary-500 text-primary-600 dark:text-primary-400;
+    @apply bg-cyan-500 text-white shadow-lg shadow-cyan-500/20;
   }
   .details-tab-btn-inactive {
-    @apply border-transparent text-slate-500 hover:text-slate-700;
-  }
-
-  /* --- 內容容器 (Content Box) --- */
-  .details-content-box {
-    @apply rounded-xl p-8 border transition-colors duration-300;
-  }
-  /* 模式：Tech */
-  .box-mode-tech {
-    @apply bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-slate-800;
-    @apply shadow-2xl;
-    @apply ring-1 ring-slate-200 dark:ring-white/5;
-  }
-  /* 模式：Gallery */
-  .box-mode-gallery {
-    @apply bg-slate-50 dark:bg-slate-800/50 border-slate-200 dark:border-slate-700;
-  }
-
-  /* --- 文字區塊樣式 (Left Column) --- */
-  /* 標籤 (Figure/Item) */
-  .details-label {
-    @apply flex items-center gap-2 font-mono text-xs font-bold uppercase tracking-wider;
-  }
-  .label-tech {
-    @apply text-cyan-400;
-  }
-  .label-gallery {
-    @apply text-primary-600 dark:text-primary-400;
-  }
-
-  /* 標題 (Title) */
-  .details-title {
-    @apply font-bold text-lg leading-tight;
-  }
-  .title-tech {
-    @apply text-slate-200;
-  }
-  .title-gallery {
-    @apply text-slate-800 dark:text-slate-200;
-  }
-
-  /* 描述 (Description) */
-  .details-desc {
-    @apply text-sm leading-relaxed border-l-2 pl-4 py-1 whitespace-pre-wrap;
-  }
-  .desc-tech {
-    @apply text-slate-300/80 font-mono border-l-2 border-cyan-500/50 pl-4;
-  }
-  .desc-gallery {
-    @apply text-slate-600 dark:text-slate-400 border-primary-500/30;
-  }
-
-  /* 底部 Tag */
-  .details-tag {
-    @apply text-[10px] px-2 py-1 rounded border;
-  }
-  .tag-tech {
-    @apply bg-slate-800 text-slate-400 border-slate-700;
-  }
-  .tag-gallery {
-    @apply bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300 border-transparent;
-  }
-
-  /* --- 圖片視窗樣式 (Right Column) --- */
-  /* 視窗外框 */
-  .details-window {
-    @apply rounded-lg border overflow-hidden shadow-lg transition-all duration-300;
-  }
-  .window-tech {
-    @apply bg-slate-950 border border-slate-800;
-    @apply rounded-lg transition-all duration-300;
-    @apply hover:border-cyan-500/30 hover:shadow-lg hover:shadow-cyan-500/10;
-  }
-  .window-gallery {
-    @apply bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-600 hover:shadow-primary-500/10;
-  }
-
-  /* 視窗標題列 (Header) */
-  .window-header {
-    @apply px-4 py-2 border-b flex items-center gap-2;
-  }
-  .header-tech {
-    @apply bg-slate-900 border-slate-800;
-  }
-  .header-gallery {
-    @apply bg-slate-100 dark:bg-slate-950 border-slate-200 dark:border-slate-800;
-  }
-
-  /* 圖片連結與背景 */
-  .window-link-wrapper {
-    @apply block relative cursor-zoom-in overflow-hidden;
-  }
-  .link-tech {
-    @apply bg-slate-900/50;
-  }
-  .link-gallery {
-    @apply bg-slate-50 dark:bg-slate-900/50;
-  }
-
-  /* 圖片本體 */
-  .window-img {
-    @apply w-full h-auto max-h-[400px] object-contain mx-auto transition-transform duration-700;
-  }
-
-  /* 懸浮遮罩 (Overlay) */
-  .window-overlay {
-    @apply absolute inset-0 opacity-0 flex items-center justify-center transition-opacity backdrop-blur-[1px];
-  }
-  .overlay-tech {
-    @apply bg-slate-900/40;
-  }
-  .overlay-gallery {
-    @apply bg-slate-900/10 dark:bg-slate-900/40;
-  }
-
-  /* 查看大圖按鈕 */
-  .window-zoom-btn {
-    @apply text-white text-xs font-medium bg-slate-800/90 px-4 py-2 rounded-full shadow-lg flex items-center gap-2 transform translate-y-2 transition-transform;
-  }
-
-  /* --- 分隔線 --- */
-  .details-divider {
-    @apply h-px my-12 w-full;
-  }
-  .divider-tech {
-    @apply bg-gradient-to-r from-transparent via-slate-700 to-transparent opacity-50;
-  }
-  .divider-gallery {
-    @apply bg-slate-200 dark:bg-slate-700;
-  }
-
-  /* --- 無資料狀態 --- */
-  .details-empty {
-    @apply text-center text-slate-500 py-12 border-2 border-dashed rounded-lg;
-  }
-  .empty-tech {
-    @apply border-slate-700;
-  }
-  .empty-gallery {
-    @apply border-slate-200 dark:border-slate-700;
+    @apply text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200;
   }
 
   /* =========================================
@@ -1103,7 +964,7 @@
 
   /* 專案預覽圖容器 */
   .db-project-visual {
-    @apply w-full md:w-48 h-32 rounded-2xl bg-slate-100 dark:bg-slate-700 overflow-hidden shrink-0 shadow-inner relative transition-transform duration-300;
+    @apply w-full h-48 rounded-2xl bg-slate-100 dark:bg-slate-700 overflow-hidden shadow-inner relative transition-transform duration-300;
   }
 
   /* 社交連結按鈕 (Hero) */
@@ -1210,7 +1071,7 @@
     @apply text-sm text-slate-600 dark:text-slate-400 leading-relaxed font-medium line-clamp-2;
   }
   .db-card-inner {
-    @apply flex flex-col md:flex-row gap-6 items-start;
+    @apply flex flex-col gap-4;
   }
 
   /* Engineering Standards Accordion */
@@ -1307,9 +1168,6 @@
   }
   .db-project-mockup-badge {
     @apply absolute bottom-2 right-2 bg-slate-900/70 backdrop-blur-md text-white/90 text-[10px] px-2 py-1 rounded border border-white/10 shadow-sm flex items-center gap-1.5 font-bold tracking-wider pointer-events-none z-20;
-  }
-  .db-load-more-btn {
-    @apply flex items-center gap-2 px-6 py-2.5 rounded-full bg-cyan-50 hover:bg-cyan-100 dark:bg-cyan-500/10 dark:hover:bg-cyan-500/20 text-sm font-semibold text-cyan-600 dark:text-cyan-400 transition-all duration-300;
   }
 
   /* Experience Timeline */

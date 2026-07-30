@@ -47,12 +47,13 @@ export interface Project {
   status?: 'Active' | 'Completed' | 'Pending'
   isConfidential: boolean
   isLab?: boolean
-  isFeatured?: boolean
+  isMockupImage?: boolean
   techFrontend: string
   techDatabase: string
   techDeployment: string
   techCore?: string
   description: string
+  coverImage?: string
   screenshots?: (string | ImageDetail)[]
   architectureImages?: (string | ImageDetail)[]
   tabs: ProjectTab[]
