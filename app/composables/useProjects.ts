@@ -1,10 +1,8 @@
 /**
- * 主要功能:
- * 1. 列表監聽: 負責從 Firestore 抓取整份清單。
- * 2. 新增專案 (Add): 因為新增是將資料丟入「集合」中，所以歸類在此。
+ * 列表監聽: 負責從 Firestore 抓取整份清單。
  */
 import { ref, onUnmounted } from 'vue'
-import { collection, query, orderBy, onSnapshot, addDoc, serverTimestamp } from 'firebase/firestore'
+import { collection, query, orderBy, onSnapshot } from 'firebase/firestore'
 import type { Project } from '../types/project'
 
 export function useProjects() {
@@ -44,28 +42,10 @@ export function useProjects() {
     if (unsubscribe) unsubscribe()
   })
 
-  // 新增專案
-  const addProject = async (formData: Project) => {
-    const { $db } = useNuxtApp()
-    if (!$db) throw new Error('Database not initialized')
-
-    try {
-      await addDoc(collection($db, 'projects'), {
-        ...formData,
-        createdAt: serverTimestamp(),
-      })
-      return true
-    } catch (err) {
-      console.error(err)
-      throw err
-    }
-  }
-
   return {
     projects,
     isLoading,
     error,
     initProjectsListener,
-    addProject,
   }
 }
