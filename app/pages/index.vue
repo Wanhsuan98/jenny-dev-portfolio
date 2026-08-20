@@ -107,7 +107,7 @@ const metrics = [
     <AppHeader />
 
     <div class="relative z-10 flex-grow flex items-center py-6">
-      <div class="w-full p-4 md:p-8 max-w-6xl mx-auto space-y-20 animate-in fade-in duration-700">
+      <div class="w-full p-4 md:p-8 max-w-7xl mx-auto space-y-20 animate-in fade-in duration-700">
         <BaseLoading v-if="loading" message="正在從 Firebase 載入個人資料..." />
 
         <template v-else-if="profile">

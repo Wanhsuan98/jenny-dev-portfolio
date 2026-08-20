@@ -30,7 +30,7 @@ onMounted(() => {
     <AppHeader />
 
     <div class="pt-8 pb-20 relative z-10 flex-grow">
-      <div class="p-4 md:p-8 max-w-6xl mx-auto space-y-20 animate-in fade-in duration-700">
+      <div class="p-4 md:p-8 max-w-7xl mx-auto space-y-20 animate-in fade-in duration-700">
         <section id="research-reports" class="pt-8">
           <ResearchReportsSection :reports="researchReports" />
         </section>

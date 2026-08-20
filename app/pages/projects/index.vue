@@ -1,7 +1,5 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
-// import { Cpu, Database, Globe } from 'lucide-vue-next'
-import type { ImageDetail } from '../../types/project'
 
 definePageMeta({
   layout: false,
@@ -9,198 +7,25 @@ definePageMeta({
 
 const { projects, initProjectsListener } = useProjects()
 
-// 重點專案
-const featuredProjects = computed(() => {
-  return projects.value.filter((p) => {
-    return p.isLab || p.isFeatured || p.name?.includes('水利署') || p.name?.includes('外交部')
-  })
-})
+type TabKey = 'production' | 'lab'
+
+const TABS: { key: TabKey; label: string; subtitle: string }[] = [
+  { key: 'production', label: '落地專案', subtitle: '實際交付予客戶或組織之正式專案' },
+  { key: 'lab', label: 'Side Project', subtitle: '個人研發與技術探索之實驗性專案' },
+]
+
+const activeTab = ref<TabKey>('production')
+
+const productionProjects = computed(() => projects.value.filter((p) => !p.isLab))
+const labProjects = computed(() => projects.value.filter((p) => p.isLab))
+
+const displayedProjects = computed(() =>
+  activeTab.value === 'production' ? productionProjects.value : labProjects.value,
+)
 
 onMounted(() => {
   initProjectsListener()
 })
-
-type RelatedProject = {
-  id?: string
-  name?: string
-  isLab?: boolean
-  description?: string
-  screenshots?: (string | ImageDetail)[]
-  techFrontend?: string
-}
-
-type SkillTag = {
-  name: string
-  projects: RelatedProject[]
-}
-
-const isTechExplorerOpen = ref(false)
-const selectedExplorerTech = ref<SkillTag | null>(null)
-
-/*
-const techHighlights = computed(() => {
-  // 預設
-  const defaultFrontend: SkillTag[] = [
-    { name: 'Vue 3', projects: [] },
-    { name: 'TypeScript', projects: [] },
-    { name: 'Vite', projects: [] },
-    { name: 'Tailwind CSS', projects: [] },
-  ]
-  const defaultBackend: SkillTag[] = [
-    { name: 'Firebase', projects: [] },
-    { name: 'Node.js', projects: [] },
-    { name: 'Python', projects: [] },
-  ]
-  const defaultTools: SkillTag[] = [
-    { name: 'Git', projects: [] },
-    { name: 'Docker', projects: [] },
-    { name: 'Vercel', projects: [] },
-  ]
-
-  if (projects.value.length === 0) {
-    return [
-      {
-        label: 'Frontend Stack',
-        tags: defaultFrontend,
-        icon: Cpu,
-        color: 'text-cyan-400',
-        glowFrom: 'rgba(34, 211, 238, 0.4)',
-        glowTo: 'rgba(20, 184, 166, 0.4)',
-        shadowColor: 'rgba(6, 182, 212, 0.2)',
-        hoverBorder: 'hover:border-cyan-500/40 hover:text-cyan-300',
-        badgeClass: 'bg-cyan-500/10 text-cyan-400',
-      },
-      {
-        label: 'Backend & Database',
-        tags: defaultBackend,
-        icon: Database,
-        color: 'text-teal-400',
-        glowFrom: 'rgba(20, 184, 166, 0.4)',
-        glowTo: 'rgba(52, 211, 153, 0.4)',
-        shadowColor: 'rgba(20, 184, 166, 0.2)',
-        hoverBorder: 'hover:border-teal-500/40 hover:text-teal-300',
-        badgeClass: 'bg-teal-500/10 text-teal-400',
-      },
-      {
-        label: 'DevOps & Tools',
-        tags: defaultTools,
-        icon: Globe,
-        color: 'text-orange-400',
-        glowFrom: 'rgba(249, 115, 22, 0.4)',
-        glowTo: 'rgba(245, 158, 11, 0.4)',
-        shadowColor: 'rgba(249, 115, 22, 0.2)',
-        hoverBorder: 'hover:border-orange-500/40 hover:text-orange-300',
-        badgeClass: 'bg-orange-500/10 text-orange-400',
-      },
-    ]
-  }
-
-  // --- 核心技能名單 ---
-  const CORE_SKILLS = new Set([
-    'Vue3',
-    'Nuxt4',
-    'TypeScript',
-    'Tailwind CSS',
-    'Vite',
-    'Element Plus',
-    'Vuetify',
-    'LIFF SDK',
-    'Python',
-    'FastAPI',
-    'Node.js',
-    'Firestore',
-    'PostgreSQL',
-    'SQLite',
-    'SQLAlchemy',
-    'Docker',
-    'Vercel',
-    'Railway',
-    'Git',
-    'vue-i18n',
-    'Sass/SCSS',
-  ])
-
-  // --- 輔助函式：提取、去重並過濾 ---
-  const getUniqueTags = (fields: (keyof Project)[]) => {
-    const tagMap = new Map<string, SkillTag>()
-
-    projects.value.forEach((p) => {
-      fields.forEach((key) => {
-        const val = p[key]
-        if (typeof val === 'string' && val) {
-          val.split(/[,、;/\n|]/).forEach((t) => {
-            const cleanTag = t.trim()
-            if (cleanTag && (CORE_SKILLS.has(cleanTag) || projects.value.length === 0)) {
-              if (!tagMap.has(cleanTag)) {
-                tagMap.set(cleanTag, {
-                  name: cleanTag,
-                  projects: [],
-                })
-              }
-              const currentTag = tagMap.get(cleanTag)!
-              // 防止同一個專案被重複加入同一個技術標籤
-              if (!currentTag.projects.find((proj) => proj.id === p.id)) {
-                currentTag.projects.push({
-                  id: p.id,
-                  name: p.name,
-                  isLab: !!p.isLab,
-                  description: p.description,
-                })
-              }
-            }
-          })
-        }
-      })
-    })
-    return Array.from(tagMap.values())
-  }
-
-  const frontendTags = getUniqueTags(['techFrontend', 'techCore'])
-  const backendTags = getUniqueTags(['techDatabase'])
-  const deploymentTags = getUniqueTags(['techDeployment'])
-
-  return [
-    {
-      label: 'Frontend Stack',
-      tags: frontendTags.length ? frontendTags : defaultFrontend,
-      icon: Cpu,
-      color: 'text-cyan-400',
-      glowFrom: 'rgba(34, 211, 238, 0.4)',
-      glowTo: 'rgba(20, 184, 166, 0.4)',
-      shadowColor: 'rgba(6, 182, 212, 0.2)',
-      hoverBorder: 'hover:border-cyan-500/40 hover:text-cyan-300',
-      badgeClass: 'bg-cyan-500/10 text-cyan-400',
-    },
-    {
-      label: 'Backend & Database',
-      tags: backendTags.length ? backendTags : defaultBackend,
-      icon: Database,
-      color: 'text-teal-400',
-      glowFrom: 'rgba(20, 184, 166, 0.4)',
-      glowTo: 'rgba(52, 211, 153, 0.4)',
-      shadowColor: 'rgba(20, 184, 166, 0.2)',
-      hoverBorder: 'hover:border-teal-500/40 hover:text-teal-300',
-      badgeClass: 'bg-teal-500/10 text-teal-400',
-    },
-    {
-      label: 'DevOps & Tools',
-      tags: deploymentTags.length ? deploymentTags : defaultTools,
-      icon: Globe,
-      color: 'text-orange-400',
-      glowFrom: 'rgba(249, 115, 22, 0.4)',
-      glowTo: 'rgba(245, 158, 11, 0.4)',
-      shadowColor: 'rgba(249, 115, 22, 0.2)',
-      hoverBorder: 'hover:border-orange-500/40 hover:text-orange-300',
-      badgeClass: 'bg-orange-500/10 text-orange-400',
-    },
-  ]
-})
-
-const handleTechClick = (tag: SkillTag) => {
-  selectedExplorerTech.value = tag
-  isTechExplorerOpen.value = true
-}
-*/
 </script>
 
 <template>
@@ -221,72 +46,36 @@ const handleTechClick = (tag: SkillTag) => {
     <AppHeader />
 
     <div class="pt-8 pb-20 relative z-10 flex-grow">
-      <div class="p-4 md:p-8 max-w-6xl mx-auto space-y-20 animate-in fade-in duration-700">
-        <!-- 2. Core Tech Stack Section (Interactive glowing grid cards) -->
-        <!--
-        <section id="showcase" class="space-y-6 pt-8">
-          <div class="space-y-2">
-            <h2 class="text-3xl font-black tracking-tight">Core Tech Stack</h2>
-            <p class="text-slate-500 dark:text-slate-400 text-sm font-mono">// Click tags to filter projects</p>
-          </div>
+      <div class="p-4 md:p-8 max-w-7xl mx-auto space-y-8 animate-in fade-in duration-700">
+        <!-- Tab Switcher -->
+        <div
+          class="flex items-center gap-2 p-1 w-fit rounded-full bg-slate-100 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/50"
+        >
+          <button
+            v-for="tab in TABS"
+            :key="tab.key"
+            @click="activeTab = tab.key"
+            class="px-5 py-2 rounded-full text-sm font-bold transition-all duration-300"
+            :class="
+              activeTab === tab.key
+                ? 'bg-cyan-500 text-white shadow-lg shadow-cyan-500/20'
+                : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
+            "
+          >
+            {{ tab.label }}
+          </button>
+        </div>
 
-          <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <div
-              v-for="tech in techHighlights"
-              :key="tech.label"
-              class="tech-card group/tech-card"
-              :style="{
-                '--glow-from': tech.glowFrom,
-                '--glow-to': tech.glowTo,
-                '--shadow-color': tech.shadowColor
-              }"
-            >
-              <div class="flex items-center gap-3 mb-6 relative z-10">
-                <div class="p-2.5 rounded-xl bg-slate-950/60 border border-slate-800 group-hover/tech-card:border-slate-700 transition-colors" :class="tech.color">
-                  <component :is="tech.icon" class="w-6 h-6" />
-                </div>
-                <h3 class="text-lg font-bold text-slate-200">{{ tech.label }}</h3>
-              </div>
-
-              <div class="flex flex-wrap gap-2.5 relative z-10">
-                <button
-                  v-for="tag in tech.tags"
-                  :key="tag.name"
-                  @click="handleTechClick(tag)"
-                  class="px-3.5 py-1.5 rounded-xl text-xs font-bold font-mono transition-all duration-300 flex items-center gap-2 border"
-                  :class="[
-                    tag.projects.length > 0 
-                      ? ['cursor-pointer bg-slate-950/40 border-slate-800/80 text-slate-300 hover:bg-slate-950/80', tech.hoverBorder] 
-                      : 'cursor-default bg-slate-950/10 border-transparent text-slate-500'
-                  ]"
-                >
-                  <span>{{ tag.name }}</span>
-                  <span v-if="tag.projects.length > 1" class="px-1.5 py-0.5 rounded-md text-[10px] font-bold" :class="tech.badgeClass">
-                    {{ tag.projects.length }}
-                  </span>
-                  <span v-else-if="tag.projects.length === 1" class="w-1.5 h-1.5 rounded-full bg-slate-500/40"></span>
-                </button>
-              </div>
-            </div>
-          </div>
-        </section>
-        -->
-
-        <!-- 3. Projects Showcase -->
-        <section id="tech-stack" class="space-y-6 pt-8">
-          <ProjectShowcaseSection :projects="featuredProjects" />
-        </section>
+        <!-- Projects Showcase -->
+        <ProjectShowcaseSection
+          :key="activeTab"
+          :projects="displayedProjects"
+          :subtitle="TABS.find((t) => t.key === activeTab)?.subtitle"
+        />
       </div>
     </div>
 
     <AppFooter />
-
-    <!-- Tech Explorer Modal -->
-    <TechExplorerModal
-      :is-open="isTechExplorerOpen"
-      :selected-tech="selectedExplorerTech"
-      @close="isTechExplorerOpen = false"
-    />
   </div>
 </template>
 
@@ -305,51 +94,5 @@ const handleTechClick = (tag: SkillTag) => {
 
 .animate-pulse-slow {
   animation: pulse-slow 10s ease-in-out infinite;
-}
-
-.tech-card {
-  position: relative;
-  background: rgba(255, 255, 255, 0.6);
-  border: 1px solid rgba(226, 232, 240, 0.8);
-  border-radius: 1rem;
-  padding: 1.5rem;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  overflow: hidden;
-}
-
-.dark .tech-card {
-  background: rgba(15, 23, 42, 0.4);
-  border: 1px solid rgba(148, 163, 184, 0.1);
-}
-
-.tech-card::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: 1rem;
-  padding: 1.5px;
-  background: linear-gradient(to bottom right, var(--glow-from), var(--glow-to));
-  -webkit-mask:
-    linear-gradient(#fff 0 0) content-box,
-    linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
-  opacity: 0;
-  transition: opacity 0.4s ease;
-  pointer-events: none;
-}
-
-.tech-card:hover {
-  transform: translateY(-4px);
-  border-color: transparent;
-  box-shadow:
-    0 10px 30px -10px rgba(0, 0, 0, 0.5),
-    0 0 20px -5px var(--shadow-color);
-}
-
-.tech-card:hover::before {
-  opacity: 1;
 }
 </style>

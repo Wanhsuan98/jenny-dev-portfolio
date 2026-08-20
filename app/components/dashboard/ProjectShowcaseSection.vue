@@ -1,48 +1,42 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
-import { Zap, Layout, ChevronRight, ChevronDown } from 'lucide-vue-next'
+import { ref } from 'vue'
+import { Zap, Layout, ChevronRight } from 'lucide-vue-next'
 import type { ImageDetail } from '@/types/project'
 
 type RelatedProject = {
   id?: string
   name?: string
   isLab?: boolean
+  isMockupImage?: boolean
   description?: string
+  coverImage?: string
   screenshots?: (string | ImageDetail)[]
   techFrontend?: string
 }
 
-const props = defineProps<{
-  projects: RelatedProject[]
-}>()
-
-const isExpanded = ref(false)
-
-const displayedProjects = computed(() => {
-  if (isExpanded.value) {
-    return props.projects
-  }
-  return props.projects.slice(0, 2)
-})
-
-const PROJECT_THEMES = [
-  { keyword: 'LINE', image: '/projects/line-checkin.png', isMockup: false },
-  { keyword: 'LEGO', image: '/projects/lego-moc.png', isMockup: false },
-  { keyword: '水利署', image: '/projects/wra-mockup.png', isMockup: true },
-  { keyword: '全球合作暨訓練架構後台', image: '/projects/gctf-mockup.png', isMockup: true },
+const props = withDefaults(
+  defineProps<{
+    projects: RelatedProject[]
+    subtitle?: string
+  }>(),
   {
-    keyword: '全球合作暨訓練架構官網',
-    image: '/projects/gctf-official-website.png',
-    isMockup: false,
+    subtitle: '專案核心技術與架構之解析',
   },
-]
+)
 
-const getProjectTheme = (project: RelatedProject) => {
-  return PROJECT_THEMES.find((theme) => project.name?.includes(theme.keyword))
+// 圖片載入失敗時(例如 Firestore 資料中的 screenshots URL 已失效),改用預設的架構圖示佔位畫面
+const brokenImageIds = ref(new Set<string>())
+
+const getProjectImage = (project: RelatedProject) => {
+  if (project.id && brokenImageIds.value.has(project.id)) return undefined
+  const cover = project.coverImage || project.screenshots?.[0]
+  if (!cover) return undefined
+  return typeof cover === 'string' ? cover : cover.url
 }
 
-const getProjectImage = (project: RelatedProject) => getProjectTheme(project)?.image
-const isMockupImage = (project: RelatedProject) => getProjectTheme(project)?.isMockup || false
+const handleImageError = (project: RelatedProject) => {
+  if (project.id) brokenImageIds.value.add(project.id)
+}
 </script>
 
 <template>
@@ -53,15 +47,15 @@ const isMockupImage = (project: RelatedProject) => getProjectTheme(project)?.isM
       </div>
       <div>
         <h2 class="db-section-title">Feature Showcases</h2>
-        <p class="db-section-subtitle text-slate-400">專案核心技術與架構之解析</p>
+        <p class="db-section-subtitle text-slate-400">{{ props.subtitle }}</p>
       </div>
     </div>
 
-    <div class="space-y-6">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
       <!-- 重點專案展示 -->
       <transition-group name="fade-list">
         <div
-          v-for="project in displayedProjects"
+          v-for="project in props.projects"
           :key="project.id"
           class="db-card db-card-hover group relative fade-list-item"
         >
@@ -74,9 +68,10 @@ const isMockupImage = (project: RelatedProject) => getProjectTheme(project)?.isM
                   class="w-full h-full object-cover"
                   loading="lazy"
                   decoding="async"
-                  alt=""
+                  :alt="project.name || '專案截圖'"
+                  @error="handleImageError(project)"
                 />
-                <div v-if="isMockupImage(project)" class="db-project-mockup-badge">
+                <div v-if="project.isMockupImage" class="db-project-mockup-badge">
                   <Layout class="w-3 h-3 opacity-70" />
                   此為示意圖
                 </div>
@@ -142,13 +137,6 @@ const isMockupImage = (project: RelatedProject) => getProjectTheme(project)?.isM
           </div>
         </div>
       </transition-group>
-    </div>
-
-    <div v-if="props.projects.length > 2 && !isExpanded" class="mt-8 flex justify-center">
-      <button @click="isExpanded = true" class="db-load-more-btn">
-        載入更多專案 (Load More Projects)
-        <ChevronDown class="w-4 h-4" />
-      </button>
     </div>
   </section>
 </template>

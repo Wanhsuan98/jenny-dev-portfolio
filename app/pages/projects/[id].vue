@@ -15,6 +15,7 @@ import {
   ChevronLeft,
   Code2,
   Layout,
+  Info,
   Lock,
   ExternalLink,
 } from 'lucide-vue-next'
@@ -28,7 +29,7 @@ const { project, isLoading, errorMsg } = useProject(() => projectId)
 const activeTabId = ref<string>('')
 
 const handleBack = () => {
-  navigateTo('/')
+  navigateTo('/projects', { replace: true })
 }
 
 // 資料標準化 Computed
@@ -80,6 +81,21 @@ watch(
 const activeTabContent = computed(() => {
   return normalizedProject.value?.tabs.find((t) => t.id === activeTabId.value)
 })
+
+// 標題區封面圖(圖片載入失敗時退回純文字標題)
+const coverImageBroken = ref(false)
+watch(
+  () => project.value?.id,
+  () => {
+    coverImageBroken.value = false
+  },
+)
+const coverImage = computed(() => {
+  if (coverImageBroken.value) return undefined
+  const cover = project.value?.coverImage || project.value?.screenshots?.[0]
+  if (!cover) return undefined
+  return typeof cover === 'string' ? cover : cover.url
+})
 </script>
 
 <template>
@@ -87,273 +103,171 @@ const activeTabContent = computed(() => {
     class="min-h-screen bg-slate-50 dark:bg-slate-900 transition-colors duration-300 flex flex-col"
   >
     <AppHeader />
-    <div class="flex-grow p-6 max-w-7xl mx-auto space-y-6 animate-in">
-      <div class="flex items-center justify-between">
-        <button
-          @click="handleBack"
-          class="flex items-center gap-1 text-slate-500 hover:text-primary-600 transition-colors"
-        >
-          <ChevronLeft class="w-4 h-4" />
-          <span>返回履歷</span>
-        </button>
-      </div>
+    <div class="flex-grow p-6 max-w-7xl mx-auto space-y-8 animate-in">
+      <button @click="handleBack" class="report-back-btn group">
+        <ChevronLeft class="report-back-btn-icon" />
+        返回履歷
+      </button>
 
       <BaseLoading v-if="isLoading" message="正在取得專案詳情資料..." />
-      <div v-else-if="errorMsg" class="card p-12 text-center text-red-500">{{ errorMsg }}</div>
+      <div v-else-if="errorMsg" class="report-detail-card p-12 text-center text-red-500 max-w-none">
+        {{ errorMsg }}
+      </div>
 
       <template v-else>
-        <div class="space-y-8">
-          <div class="card overflow-hidden">
-            <div class="card-header flex flex-col md:flex-row md:items-end justify-between gap-4">
-              <div>
-                <div class="flex items-center gap-3 mb-3">
-                  <StatusBadge :status="project?.status || 'Active'" />
-                  <span class="text-meta">ID: {{ projectId }}</span>
-                </div>
-                <div class="flex flex-col sm:flex-row sm:items-center gap-4">
-                  <h1 class="page-title text-4xl">{{ project?.name }}</h1>
-                  <NuxtLink
-                    v-if="project?.name?.includes('LINE')"
-                    to="/liff"
-                    class="flex items-center gap-2 px-4 py-1.5 bg-[#00b900] hover:bg-[#00a300] text-white rounded-full text-sm font-bold transition-all shadow-md hover:shadow-[#00b900]/20 shrink-0 w-fit"
-                  >
-                    <ExternalLink class="w-4 h-4" />
-                    立即體驗
-                  </NuxtLink>
-                </div>
-                <p class="text-meta mt-2">建立時間：{{ formatDate(project?.createdAt) }}</p>
-              </div>
+        <header>
+          <div
+            v-if="coverImage"
+            class="relative rounded-3xl overflow-hidden shadow-xl aspect-[21/9] bg-slate-100 dark:bg-slate-800"
+          >
+            <img
+              :src="coverImage"
+              :alt="project?.name || '專案封面'"
+              class="w-full h-full object-cover"
+              @error="coverImageBroken = true"
+            />
+            <div
+              class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent"
+            ></div>
+            <div
+              class="absolute inset-x-0 bottom-0 p-6 sm:p-8 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4"
+            >
+              <h1 class="text-3xl md:text-4xl font-black text-white tracking-tight drop-shadow-sm">
+                {{ project?.name }}
+              </h1>
+              <NuxtLink
+                v-if="project?.name?.includes('LINE')"
+                to="/liff"
+                class="flex items-center gap-2 px-4 py-1.5 bg-[#00b900] hover:bg-[#00a300] text-white rounded-full text-sm font-bold transition-all shadow-md hover:shadow-[#00b900]/20 shrink-0 w-fit"
+              >
+                <ExternalLink class="w-4 h-4" />
+                立即體驗
+              </NuxtLink>
             </div>
+          </div>
+
+          <div v-else class="flex flex-col sm:flex-row sm:items-center gap-4">
+            <h1 class="page-title text-4xl">{{ project?.name }}</h1>
+            <NuxtLink
+              v-if="project?.name?.includes('LINE')"
+              to="/liff"
+              class="flex items-center gap-2 px-4 py-1.5 bg-[#00b900] hover:bg-[#00a300] text-white rounded-full text-sm font-bold transition-all shadow-md hover:shadow-[#00b900]/20 shrink-0 w-fit"
+            >
+              <ExternalLink class="w-4 h-4" />
+              立即體驗
+            </NuxtLink>
+          </div>
+        </header>
+
+        <section class="space-y-4">
+          <div class="report-detail-section-title">
+            <Info class="w-6 h-6 text-amber-500" />
+            專案背景與核心貢獻
+          </div>
+          <div class="report-detail-card max-w-none space-y-6">
+            <p>{{ project?.description || '尚無專案描述' }}</p>
 
             <div
-              class="px-8 py-8 border-b border-slate-100 dark:border-slate-800 bg-slate-50/30 dark:bg-slate-900/40"
+              class="flex flex-wrap gap-x-10 gap-y-4 pt-5 border-t border-slate-100 dark:border-slate-700/50"
             >
-              <h3 class="text-lg font-semibold text-slate-800 dark:text-slate-200 mb-4">
-                專案背景與核心貢獻
-              </h3>
-              <div
-                class="detail-label leading-relaxed whitespace-pre-line max-w-3xl text-slate-600 dark:text-slate-300"
-              >
-                {{ project?.description || '尚無專案描述' }}
-              </div>
-            </div>
-
-            <div class="p-8 grid grid-cols-1 lg:grid-cols-3 gap-12">
-              <div
-                class="lg:col-span-1 space-y-8 border-r border-slate-100 dark:border-slate-700 pr-8 h-fit lg:sticky lg:top-8"
-              >
+              <div class="tech-stack-item">
+                <Monitor class="tech-icon text-blue-500" />
                 <div>
-                  <h3 class="detail-label">技術棧 Stack</h3>
-                  <div class="space-y-4">
-                    <div class="tech-stack-item">
-                      <Monitor class="tech-icon text-blue-500" />
-                      <div>
-                        <p class="tech-category-label">Frontend</p>
-                        <p class="tech-content-text">{{ project?.techFrontend }}</p>
-                      </div>
-                    </div>
-                    <div v-if="project?.techDatabase" class="tech-stack-item">
-                      <Database class="tech-icon text-green-500" />
-                      <div>
-                        <p class="tech-category-label">Database</p>
-                        <p class="tech-content-text">{{ project?.techDatabase }}</p>
-                      </div>
-                    </div>
-                    <div v-if="project?.techDeployment" class="tech-stack-item">
-                      <Cloud class="tech-icon text-cyan-500" />
-                      <div>
-                        <p class="tech-category-label">Deployment</p>
-                        <p class="tech-content-text">{{ project?.techDeployment }}</p>
-                      </div>
-                    </div>
-                    <div v-if="project?.techCore" class="tech-stack-item">
-                      <Package class="tech-icon text-orange-500" />
-                      <div>
-                        <p class="tech-category-label">Key Packages</p>
-                        <p class="tech-content-text">{{ project?.techCore }}</p>
-                      </div>
-                    </div>
-                  </div>
+                  <p class="tech-category-label">Frontend</p>
+                  <p class="tech-content-text">{{ project?.techFrontend }}</p>
                 </div>
               </div>
-
-              <div class="lg:col-span-2 space-y-8">
-                <div v-if="project?.isConfidential" class="nda-alert">
-                  <Lock class="w-5 h-5 text-amber-600 dark:text-amber-500 mt-0.5 shrink-0" />
-                  <div class="space-y-1">
-                    <p class="nda-title">保密聲明 (Confidentiality Notice)</p>
-                    <p class="nda-desc">
-                      受限於保密協議
-                      (NDA)，部分敏感介面細節已進行遮蔽處理。下方的圖表旨在呈現核心工程架構與資料治理邏輯。
-                      <span class="block mt-1 opacity-75 leading-tight">
-                        Due to NDA restrictions, internal UI details are redacted. The diagrams
-                        below visualize the core engineering architecture and data governance logic.
-                      </span>
-                    </p>
-                  </div>
+              <div v-if="project?.techDatabase" class="tech-stack-item">
+                <Database class="tech-icon text-green-500" />
+                <div>
+                  <p class="tech-category-label">Database</p>
+                  <p class="tech-content-text">{{ project?.techDatabase }}</p>
                 </div>
-
-                <div class="details-tab-nav">
-                  <button
-                    v-for="tab in normalizedProject?.tabs"
-                    :key="tab.id"
-                    @click="activeTabId = tab.id"
-                    class="details-tab-btn"
-                    :class="
-                      activeTabId === tab.id ? 'details-tab-btn-active' : 'details-tab-btn-inactive'
-                    "
-                  >
-                    <Layout v-if="tab.mode === 'gallery'" class="w-4 h-4" />
-                    <Code2 v-else class="w-4 h-4" />
-                    {{ tab.name }}
-                  </button>
+              </div>
+              <div v-if="project?.techDeployment" class="tech-stack-item">
+                <Cloud class="tech-icon text-cyan-500" />
+                <div>
+                  <p class="tech-category-label">Deployment</p>
+                  <p class="tech-content-text">{{ project?.techDeployment }}</p>
                 </div>
-
-                <div
-                  v-if="activeTabContent"
-                  class="animate-in fade-in slide-in-from-bottom-2 duration-300"
-                >
-                  <div
-                    class="details-content-box"
-                    :class="activeTabContent.mode === 'tech' ? 'box-mode-tech' : 'box-mode-gallery'"
-                  >
-                    <div v-if="activeTabContent.images.length" class="space-y-16">
-                      <div
-                        v-for="(img, index) in activeTabContent.images"
-                        :key="index"
-                        class="group relative"
-                      >
-                        <div class="grid grid-cols-1 lg:grid-cols-5 gap-8 items-start">
-                          <div class="lg:col-span-2 space-y-4 pt-2 order-2 lg:order-1">
-                            <div
-                              class="details-label"
-                              :class="
-                                activeTabContent.mode === 'tech' ? 'label-tech' : 'label-gallery'
-                              "
-                            >
-                              <component
-                                :is="activeTabContent.mode === 'tech' ? Code2 : Layout"
-                                class="w-4 h-4"
-                              />
-                              >> {{ activeTabContent.mode === 'tech' ? 'FIGURE' : 'ITEM' }}
-                              {{ 1 + index }}.0
-                            </div>
-
-                            <h4
-                              class="details-title"
-                              :class="
-                                activeTabContent.mode === 'tech' ? 'title-tech' : 'title-gallery'
-                              "
-                            >
-                              {{
-                                img.caption ||
-                                (activeTabContent.mode === 'tech'
-                                  ? 'SYSTEM ARCHITECTURE'
-                                  : 'UI COMPONENT')
-                              }}
-                            </h4>
-
-                            <div
-                              class="details-desc"
-                              :class="
-                                activeTabContent.mode === 'tech' ? 'desc-tech' : 'desc-gallery'
-                              "
-                            >
-                              {{ img.description || 'No description provided.' }}
-                            </div>
-
-                            <div class="pt-4 flex items-center gap-2">
-                              <span
-                                class="details-tag"
-                                :class="
-                                  activeTabContent.mode === 'tech' ? 'tag-tech' : 'tag-gallery'
-                                "
-                              >
-                                Type:
-                                {{ activeTabContent.mode === 'tech' ? 'Diagram' : 'Screenshot' }}
-                              </span>
-                            </div>
-                          </div>
-
-                          <div class="lg:col-span-3 order-1 lg:order-2">
-                            <div
-                              class="details-window"
-                              :class="
-                                activeTabContent.mode === 'tech' ? 'window-tech' : 'window-gallery'
-                              "
-                            >
-                              <div
-                                class="window-header"
-                                :class="
-                                  activeTabContent.mode === 'tech'
-                                    ? 'header-tech'
-                                    : 'header-gallery'
-                                "
-                              >
-                                <div class="w-2.5 h-2.5 rounded-full bg-red-500/80"></div>
-                                <div class="w-2.5 h-2.5 rounded-full bg-yellow-500/80"></div>
-                                <div class="w-2.5 h-2.5 rounded-full bg-green-500/80"></div>
-                                <span
-                                  class="ml-2 text-[10px] text-slate-500 font-mono truncate max-w-[200px]"
-                                >
-                                  {{ img.caption || 'image_preview' }}.png
-                                </span>
-                              </div>
-
-                              <a
-                                :href="img.url"
-                                target="_blank"
-                                class="window-link-wrapper group"
-                                :class="
-                                  activeTabContent.mode === 'tech' ? 'link-tech' : 'link-gallery'
-                                "
-                              >
-                                <img
-                                  :src="img.url"
-                                  class="window-img group-hover:scale-105"
-                                  alt="Project Image"
-                                />
-                                <div
-                                  class="window-overlay group-hover:opacity-100"
-                                  :class="
-                                    activeTabContent.mode === 'tech'
-                                      ? 'overlay-tech'
-                                      : 'overlay-gallery'
-                                  "
-                                >
-                                  <span class="window-zoom-btn group-hover:translate-y-0">
-                                    <span class="text-lg"><ExternalLink class="w-4 h-4" /></span>
-                                    點擊查看原始大圖
-                                  </span>
-                                </div>
-                              </a>
-                            </div>
-                          </div>
-                        </div>
-
-                        <div
-                          v-if="index !== activeTabContent.images.length - 1"
-                          class="details-divider"
-                          :class="
-                            activeTabContent.mode === 'tech' ? 'divider-tech' : 'divider-gallery'
-                          "
-                        ></div>
-                      </div>
-                    </div>
-
-                    <div
-                      v-else
-                      class="details-empty"
-                      :class="activeTabContent.mode === 'tech' ? 'empty-tech' : 'empty-gallery'"
-                    >
-                      暫無圖片資料
-                    </div>
-                  </div>
+              </div>
+              <div v-if="project?.techCore" class="tech-stack-item">
+                <Package class="tech-icon text-orange-500" />
+                <div>
+                  <p class="tech-category-label">Key Packages</p>
+                  <p class="tech-content-text">{{ project?.techCore }}</p>
                 </div>
               </div>
             </div>
           </div>
+        </section>
+
+        <div v-if="project?.isConfidential" class="nda-alert">
+          <Lock class="w-5 h-5 text-amber-600 dark:text-amber-500 mt-0.5 shrink-0" />
+          <div class="space-y-1">
+            <p class="nda-title">保密聲明 (Confidentiality Notice)</p>
+            <p class="nda-desc">
+              受限於保密協議
+              (NDA)，部分敏感介面細節已進行遮蔽處理。下方內容旨在分享核心工程架構與資料治理邏輯的設計思路。
+              <span class="block mt-1 opacity-75 leading-tight">
+                Due to NDA restrictions, internal UI details are redacted. The notes below share the
+                design thinking behind the core engineering architecture and data governance logic.
+              </span>
+            </p>
+          </div>
         </div>
+
+        <section class="space-y-4">
+          <div class="details-tab-nav">
+            <button
+              v-for="tab in normalizedProject?.tabs"
+              :key="tab.id"
+              @click="activeTabId = tab.id"
+              class="details-tab-btn"
+              :class="
+                activeTabId === tab.id ? 'details-tab-btn-active' : 'details-tab-btn-inactive'
+              "
+            >
+              <Layout v-if="tab.mode === 'gallery'" class="w-4 h-4" />
+              <Code2 v-else class="w-4 h-4" />
+              {{ tab.name }}
+            </button>
+          </div>
+
+          <div
+            v-if="activeTabContent"
+            class="animate-in fade-in slide-in-from-bottom-2 duration-300"
+          >
+            <div
+              v-if="activeTabContent.images.length"
+              class="report-detail-card max-w-none space-y-6"
+            >
+              <div
+                v-for="(img, index) in activeTabContent.images"
+                :key="index"
+                class="flex items-start gap-4"
+              >
+                <span
+                  class="flex items-center justify-center w-8 h-8 rounded-full bg-cyan-100 dark:bg-cyan-900/30 text-cyan-600 dark:text-cyan-400 font-bold text-sm shrink-0"
+                >
+                  {{ index + 1 }}
+                </span>
+                <div class="space-y-1.5 pb-1">
+                  <h4 class="text-lg font-bold text-slate-800 dark:text-white">
+                    {{ img.caption || '技術重點分享' }}
+                  </h4>
+                  <p class="text-slate-600 dark:text-slate-300 leading-relaxed whitespace-pre-wrap">
+                    {{ img.description || 'No description provided.' }}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div v-else class="report-detail-card max-w-none text-center text-slate-400">
+              暫無內容
+            </div>
+          </div>
+        </section>
       </template>
     </div>
     <AppFooter />
