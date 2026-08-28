@@ -52,12 +52,6 @@
     @apply text-white hover:text-red-400 transition-colors p-2 bg-white/10 rounded-full backdrop-blur-sm;
   }
 
-  /* 功能變體 */
-  .btn-mode-toggle {
-    @apply p-2 rounded-full transition-colors text-gray-500 hover:bg-gray-100;
-    @apply dark:text-yellow-400 dark:hover:bg-gray-700;
-  }
-
   .btn-action {
     @apply flex items-center gap-2 px-4 h-9 text-sm font-medium text-white bg-slate-800 rounded-full shadow-lg transition-all;
     @apply hover:bg-slate-700 dark:bg-cyan-600 dark:hover:bg-cyan-500;
@@ -254,45 +248,10 @@
   /* =========================================
      4. 頁面佈局 (Layout System)
      ========================================= */
-  .layout-root {
-    @apply flex h-screen font-sans overflow-hidden;
-    @apply bg-gray-50 text-gray-900;
-    @apply dark:bg-gray-900 dark:text-gray-100;
-    @apply transition-colors duration-300;
-  }
-
-  .layout-sidebar {
-    @apply w-64 flex flex-col shadow-xl z-30 shrink-0;
-    @apply bg-slate-900 dark:bg-gray-800 text-white;
-    @apply transition-transform duration-300 ease-in-out will-change-transform;
-    @apply fixed inset-y-0 left-0;
-  }
-
-  /* 手機版側邊欄遮罩 */
-  .layout-backdrop {
-    @apply fixed inset-0 bg-black/50 z-20 backdrop-blur-sm md:hidden cursor-pointer;
-    @apply transition-opacity duration-300;
-  }
-
-  .layout-sidebar-header {
-    @apply h-16 flex items-center justify-center border-b border-slate-700 bg-slate-800 relative;
-  }
-
-  .layout-main {
-    @apply flex-1 flex flex-col overflow-hidden relative;
-    @apply transition-[padding-left] duration-300 ease-in-out;
-  }
-
   .layout-header {
     @apply h-16 flex items-center justify-between px-6 sticky w-full top-0 z-50 border-b;
     @apply bg-white/70 dark:bg-slate-950/70 border-slate-200/60 dark:border-slate-800/60 backdrop-blur-xl;
     @apply transition-all duration-300;
-  }
-
-  .layout-content {
-    @apply flex-1 overflow-auto p-6;
-    @apply bg-gray-50 dark:bg-gray-900;
-    @apply transition-colors duration-300;
   }
 
   .layout-login {
@@ -450,18 +409,6 @@
   /* =========================================
      8. 導航元件 (Navigation)
      ========================================= */
-  .nav-item {
-    @apply flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200;
-  }
-  .nav-item-active {
-    @apply bg-primary-600 text-white shadow-md shadow-primary-900/20;
-  }
-  .nav-item-inactive {
-    @apply text-slate-400 hover:bg-slate-800 hover:text-white;
-  }
-  .nav-label {
-    @apply px-3 mb-2 text-xs font-semibold text-slate-500 uppercase tracking-wider;
-  }
   .header-nav {
     @apply hidden md:flex items-center gap-6;
   }
@@ -552,11 +499,6 @@
     @apply hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400 dark:text-yellow-400;
   }
 
-  /* 側邊欄 Logo 容器 */
-  .sidebar-logo-container {
-    @apply w-8 h-8 bg-gradient-to-tr from-primary-500 to-primary-700 rounded-lg flex items-center justify-center shadow-lg;
-  }
-
   /* Demo 標籤 */
   .badge-demo {
     @apply bg-cyan-500/20 text-cyan-300 text-[10px] px-1.5 py-0.5 rounded border border-cyan-500/30;
@@ -573,27 +515,87 @@
     @apply relative inline-flex rounded-full h-2 w-2 bg-green-500;
   }
 
-  /* 底部資訊區塊 */
-  .sidebar-footer {
-    @apply p-4 border-t border-slate-700/50 bg-slate-900/50;
-  }
-
   /* =========================================
-   9. 專案細節元件 (Project Details)
+   9. 專案細節頁 (Project Detail)
    ========================================= */
 
-  /* --- 技術棧 (Tech Stack) --- */
-  .tech-stack-item {
-    @apply flex items-start gap-3;
+  /* --- 版面容器 --- */
+  .project-detail-page {
+    @apply min-h-screen bg-slate-50 dark:bg-slate-900 transition-colors duration-300 flex flex-col;
   }
-  .tech-icon {
-    @apply w-5 h-5 mt-1;
+  .project-detail-container {
+    @apply flex-grow p-6 max-w-7xl mx-auto space-y-10 animate-in;
   }
-  .tech-category-label {
-    @apply text-xs text-slate-400 font-bold uppercase;
+
+  /* --- 主視覺 Hero --- */
+  .project-detail-hero {
+    @apply relative rounded-3xl overflow-hidden shadow-xl bg-slate-100 dark:bg-slate-800;
   }
-  .tech-content-text {
-    @apply text-slate-600 dark:text-slate-300 font-medium;
+  .project-detail-hero-overlay {
+    @apply absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent;
+  }
+
+  /* --- 技術棧橫幅 (Meta Bar) --- */
+  .project-detail-meta-bar {
+    @apply flex flex-wrap gap-3;
+  }
+  .project-detail-meta-pill {
+    @apply flex items-center gap-2.5 px-4 py-2.5 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700/50 shadow-sm;
+  }
+  .project-detail-meta-icon {
+    @apply w-4 h-4 shrink-0;
+  }
+  .project-detail-meta-label {
+    @apply text-[10px] uppercase tracking-wider text-slate-400 font-bold leading-none;
+  }
+  .project-detail-meta-value {
+    @apply text-sm font-semibold text-slate-700 dark:text-slate-200 leading-tight mt-0.5;
+  }
+
+  /* --- 側邊導覽 + 內容分割版面 --- */
+  .project-detail-grid {
+    @apply grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12;
+  }
+  .project-detail-side-card {
+    @apply lg:sticky lg:top-28 bg-white dark:bg-slate-800 rounded-3xl border border-slate-200 dark:border-slate-700/50 shadow-xl shadow-slate-200/50 dark:shadow-none p-6 sm:p-7 space-y-6;
+  }
+  .project-detail-side-desc {
+    @apply text-slate-600 dark:text-slate-300 leading-relaxed text-sm whitespace-pre-line;
+  }
+  .project-detail-nav-label {
+    @apply text-xs font-bold uppercase tracking-wider text-slate-400 mb-2;
+  }
+  .project-detail-nav-btn {
+    @apply flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-sm font-semibold transition-all duration-300 text-left border-l-2;
+  }
+  .project-detail-nav-btn-active {
+    @apply bg-cyan-50 dark:bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 border-cyan-500;
+  }
+  .project-detail-nav-btn-inactive {
+    @apply text-slate-500 dark:text-slate-400 border-transparent hover:bg-slate-50 dark:hover:bg-slate-700/40 hover:text-slate-700 dark:hover:text-slate-200;
+  }
+
+  /* --- 內容時間軸 (Timeline) --- */
+  .project-detail-timeline {
+    @apply relative space-y-10;
+  }
+  .project-detail-timeline-line {
+    @apply absolute left-5 top-2 bottom-2 w-px bg-slate-200 dark:bg-slate-700/50;
+  }
+  .project-detail-item {
+    @apply relative pl-14;
+  }
+  .project-detail-item-node {
+    @apply absolute left-0 top-0 flex items-center justify-center w-10 h-10 rounded-full bg-cyan-500 text-white font-bold text-sm shadow-lg shadow-cyan-500/30 ring-4 ring-slate-50 dark:ring-slate-900 z-10;
+  }
+  .project-detail-item-title {
+    @apply text-lg font-bold text-slate-800 dark:text-white mb-1.5;
+  }
+  .project-detail-item-desc {
+    @apply text-slate-600 dark:text-slate-300 leading-relaxed whitespace-pre-wrap text-sm sm:text-base;
+  }
+  .project-detail-empty {
+    @apply text-center text-slate-400 py-16 rounded-3xl border border-dashed border-slate-200 dark:border-slate-700/50;
   }
 
   /* --- NDA 警示區塊 --- */
@@ -605,20 +607,6 @@
   }
   .nda-desc {
     @apply text-xs text-amber-800/80 dark:text-amber-400/80 leading-relaxed;
-  }
-
-  /* --- 詳細頁 Tab 導航 --- */
-  .details-tab-nav {
-    @apply flex items-center gap-2 p-1 w-fit rounded-full bg-slate-100 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/50 mb-6 overflow-x-auto;
-  }
-  .details-tab-btn {
-    @apply flex items-center gap-2 px-4 py-2 rounded-full text-sm font-bold transition-all duration-300 whitespace-nowrap;
-  }
-  .details-tab-btn-active {
-    @apply bg-cyan-500 text-white shadow-lg shadow-cyan-500/20;
-  }
-  .details-tab-btn-inactive {
-    @apply text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200;
   }
 
   /* =========================================

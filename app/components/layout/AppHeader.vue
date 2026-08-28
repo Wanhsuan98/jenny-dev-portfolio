@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { Menu, Moon, Sun, Home } from 'lucide-vue-next'
+import { Moon, Sun, Home } from 'lucide-vue-next'
 
-const emit = defineEmits(['toggle-sidebar'])
 const route = useRoute()
 
 const isPublicRoute = computed(() => {
@@ -25,10 +24,6 @@ const { isDark, toggleDark } = useTheme()
     <div class="header-glow-line"></div>
 
     <div class="header-side-wrapper">
-      <button v-if="!isPublicRoute" @click="emit('toggle-sidebar')" class="btn-mode-toggle">
-        <Menu class="h-6 w-6" />
-      </button>
-
       <h2 class="header-logo-container group" :class="{ 'md:hidden': !isPublicRoute }">
         <span class="header-logo-span">Jenny </span>
         <span class="relative">
