@@ -1,8 +1,6 @@
 <script setup lang="ts">
-import { computed } from 'vue'
-
 definePageMeta({
-  layout: 'dashboard',
+  layout: false,
 })
 import {
   MessageSquare,
@@ -87,12 +85,11 @@ const getBtnClass = (theme: string) => {
   }
   return classes[theme] || classes.cyan
 }
-const isPublicMode = computed(() => route.name === 'lab-public')
 </script>
 
 <template>
-  <div :class="{ 'lab-detail-page-wrapper': isPublicMode }">
-    <AppHeader v-if="isPublicMode" />
+  <div class="lab-detail-page-wrapper">
+    <AppHeader />
     <div class="lab-detail-container">
       <BaseLoading v-if="isLoading" message="正在從知識庫提取實驗數據..." />
 
@@ -312,5 +309,6 @@ const isPublicMode = computed(() => route.name === 'lab-public')
         </div>
       </template>
     </div>
+    <AppFooter />
   </div>
 </template>

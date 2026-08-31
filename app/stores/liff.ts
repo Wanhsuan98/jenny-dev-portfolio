@@ -22,7 +22,8 @@ export const useLiffStore = defineStore('liff', () => {
     if (isInitialized.value) return
 
     try {
-      await liff.init({ liffId: import.meta.env.VITE_LIFF_ID })
+      const config = useRuntimeConfig()
+      await liff.init({ liffId: config.public.liffId })
 
       isInitialized.value = true
       isLoggedIn.value = liff.isLoggedIn()
