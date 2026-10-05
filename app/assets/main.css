@@ -469,6 +469,28 @@
     @apply bg-white dark:bg-slate-700 text-cyan-600 dark:text-white shadow-md;
   }
 
+  /* 手機版導覽選單開關 (桌機版 Dock 導覽列在此寬度已隱藏) */
+  .header-mobile-nav-toggle {
+    @apply md:hidden p-2 rounded-xl transition-all duration-300;
+    @apply hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 dark:text-slate-400;
+  }
+
+  /* 手機版下拉導覽面板 */
+  .header-mobile-nav-panel {
+    @apply md:hidden absolute top-full inset-x-4 mt-2 p-2 rounded-2xl flex flex-col gap-1;
+    @apply bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border border-slate-200/60 dark:border-slate-800/60 shadow-xl;
+  }
+
+  .header-mobile-nav-link {
+    @apply flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-bold transition-colors;
+    @apply text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-cyan-600 dark:hover:text-white;
+  }
+
+  .header-mobile-nav-link.router-link-active,
+  .header-mobile-nav-link.router-link-exact-active {
+    @apply bg-cyan-50 dark:bg-cyan-500/10 text-cyan-600 dark:text-cyan-400;
+  }
+
   /* 頂部狀態標籤 */
   .header-live-status {
     @apply flex items-center gap-2 px-3 py-1 rounded-lg border backdrop-blur-sm transition-colors;
@@ -829,7 +851,7 @@
   }
 
   .lab-pipeline-header {
-    @apply text-xl font-bold mb-8 flex items-center gap-2 text-left;
+    @apply text-xl font-bold mb-8 flex items-center gap-2 text-left text-slate-800 dark:text-white;
   }
 
   .lab-pipeline-visual {
@@ -869,7 +891,7 @@
   }
 
   .lab-action-grid {
-    @apply grid grid-cols-1 md:grid-cols-2 gap-8 pt-6;
+    @apply grid gap-8 pt-6;
   }
 
   .lab-action-status {

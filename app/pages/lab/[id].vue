@@ -3,6 +3,7 @@ definePageMeta({
   layout: false,
 })
 import {
+  ChevronLeft,
   MessageSquare,
   Users,
   Zap,
@@ -91,6 +92,11 @@ const getBtnClass = (theme: string) => {
   <div class="lab-detail-page-wrapper">
     <AppHeader />
     <div class="lab-detail-container">
+      <NuxtLink to="/projects" class="report-back-btn group">
+        <ChevronLeft class="report-back-btn-icon" />
+        返回專案列表
+      </NuxtLink>
+
       <BaseLoading v-if="isLoading" message="正在從知識庫提取實驗數據..." />
 
       <div v-else-if="errorMsg" class="lab-error-card">
@@ -257,7 +263,11 @@ const getBtnClass = (theme: string) => {
         </section>
 
         <!-- Dynamic Action Section -->
-        <div v-if="project.labActions" class="lab-action-grid">
+        <div
+          v-if="project.labActions"
+          class="lab-action-grid"
+          :class="project.labActions.length === 1 ? 'grid-cols-1' : 'md:grid-cols-2'"
+        >
           <div
             v-for="action in project.labActions"
             :key="action.label"
@@ -285,7 +295,7 @@ const getBtnClass = (theme: string) => {
             <NuxtLink
               v-if="action.to"
               :to="action.to"
-              class="lab-btn group"
+              class="lab-btn group max-w-sm"
               :class="getBtnClass(action.themeColor)"
             >
               立即體驗
@@ -297,7 +307,7 @@ const getBtnClass = (theme: string) => {
               v-if="action.href"
               :href="action.href"
               target="_blank"
-              class="lab-btn group"
+              class="lab-btn group max-w-sm"
               :class="getBtnClass(action.themeColor)"
             >
               啟動 Live Demo 網站
