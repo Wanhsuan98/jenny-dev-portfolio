@@ -11,10 +11,6 @@ const { getReportById } = useReports()
 
 const reportId = computed(() => route.params.id as string)
 
-const goBack = () => {
-  navigateTo('/#research-reports')
-}
-
 const { data: report, pending } = await useAsyncData(
   () => `report-${reportId.value}`,
   () => getReportById(reportId.value),
@@ -34,10 +30,10 @@ const loading = computed(() => import.meta.server || pending.value)
 
     <main class="report-detail-container">
       <!-- 返回 -->
-      <button @click="goBack" class="report-back-btn group">
+      <NuxtLink to="/reports" class="report-back-btn group">
         <ChevronLeft class="report-back-btn-icon" />
-        返回上一頁
-      </button>
+        返回深度研究列表
+      </NuxtLink>
 
       <div v-if="report" class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
         <!-- 導讀內文區 -->
@@ -148,12 +144,12 @@ const loading = computed(() => import.meta.server || pending.value)
 
       <div v-else class="text-center py-20">
         <h2 class="text-2xl font-bold text-slate-700 dark:text-slate-300">找不到該報告</h2>
-        <button
-          @click="goBack"
-          class="mt-6 font-medium text-cyan-600 dark:text-cyan-400 hover:underline"
+        <NuxtLink
+          to="/reports"
+          class="mt-6 inline-block font-medium text-cyan-600 dark:text-cyan-400 hover:underline"
         >
-          返回首頁
-        </button>
+          返回深度研究列表
+        </NuxtLink>
       </div>
     </main>
     <AppFooter />

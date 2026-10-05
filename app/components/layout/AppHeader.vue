@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { computed } from 'vue'
-import { Moon, Sun, Home } from 'lucide-vue-next'
+import { computed, ref, watch } from 'vue'
+import { Menu, X, Moon, Sun, Home } from 'lucide-vue-next'
 
 const route = useRoute()
 
@@ -16,6 +16,15 @@ const navItems = [
 ]
 
 const { isDark, toggleDark } = useTheme()
+
+// 手機版導覽選單:桌機版有固定顯示的導覽列,手機版收合後改用此選單開關
+const isMobileNavOpen = ref(false)
+watch(
+  () => route.fullPath,
+  () => {
+    isMobileNavOpen.value = false
+  },
+)
 </script>
 
 <template>
@@ -24,20 +33,22 @@ const { isDark, toggleDark } = useTheme()
     <div class="header-glow-line"></div>
 
     <div class="header-side-wrapper">
-      <h2 class="header-logo-container group" :class="{ 'md:hidden': !isPublicRoute }">
-        <span class="header-logo-span">Jenny </span>
-        <span class="relative">
-          <span class="header-logo-accent">Lin</span>
-          <span class="header-logo-underline"></span>
-        </span>
-        <span class="header-logo-suffix"> .Dev</span>
-      </h2>
+      <NuxtLink to="/" :class="{ 'md:hidden': !isPublicRoute }">
+        <h2 class="header-logo-container group">
+          <span class="header-logo-span">Jenny </span>
+          <span class="relative">
+            <span class="header-logo-accent">Lin</span>
+            <span class="header-logo-underline"></span>
+          </span>
+          <span class="header-logo-suffix"> .Dev</span>
+        </h2>
+      </NuxtLink>
     </div>
 
     <!-- 核心內容 -->
     <div v-if="isPublicRoute" class="header-center-area">
       <!-- 主導覽列 -->
-      <nav class="header-nav-dock">
+      <nav class="header-nav-dock" aria-label="主要導覽">
         <NuxtLink
           v-for="item in navItems"
           :key="item.path"
@@ -63,7 +74,36 @@ const { isDark, toggleDark } = useTheme()
         <Sun v-else class="h-5 w-5" />
       </button>
 
+      <button
+        @click="isMobileNavOpen = !isMobileNavOpen"
+        class="header-mobile-nav-toggle"
+        aria-controls="mobile-nav-panel"
+        :aria-expanded="isMobileNavOpen"
+        :aria-label="isMobileNavOpen ? '關閉導覽選單' : '開啟導覽選單'"
+      >
+        <X v-if="isMobileNavOpen" class="h-5 w-5" />
+        <Menu v-else class="h-5 w-5" />
+      </button>
+
       <div class="header-v-divider"></div>
     </div>
+
+    <!-- 手機版下拉導覽選單 -->
+    <nav
+      v-if="isMobileNavOpen"
+      id="mobile-nav-panel"
+      aria-label="手機導覽"
+      class="header-mobile-nav-panel"
+    >
+      <NuxtLink
+        v-for="item in navItems"
+        :key="item.path"
+        :to="item.path"
+        class="header-mobile-nav-link"
+      >
+        <component :is="item.icon" v-if="item.icon" class="w-4 h-4" />
+        {{ item.label }}
+      </NuxtLink>
+    </nav>
   </header>
 </template>

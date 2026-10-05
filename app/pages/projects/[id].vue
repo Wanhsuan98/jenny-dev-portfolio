@@ -28,10 +28,6 @@ const { project, isLoading, errorMsg } = useProject(() => projectId)
 // 當前選中的 Tab ID
 const activeTabId = ref<string>('')
 
-const handleBack = () => {
-  navigateTo('/projects', { replace: true })
-}
-
 // 資料標準化 Computed
 const normalizedProject = computed(() => {
   if (!project.value) return null
@@ -102,10 +98,10 @@ const coverImage = computed(() => {
   <div class="project-detail-page">
     <AppHeader />
     <div class="project-detail-container">
-      <button @click="handleBack" class="report-back-btn group">
+      <NuxtLink to="/projects" class="report-back-btn group">
         <ChevronLeft class="report-back-btn-icon" />
-        返回履歷
-      </button>
+        返回專案列表
+      </NuxtLink>
 
       <BaseLoading v-if="isLoading" message="正在取得專案詳情資料..." />
       <div v-else-if="errorMsg" class="report-detail-card p-12 text-center text-red-500 max-w-none">
