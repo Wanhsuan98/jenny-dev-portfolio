@@ -564,6 +564,9 @@
   .project-detail-meta-pill {
     @apply flex items-center gap-2.5 px-4 py-2.5 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700/50 shadow-sm;
   }
+  .project-detail-meta-link {
+    @apply transition-colors hover:border-cyan-400 dark:hover:border-cyan-500/60;
+  }
   .project-detail-meta-icon {
     @apply w-4 h-4 shrink-0;
   }
