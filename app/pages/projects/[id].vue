@@ -7,18 +7,7 @@ definePageMeta({
 })
 
 import type { ImageDetail } from '../../types/project'
-import {
-  Monitor,
-  Database,
-  Cloud,
-  Package,
-  ChevronLeft,
-  Code2,
-  Layout,
-  Info,
-  Lock,
-  ExternalLink,
-} from 'lucide-vue-next'
+import { ChevronLeft, Code2, Layout, Info, Lock, ExternalLink } from 'lucide-vue-next'
 
 const route = useRoute()
 const projectId = route.params.id as string
@@ -147,36 +136,7 @@ const coverImage = computed(() => {
             </NuxtLink>
           </div>
 
-          <div class="project-detail-meta-bar">
-            <div class="project-detail-meta-pill">
-              <Monitor class="project-detail-meta-icon text-blue-500" />
-              <div>
-                <p class="project-detail-meta-label">Frontend</p>
-                <p class="project-detail-meta-value">{{ project?.techFrontend }}</p>
-              </div>
-            </div>
-            <div v-if="project?.techDatabase" class="project-detail-meta-pill">
-              <Database class="project-detail-meta-icon text-green-500" />
-              <div>
-                <p class="project-detail-meta-label">Database</p>
-                <p class="project-detail-meta-value">{{ project?.techDatabase }}</p>
-              </div>
-            </div>
-            <div v-if="project?.techDeployment" class="project-detail-meta-pill">
-              <Cloud class="project-detail-meta-icon text-cyan-500" />
-              <div>
-                <p class="project-detail-meta-label">Deployment</p>
-                <p class="project-detail-meta-value">{{ project?.techDeployment }}</p>
-              </div>
-            </div>
-            <div v-if="project?.techCore" class="project-detail-meta-pill">
-              <Package class="project-detail-meta-icon text-orange-500" />
-              <div>
-                <p class="project-detail-meta-label">Key Packages</p>
-                <p class="project-detail-meta-value">{{ project?.techCore }}</p>
-              </div>
-            </div>
-          </div>
+          <ProjectMetaBar :project="project" />
         </header>
 
         <div v-if="project?.isConfidential" class="nda-alert">
@@ -185,10 +145,11 @@ const coverImage = computed(() => {
             <p class="nda-title">保密聲明 (Confidentiality Notice)</p>
             <p class="nda-desc">
               受限於保密協議
-              (NDA)，部分敏感介面細節已進行遮蔽處理。下方內容旨在分享核心工程架構與資料治理邏輯的設計思路。
+              (NDA)，部分敏感介面、實作細節已進行遮蔽處理。下方內容旨在分享核心工程架構與資料治理邏輯的設計思路。
               <span class="block mt-1 opacity-75 leading-tight">
-                Due to NDA restrictions, internal UI details are redacted. The notes below share the
-                design thinking behind the core engineering architecture and data governance logic.
+                Due to NDA restrictions, internal UI and implementation details are redacted. The
+                notes below share the design thinking behind the core engineering architecture and
+                data governance logic.
               </span>
             </p>
           </div>
