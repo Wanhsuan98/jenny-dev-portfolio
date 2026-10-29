@@ -7,6 +7,12 @@ definePageMeta({
 
 const { reports: researchReports, fetchReports } = useReports()
 
+usePageSeo({
+  title: '技術研究報告',
+  description: 'Jenny 的前端技術研究與讀書會報告，涵蓋 Vue.js、AI 輔助開發與函數式程式設計。',
+  path: '/reports',
+})
+
 onMounted(() => {
   fetchReports()
 })
@@ -31,6 +37,7 @@ onMounted(() => {
 
     <div class="pt-8 pb-20 relative z-10 flex-grow">
       <div class="p-4 md:p-8 max-w-7xl mx-auto space-y-20 animate-in fade-in duration-700">
+        <h1 class="sr-only">Jenny 的技術研究報告</h1>
         <section id="research-reports" class="pt-8">
           <ResearchReportsSection :reports="researchReports" />
         </section>

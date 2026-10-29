@@ -7,6 +7,7 @@ import type { Project } from '../types/project'
 
 export function useProject(idSource?: string | (() => string)) {
   const { $db } = useNuxtApp()
+  const event = useRequestEvent()
   const manualId = ref('')
 
   const id = computed(() => {
@@ -31,17 +32,19 @@ export function useProject(idSource?: string | (() => string)) {
       if (docSnap.exists()) {
         return { id: docSnap.id, ...docSnap.data() } as Project
       }
-      throw new Error('找不到此專案，可能已被刪除。')
+      // 伺服器端回傳 404，避免不存在的專案被當成正常頁面收錄
+      if (event) setResponseStatus(event, 404)
+      throw createError({ statusCode: 404, message: '找不到此專案，可能已被刪除。' })
     },
     {
-      server: false,
       default: () => null,
       watch: [id],
     },
   )
 
-  const isLoading = computed(() => import.meta.server || pending.value)
+  const isLoading = computed(() => pending.value)
   const errorMsg = computed(() => (error.value ? error.value.message : ''))
+  const isNotFound = computed(() => error.value?.statusCode === 404)
 
   const fetchProject = async (targetId?: string) => {
     if (targetId && !idSource) {
@@ -55,6 +58,7 @@ export function useProject(idSource?: string | (() => string)) {
     project,
     isLoading,
     errorMsg,
+    isNotFound,
     fetchProject,
   }
 }

@@ -2,6 +2,12 @@
 definePageMeta({
   layout: false,
 })
+
+usePageSeo({
+  title: '工程規範',
+  description: '本網站遵循的前端工程規範：型別安全、測試、程式碼審查與 CI/CD 流程。',
+  path: '/standards',
+})
 </script>
 
 <template>
@@ -23,6 +29,7 @@ definePageMeta({
 
     <div class="pt-8 pb-20 relative z-10 flex-grow">
       <div class="p-4 md:p-8 max-w-7xl mx-auto space-y-20 animate-in fade-in duration-700">
+        <h1 class="sr-only">本網站工程規範</h1>
         <section id="engineering-standards" class="pt-8">
           <EngineeringStandardsSection />
         </section>

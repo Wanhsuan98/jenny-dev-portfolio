@@ -127,7 +127,7 @@ const handleImageError = (project: RelatedProject) => {
               <div class="flex items-center gap-3 pt-4">
                 <NuxtLink
                   v-if="project.id"
-                  :to="project.isLab ? `/lab/${project.id}` : `/project/${project.id}`"
+                  :to="project.isLab ? `/lab/${project.id}` : `/projects/${project.id}`"
                   class="db-btn db-btn-primary"
                 >
                   查看技術細節 <ChevronRight class="w-3.5 h-3.5" />

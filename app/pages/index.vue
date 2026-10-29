@@ -11,6 +11,13 @@ definePageMeta({
 
 const { profile, loading, fetchProfile } = useProfile()
 
+usePageSeo({
+  title: 'Frontend Developer 作品集',
+  description:
+    'Jenny，前端工程師。專注 Vue 3 / Nuxt 與 React / Next.js，具 i18n、WCAG 無障礙、SEO 與 TypeScript 模組化架構實務經驗。',
+  path: '/',
+})
+
 onMounted(() => {
   fetchProfile()
 })

@@ -53,6 +53,8 @@ export interface Project {
   techDeployment: string
   techCore?: string
   description: string
+  // 選填，供 meta description 使用；未填時由 description 自動截取
+  seoDescription?: string
   coverImage?: string
   screenshots?: (string | ImageDetail)[]
   architectureImages?: (string | ImageDetail)[]

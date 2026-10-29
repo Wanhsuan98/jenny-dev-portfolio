@@ -12,7 +12,18 @@ import { ChevronLeft, Code2, Layout, Info, Lock, ExternalLink } from 'lucide-vue
 const route = useRoute()
 const projectId = route.params.id as string
 
-const { project, isLoading, errorMsg } = useProject(() => projectId)
+const { project, isLoading, errorMsg, isNotFound } = useProject(() => projectId)
+
+usePageSeo({
+  title: () => project.value?.name || '專案詳情',
+  description: () => project.value?.seoDescription || toMetaDescription(project.value?.description),
+  path: `/projects/${projectId}`,
+  image: () => {
+    const cover = project.value?.coverImage || project.value?.screenshots?.[0]
+    return typeof cover === 'string' ? cover : cover?.url
+  },
+  noindex: isNotFound,
+})
 
 // 當前選中的 Tab ID
 const activeTabId = ref<string>('')
@@ -48,23 +59,12 @@ const normalizedProject = computed(() => {
   return p
 })
 
-// 自動選中第一個 Tab
-watch(
-  () => normalizedProject.value,
-  (newVal) => {
-    if (newVal?.tabs?.length && !activeTabId.value) {
-      const firstTab = newVal.tabs[0]
-      if (firstTab) {
-        activeTabId.value = firstTab.id
-      }
-    }
-  },
-  { immediate: true },
-)
+// 未手動切換時預設選中第一個 Tab（用 computed 推導，確保 SSR 與客戶端渲染一致）
+const currentTabId = computed(() => activeTabId.value || normalizedProject.value?.tabs[0]?.id || '')
 
 // 取得當前選中的 Tab 內容
 const activeTabContent = computed(() => {
-  return normalizedProject.value?.tabs.find((t) => t.id === activeTabId.value)
+  return normalizedProject.value?.tabs.find((t) => t.id === currentTabId.value)
 })
 
 // 標題區封面圖(圖片載入失敗時退回純文字標題)
@@ -178,7 +178,7 @@ const coverImage = computed(() => {
                     @click="activeTabId = tab.id"
                     class="project-detail-nav-btn"
                     :class="
-                      activeTabId === tab.id
+                      currentTabId === tab.id
                         ? 'project-detail-nav-btn-active'
                         : 'project-detail-nav-btn-inactive'
                     "

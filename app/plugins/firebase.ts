@@ -1,4 +1,4 @@
-import { initializeApp } from 'firebase/app'
+import { getApp, getApps, initializeApp } from 'firebase/app'
 import { getFirestore, type Firestore } from 'firebase/firestore'
 
 let db: Firestore
@@ -15,7 +15,8 @@ export default defineNuxtPlugin(() => {
     appId: config.public.firebaseAppId,
   }
 
-  const app = initializeApp(firebaseConfig)
+  // 伺服器端每個請求都會執行 plugin，沿用已初始化的 app 避免重複初始化錯誤
+  const app = getApps().length ? getApp() : initializeApp(firebaseConfig)
   db = getFirestore(app)
 
   return {
