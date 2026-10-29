@@ -65,8 +65,9 @@ export function useReports() {
         return null
       }
     } catch (err) {
+      // 往上拋出，讓呼叫端區分「讀取失敗」與「報告不存在」
       console.error('Error fetching report detail:', err)
-      return null
+      throw err
     }
   }
 

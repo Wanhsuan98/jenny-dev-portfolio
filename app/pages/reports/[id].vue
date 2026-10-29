@@ -10,23 +10,33 @@ const route = useRoute()
 const { getReportById } = useReports()
 
 const reportId = computed(() => route.params.id as string)
+const event = useRequestEvent()
 
-const { data: report, pending } = await useAsyncData(
+const {
+  data: report,
+  pending,
+  status,
+} = await useAsyncData(
   () => `report-${reportId.value}`,
-  () => getReportById(reportId.value),
+  async () => {
+    const data = await getReportById(reportId.value)
+    // 伺服器端回傳 404，避免不存在的報告被當成正常頁面收錄
+    if (!data && event) setResponseStatus(event, 404)
+    return data
+  },
   {
-    server: false,
     default: () => null,
     watch: [reportId],
   },
 )
 
-const loading = computed(() => import.meta.server || pending.value)
+const loading = computed(() => pending.value)
 
 usePageSeo({
   title: () => report.value?.title || '研究報告',
   description: () => report.value?.summary,
   path: () => `/reports/${reportId.value}`,
+  noindex: () => status.value === 'success' && !report.value,
 })
 </script>
 

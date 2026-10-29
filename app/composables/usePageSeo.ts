@@ -9,6 +9,7 @@ interface PageSeoOptions {
   description: MaybeRefOrGetter<string | undefined>
   path: MaybeRefOrGetter<string>
   image?: MaybeRefOrGetter<string | undefined>
+  noindex?: MaybeRefOrGetter<boolean>
 }
 
 // 1200x630，符合 summary_large_image 的橫幅比例
@@ -31,6 +32,7 @@ export function usePageSeo(options: PageSeoOptions) {
     ogUrl: canonical,
     ogImage: image,
     twitterCard: 'summary_large_image',
+    robots: () => (toValue(options.noindex) ? 'noindex, nofollow' : undefined),
   })
 
   useHead({

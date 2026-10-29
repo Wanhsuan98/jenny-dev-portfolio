@@ -23,13 +23,14 @@ import {
 } from 'lucide-vue-next'
 
 const route = useRoute()
-const { project, isLoading, errorMsg } = useProject(() => route.params.id as string)
+const { project, isLoading, errorMsg, isNotFound } = useProject(() => route.params.id as string)
 
 usePageSeo({
   title: () => project.value?.name || 'Side Project',
-  description: () => project.value?.description,
+  description: () => project.value?.seoDescription || toMetaDescription(project.value?.description),
   path: () => `/lab/${route.params.id}`,
   image: () => project.value?.coverImage,
+  noindex: isNotFound,
 })
 
 // 圖標映射表
