@@ -7,6 +7,13 @@ definePageMeta({
 
 const { projects, initProjectsListener } = useProjects()
 
+usePageSeo({
+  title: '專案作品',
+  description:
+    'Jenny 的落地專案與 Side Project：政府機關官網、AI 輿情系統、LINE LIFF 活動簽到等前端實作。',
+  path: '/projects',
+})
+
 type TabKey = 'production' | 'lab'
 
 const TABS: { key: TabKey; label: string; subtitle: string }[] = [
@@ -47,6 +54,7 @@ onMounted(() => {
 
     <div class="pt-8 pb-20 relative z-10 flex-grow">
       <div class="p-4 md:p-8 max-w-7xl mx-auto space-y-8 animate-in fade-in duration-700">
+        <h1 class="sr-only">Jenny 的專案作品</h1>
         <!-- Tab Switcher -->
         <div
           class="flex items-center gap-2 p-1 w-fit rounded-full bg-slate-100 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/50"

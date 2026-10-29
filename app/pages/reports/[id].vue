@@ -22,6 +22,12 @@ const { data: report, pending } = await useAsyncData(
 )
 
 const loading = computed(() => import.meta.server || pending.value)
+
+usePageSeo({
+  title: () => report.value?.title || '研究報告',
+  description: () => report.value?.summary,
+  path: () => `/reports/${reportId.value}`,
+})
 </script>
 
 <template>

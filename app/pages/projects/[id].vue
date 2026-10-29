@@ -14,6 +14,16 @@ const projectId = route.params.id as string
 
 const { project, isLoading, errorMsg } = useProject(() => projectId)
 
+usePageSeo({
+  title: () => project.value?.name || '專案詳情',
+  description: () => project.value?.description,
+  path: `/projects/${projectId}`,
+  image: () => {
+    const cover = project.value?.coverImage || project.value?.screenshots?.[0]
+    return typeof cover === 'string' ? cover : cover?.url
+  },
+})
+
 // 當前選中的 Tab ID
 const activeTabId = ref<string>('')
 

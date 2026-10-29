@@ -25,6 +25,13 @@ import {
 const route = useRoute()
 const { project, isLoading, errorMsg } = useProject(() => route.params.id as string)
 
+usePageSeo({
+  title: () => project.value?.name || 'Side Project',
+  description: () => project.value?.description,
+  path: () => `/lab/${route.params.id}`,
+  image: () => project.value?.coverImage,
+})
+
 // 圖標映射表
 const getIcon = (type: string) => {
   const icons: Record<string, typeof Server | typeof MessageSquare> = {
